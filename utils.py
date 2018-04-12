@@ -20,3 +20,12 @@ def get_logger(name='default', level=logging.DEBUG, colored=False):
         coloredlogs.install(level=level, logger=logger)
 
     return logger
+
+
+class LoggableMixin(object):
+    @property
+    def logger(self):
+        if not hasattr(self, '_logger'):
+            self._logger = get_logger(self.__class__.__name__.lower())
+
+        return self._logger
