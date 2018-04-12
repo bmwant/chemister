@@ -7,6 +7,7 @@ import config
 from utils import get_logger
 from crawler.scheduler import Scheduler
 from crawler.factory import Factory
+from crawler.parser.i_ua import IUaParser
 
 
 async def load_yaml(filepath):
@@ -42,3 +43,9 @@ async def refresh_data():
 
     await scheduler.run_once()
     await scheduler.cleanup()
+
+
+async def load_bids():
+    from crawler.models.bid import Bid
+    data = await load_yaml(config.DEV_BID_RESOURCE)
+    return [Bid(**d) for d in data]

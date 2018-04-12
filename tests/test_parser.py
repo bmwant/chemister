@@ -5,5 +5,3 @@ def test_i_ua_parser(page_html):
     html = page_html('i_ua')
     parser = IUaParser()
     data = parser.parse(html=html)
-    from pprint import pprint
-    pprint(data)

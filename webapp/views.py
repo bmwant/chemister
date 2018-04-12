@@ -4,13 +4,19 @@ from functools import partial
 import aiohttp_jinja2
 from aiohttp import web
 
-from webapp.utils import refresh_data
+from webapp.utils import refresh_data, load_bids
 
 
 @aiohttp_jinja2.template('index.html')
 async def index(request):
     logger = request.app.logger
     logger.info('Accessing index page')
+    in_bids = []
+    out_bids = await load_bids()
+    return {
+        'in_bids': in_bids,
+        'out_bids': out_bids,
+    }
 
 
 
