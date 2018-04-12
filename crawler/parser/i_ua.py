@@ -16,13 +16,19 @@ class _BSEngine(BaseEngine, LoggableMixin):
         for row in rows:
             cells = row.find_all('td')
             new_bid = {
-                'rate': cells[1].text,
-                'amount': cells[2].text,
-                'phone': self._extract_phone(cells[3])
+                'rate': self._extract_rate(cells[1]),
+                'amount': self._extract_amount(cells[2]),
+                'phone': self._extract_phone(cells[3]),
+                'currency': 'USD',
             }
-            # import pdb; pdb.set_trace()
             data.append(new_bid)
         self._data = data
+
+    def _extract_rate(self, cell):
+        return float(cell.text)
+
+    def _extract_amount(self, cell):
+        return float(''.join(takewhile(str.isnumeric, cell.text)))
 
     def _extract_phone(self, cell):
         link = cell.find('span', 'a')
