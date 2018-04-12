@@ -1,5 +1,6 @@
-## wcbot
-World Cup 2018 Win Outright Comparison.
+## chemister
+
+Che Mister.
 
 For implementations details and design notes go straight to 
 [Architecture](resources/ARCHITECTURE.md)
@@ -21,7 +22,7 @@ Make sure you have next items installed:
 
 ### Installation
 ```
-$ git clone https://github.com/bmwant/wcbot.git
+$ git clone https://github.com/bmwant/.git
 $ pipenv install
 $ npm install
 $ pipenv shell

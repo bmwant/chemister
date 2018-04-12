@@ -12,32 +12,11 @@ from webapp.utils import (
 )
 
 
-@aiohttp_jinja2.template('index.html')
+@aiohttp_jinja2.template('dist/index.html')
 async def index(request):
     logger = request.app.logger
     logger.info('Accessing index page')
-    cache = request.app['cache']
 
-    teams = await load_teams()
-    available_resources = await load_resources()
-
-    resources = {}
-    has_data = False
-    for resource in available_resources:
-        resource_data = await get_cached_value(cache=cache,
-                                               key=resource)
-        if resource_data is not None:
-            has_data = True
-        resources[resource] = resource_data
-
-    if not has_data:
-        loading_url = request.app.router['loading'].url_for()
-        return web.HTTPFound(loading_url)
-
-    return {
-        'teams': teams,
-        'resources': resources
-    }
 
 
 @aiohttp_jinja2.template('loading.html')
