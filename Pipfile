@@ -1,0 +1,25 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+aiohttp = "*"
+tox = "*"
+pytest = "*"
+"aiohttp-jinja2" = "*"
+click = "*"
+aioredis = "*"
+pyyaml = "*"
+attrs = "*"
+coloredlogs = "*"
+selenium = "*"
+"beautifulsoup4" = "*"
+"html5lib" = "*"
+
+
+[dev-packages]
+

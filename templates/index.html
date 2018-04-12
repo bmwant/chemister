@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="siimple-grid">
+  <div class="siimple-grid-row">
+    <div class="siimple-grid-col siimple-grid-col--6">
+      <div class="siimple-tip siimple-tip--yellow siimple-tip--exclamation">
+        <strong>World Cup 2018 Win Outright Odds Comparison</strong>
+      </div>
+      <div class="siimple-tip siimple-tip--blue siimple-tip--question">
+        Last updated: <strong>date</strong>
+      </div>
+    </div>
+  </div>
+  <div class="siimple-grid-row">
+    <div class="siimple-grid-col siimple-grid-col--6">
+      <div class="siimple-table siimple-table--hover">
+        <div class="siimple-table-header">
+          <div class="siimple-table-row">
+            <div class="siimple-table-cell">Team</div>
+            {% for resource_name in resources.keys() %}
+            <div class="siimple-table-cell">{{ resource_name }}</div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="siimple-table-body">
+          {% for team in teams %}
+            <div class="siimple-table-row">
+              <div class="siimple-table-cell">{{ team }}</div>
+              {% for data in resources.values() %}
+              <div class="siimple-table-cell">{{ data[team] |round(3) if data[team] else '-' }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

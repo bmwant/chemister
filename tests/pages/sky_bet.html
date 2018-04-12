@@ -1,0 +1,596 @@
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" lang="en" class="page"><head>
+    <meta charset="UTF-8" /><script type="text/javascript" src="https://bam.nr-data.net/1/86fa490fac?a=18731121&amp;v=1071.385e752&amp;to=ZlVaZ0BZDUpVUhdYWF8fe0ZBTAxUG20uU1JFbHtcXEwRVlhdBkNrd19XR1BZD1VodBVUWUVzV11GSgxVWFQRCw1QU0xaXVYmT1FfFw%3D%3D&amp;rst=20372&amp;ref=https://m.skybet.com/football/world-cup-2018/event/16742642&amp;ap=14&amp;be=2912&amp;fe=20016&amp;dc=5517&amp;af=err,xhr,stn,ins,spa&amp;perf=%7B%22timing%22:%7B%22of%22:1522831208398,%22n%22:0,%22f%22:5,%22dn%22:5,%22dne%22:5,%22c%22:6,%22s%22:1779,%22ce%22:2618,%22rq%22:2618,%22rp%22:2859,%22rpe%22:2940,%22dl%22:2871,%22di%22:5326,%22ds%22:5517,%22de%22:5517,%22dc%22:20016,%22l%22:20016,%22le%22:20017%7D,%22navigation%22:%7B%7D%7D&amp;at=ShJNEQhDQUtRUABFYVRCS1pdVkEDFgBWHwEfARofEFsPUFFfF2dSQ0NRXFwaWRsCVQZUVQNVAAsFWgYJB1BUAgRTVQ8EAAwAAQAIWwIEAxJFHxBZQQNPTB4%3D&amp;ja=%7B%22iframe%22:%22false%22%7D&amp;jsonp=NREUM.setToken"></script><script src="https://js-agent.newrelic.com/nr-spa-1071.min.js"></script><script async="" src="//connect.facebook.net/en_US/fbds.js"></script><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"VQUHVlRaDBABXFZRBgAFVw=="};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o||e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o&lt;n.length;o++)r(n[o]);return r}({1:[function(t,e,n){function r(t){try{c.console&amp;&amp;console.log(t)}catch(e){}}var o,i=t("ee"),a=t(20),c={};try{o=localStorage.getItem("__nr_flags").split(","),console&amp;&amp;"function"==typeof console.log&amp;&amp;(c.console=!0,o.indexOf("dev")!==-1&amp;&amp;(c.dev=!0),o.indexOf("nr_dev")!==-1&amp;&amp;(c.nrDev=!0))}catch(s){}c.nrDev&amp;&amp;i.on("internal-error",function(t){r(t.stack)}),c.dev&amp;&amp;i.on("fn-err",function(t,e,n){r(n.stack)}),c.dev&amp;&amp;(r("NR AGENT IN DEVELOPMENT MODE"),r("flags: "+a(c,function(t,e){return t}).join(", ")))},{}],2:[function(t,e,n){function r(t,e,n,r,c){try{h?h-=1:o(c||new UncaughtException(t,e,n),!0)}catch(f){try{i("ierr",[f,s.now(),!0])}catch(d){}}return"function"==typeof u&amp;&amp;u.apply(this,a(arguments))}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function o(t,e){var n=e?null:s.now();i("err",[t,n])}var i=t("handle"),a=t(21),c=t("ee"),s=t("loader"),f=t("gos"),u=window.onerror,d=!1,p="nr@seenError",h=0;s.features.err=!0,t(1),window.onerror=r;try{throw new Error}catch(l){"stack"in l&amp;&amp;(t(13),t(12),"addEventListener"in window&amp;&amp;t(6),s.xhrWrappable&amp;&amp;t(14),d=!0)}c.on("fn-start",function(t,e,n){d&amp;&amp;(h+=1)}),c.on("fn-err",function(t,e,n){d&amp;&amp;!n[p]&amp;&amp;(f(n,p,function(){return!0}),this.thrown=!0,o(n))}),c.on("fn-end",function(){d&amp;&amp;!this.thrown&amp;&amp;h&gt;0&amp;&amp;(h-=1)}),c.on("internal-error",function(t){i("ierr",[t,s.now(),!0])})},{}],3:[function(t,e,n){t("loader").features.ins=!0},{}],4:[function(t,e,n){function r(){M++,S=y.hash,this[u]=b.now()}function o(){M--,y.hash!==S&amp;&amp;i(0,!0);var t=b.now();this[l]=~~this[l]+t-this[u],this[d]=t}function i(t,e){E.emit("newURL",[""+y,e])}function a(t,e){t.on(e,function(){this[e]=b.now()})}var c="-start",s="-end",f="-body",u="fn"+c,d="fn"+s,p="cb"+c,h="cb"+s,l="jsTime",m="fetch",v="addEventListener",w=window,y=w.location,b=t("loader");if(w[v]&amp;&amp;b.xhrWrappable){var g=t(10),x=t(11),E=t(8),P=t(6),O=t(13),R=t(7),T=t(14),L=t(9),j=t("ee"),N=j.get("tracer");t(15),b.features.spa=!0;var S,M=0;j.on(u,r),j.on(p,r),j.on(d,o),j.on(h,o),j.buffer([u,d,"xhr-done","xhr-resolved"]),P.buffer([u]),O.buffer(["setTimeout"+s,"clearTimeout"+c,u]),T.buffer([u,"new-xhr","send-xhr"+c]),R.buffer([m+c,m+"-done",m+f+c,m+f+s]),E.buffer(["newURL"]),g.buffer([u]),x.buffer(["propagate",p,h,"executor-err","resolve"+c]),N.buffer([u,"no-"+u]),L.buffer(["new-jsonp","cb-start","jsonp-error","jsonp-end"]),a(T,"send-xhr"+c),a(j,"xhr-resolved"),a(j,"xhr-done"),a(R,m+c),a(R,m+"-done"),a(L,"new-jsonp"),a(L,"jsonp-end"),a(L,"cb-start"),E.on("pushState-end",i),E.on("replaceState-end",i),w[v]("hashchange",i,!0),w[v]("load",i,!0),w[v]("popstate",function(){i(0,M&gt;1)},!0)}},{}],5:[function(t,e,n){function r(t){}if(window.performance&amp;&amp;window.performance.timing&amp;&amp;window.performance.getEntriesByType){var o=t("ee"),i=t("handle"),a=t(13),c=t(12),s="learResourceTimings",f="addEventListener",u="resourcetimingbufferfull",d="bstResource",p="resource",h="-start",l="-end",m="fn"+h,v="fn"+l,w="bstTimer",y="pushState",b=t("loader");b.features.stn=!0,t(8);var g=NREUM.o.EV;o.on(m,function(t,e){var n=t[0];n instanceof g&amp;&amp;(this.bstStart=b.now())}),o.on(v,function(t,e){var n=t[0];n instanceof g&amp;&amp;i("bst",[n,e,this.bstStart,b.now()])}),a.on(m,function(t,e,n){this.bstStart=b.now(),this.bstType=n}),a.on(v,function(t,e){i(w,[e,this.bstStart,b.now(),this.bstType])}),c.on(m,function(){this.bstStart=b.now()}),c.on(v,function(t,e){i(w,[e,this.bstStart,b.now(),"requestAnimationFrame"])}),o.on(y+h,function(t){this.time=b.now(),this.startPath=location.pathname+location.hash}),o.on(y+l,function(t){i("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),f in window.performance&amp;&amp;(window.performance["c"+s]?window.performance[f](u,function(t){i(d,[window.performance.getEntriesByType(p)]),window.performance["c"+s]()},!1):window.performance[f]("webkit"+u,function(t){i(d,[window.performance.getEntriesByType(p)]),window.performance["webkitC"+s]()},!1)),document[f]("scroll",r,{passive:!0}),document[f]("keypress",r,!1),document[f]("click",r,!1)}},{}],6:[function(t,e,n){function r(t){for(var e=t;e&amp;&amp;!e.hasOwnProperty(u);)e=Object.getPrototypeOf(e);e&amp;&amp;o(e)}function o(t){c.inPlace(t,[u,d],"-",i)}function i(t,e){return t[1]}var a=t("ee").get("events"),c=t(23)(a,!0),s=t("gos"),f=XMLHttpRequest,u="addEventListener",d="removeEventListener";e.exports=a,"getPrototypeOf"in Object?(r(document),r(window),r(f.prototype)):f.prototype.hasOwnProperty(u)&amp;&amp;(o(window),o(f.prototype)),a.on(u+"-start",function(t,e){var n=t[1],r=s(n,"nr@wrapped",function(){function t(){if("function"==typeof n.handleEvent)return n.handleEvent.apply(n,arguments)}var e={object:t,"function":n}[typeof n];return e?c(e,"fn-",null,e.name||"anonymous"):n});this.wrapped=t[1]=r}),a.on(d+"-start",function(t){t[1]=this.wrapped||t[1]})},{}],7:[function(t,e,n){function r(t,e,n){var r=t[e];"function"==typeof r&amp;&amp;(t[e]=function(){var t=r.apply(this,arguments);return o.emit(n+"start",arguments,t),t.then(function(e){return o.emit(n+"end",[null,e],t),e},function(e){throw o.emit(n+"end",[e],t),e})})}var o=t("ee").get("fetch"),i=t(20);e.exports=o;var a=window,c="fetch-",s=c+"body-",f=["arrayBuffer","blob","json","text","formData"],u=a.Request,d=a.Response,p=a.fetch,h="prototype";u&amp;&amp;d&amp;&amp;p&amp;&amp;(i(f,function(t,e){r(u[h],e,s),r(d[h],e,s)}),r(a,"fetch",c),o.on(c+"end",function(t,e){var n=this;e?e.clone().arrayBuffer().then(function(t){n.rxSize=t.byteLength,o.emit(c+"done",[null,e],n)}):o.emit(c+"done",[t],n)}))},{}],8:[function(t,e,n){var r=t("ee").get("history"),o=t(23)(r);e.exports=r,o.inPlace(window.history,["pushState","replaceState"],"-")},{}],9:[function(t,e,n){function r(t){function e(){s.emit("jsonp-end",[],p),t.removeEventListener("load",e,!1),t.removeEventListener("error",n,!1)}function n(){s.emit("jsonp-error",[],p),s.emit("jsonp-end",[],p),t.removeEventListener("load",e,!1),t.removeEventListener("error",n,!1)}var r=t&amp;&amp;"string"==typeof t.nodeName&amp;&amp;"script"===t.nodeName.toLowerCase();if(r){var o="function"==typeof t.addEventListener;if(o){var a=i(t.src);if(a){var u=c(a),d="function"==typeof u.parent[u.key];if(d){var p={};f.inPlace(u.parent,[u.key],"cb-",p),t.addEventListener("load",e,!1),t.addEventListener("error",n,!1),s.emit("new-jsonp",[t.src],p)}}}}}function o(){return"addEventListener"in window}function i(t){var e=t.match(u);return e?e[1]:null}function a(t,e){var n=t.match(p),r=n[1],o=n[3];return o?a(o,e[r]):e[r]}function c(t){var e=t.match(d);return e&amp;&amp;e.length&gt;=3?{key:e[2],parent:a(e[1],window)}:{key:t,parent:window}}var s=t("ee").get("jsonp"),f=t(23)(s);if(e.exports=s,o()){var u=/[?&amp;](?:callback|cb)=([^&amp;#]+)/,d=/(.*)\.([^.]+)/,p=/^(\w+)(\.|$)(.*)$/,h=["appendChild","insertBefore","replaceChild"];f.inPlace(HTMLElement.prototype,h,"dom-"),f.inPlace(HTMLHeadElement.prototype,h,"dom-"),f.inPlace(HTMLBodyElement.prototype,h,"dom-"),s.on("dom-start",function(t){r(t[0])})}},{}],10:[function(t,e,n){var r=t("ee").get("mutation"),o=t(23)(r),i=NREUM.o.MO;e.exports=r,i&amp;&amp;(window.MutationObserver=function(t){return this instanceof i?new i(o(t,"fn-")):i.apply(this,arguments)},MutationObserver.prototype=i.prototype)},{}],11:[function(t,e,n){function r(t){var e=a.context(),n=c(t,"executor-",e),r=new f(n);return a.context(r).getCtx=function(){return e},a.emit("new-promise",[r,e],e),r}function o(t,e){return e}var i=t(23),a=t("ee").get("promise"),c=i(a),s=t(20),f=NREUM.o.PR;e.exports=a,f&amp;&amp;(window.Promise=r,["all","race"].forEach(function(t){var e=f[t];f[t]=function(n){function r(t){return function(){a.emit("propagate",[null,!o],i),o=o||!t}}var o=!1;s(n,function(e,n){Promise.resolve(n).then(r("all"===t),r(!1))});var i=e.apply(f,arguments),c=f.resolve(i);return c}}),["resolve","reject"].forEach(function(t){var e=f[t];f[t]=function(t){var n=e.apply(f,arguments);return t!==n&amp;&amp;a.emit("propagate",[t,!0],n),n}}),f.prototype["catch"]=function(t){return this.then(null,t)},f.prototype=Object.create(f.prototype,{constructor:{value:r}}),s(Object.getOwnPropertyNames(f),function(t,e){try{r[e]=f[e]}catch(n){}}),a.on("executor-start",function(t){t[0]=c(t[0],"resolve-",this),t[1]=c(t[1],"resolve-",this)}),a.on("executor-err",function(t,e,n){t[1](n)}),c.inPlace(f.prototype,["then"],"then-",o),a.on("then-start",function(t,e){this.promise=e,t[0]=c(t[0],"cb-",this),t[1]=c(t[1],"cb-",this)}),a.on("then-end",function(t,e,n){this.nextPromise=n;var r=this.promise;a.emit("propagate",[r,!0],n)}),a.on("cb-end",function(t,e,n){a.emit("propagate",[n,!0],this.nextPromise)}),a.on("propagate",function(t,e,n){this.getCtx&amp;&amp;!e||(this.getCtx=function(){if(t instanceof Promise)var e=a.context(t);return e&amp;&amp;e.getCtx?e.getCtx():this})}),r.toString=function(){return""+f})},{}],12:[function(t,e,n){var r=t("ee").get("raf"),o=t(23)(r),i="equestAnimationFrame";e.exports=r,o.inPlace(window,["r"+i,"mozR"+i,"webkitR"+i,"msR"+i],"raf-"),r.on("raf-start",function(t){t[0]=o(t[0],"fn-")})},{}],13:[function(t,e,n){function r(t,e,n){t[0]=a(t[0],"fn-",null,n)}function o(t,e,n){this.method=n,this.timerDuration=isNaN(t[1])?0:+t[1],t[0]=a(t[0],"fn-",this,n)}var i=t("ee").get("timer"),a=t(23)(i),c="setTimeout",s="setInterval",f="clearTimeout",u="-start",d="-";e.exports=i,a.inPlace(window,[c,"setImmediate"],c+d),a.inPlace(window,[s],s+d),a.inPlace(window,[f,"clearImmediate"],f+d),i.on(s+u,r),i.on(c+u,o)},{}],14:[function(t,e,n){function r(t,e){d.inPlace(e,["onreadystatechange"],"fn-",c)}function o(){var t=this,e=u.context(t);t.readyState&gt;3&amp;&amp;!e.resolved&amp;&amp;(e.resolved=!0,u.emit("xhr-resolved",[],t)),d.inPlace(t,y,"fn-",c)}function i(t){b.push(t),l&amp;&amp;(x?x.then(a):v?v(a):(E=-E,P.data=E))}function a(){for(var t=0;t&lt;b.length;t++)r([],b[t]);b.length&amp;&amp;(b=[])}function c(t,e){return e}function s(t,e){for(var n in t)e[n]=t[n];return e}t(6);var f=t("ee"),u=f.get("xhr"),d=t(23)(u),p=NREUM.o,h=p.XHR,l=p.MO,m=p.PR,v=p.SI,w="readystatechange",y=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"],b=[];e.exports=u;var g=window.XMLHttpRequest=function(t){var e=new h(t);try{u.emit("new-xhr",[e],e),e.addEventListener(w,o,!1)}catch(n){try{u.emit("internal-error",[n])}catch(r){}}return e};if(s(h,g),g.prototype=h.prototype,d.inPlace(g.prototype,["open","send"],"-xhr-",c),u.on("send-xhr-start",function(t,e){r(t,e),i(e)}),u.on("open-xhr-start",r),l){var x=m&amp;&amp;m.resolve();if(!v&amp;&amp;!m){var E=1,P=document.createTextNode(E);new l(a).observe(P,{characterData:!0})}}else f.on("fn-end",function(t){t[0]&amp;&amp;t[0].type===w||a()})},{}],15:[function(t,e,n){function r(t){var e=this.params,n=this.metrics;if(!this.ended){this.ended=!0;for(var r=0;r&lt;d;r++)t.removeEventListener(u[r],this.listener,!1);if(!e.aborted){if(n.duration=a.now()-this.startTime,4===t.readyState){e.status=t.status;var i=o(t,this.lastSize);if(i&amp;&amp;(n.rxSize=i),this.sameOrigin){var s=t.getResponseHeader("X-NewRelic-App-Data");s&amp;&amp;(e.cat=s.split(", ").pop())}}else e.status=0;n.cbTime=this.cbTime,f.emit("xhr-done",[t],t),c("xhr",[e,n,this.startTime])}}}function o(t,e){var n=t.responseType;if("json"===n&amp;&amp;null!==e)return e;var r="arraybuffer"===n||"blob"===n||"json"===n?t.response:t.responseText;return l(r)}function i(t,e){var n=s(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}var a=t("loader");if(a.xhrWrappable){var c=t("handle"),s=t(16),f=t("ee"),u=["load","error","abort","timeout"],d=u.length,p=t("id"),h=t(19),l=t(18),m=window.XMLHttpRequest;a.features.xhr=!0,t(14),f.on("new-xhr",function(t){var e=this;e.totalCbs=0,e.called=0,e.cbTime=0,e.end=r,e.ended=!1,e.xhrGuids={},e.lastSize=null,h&amp;&amp;(h&gt;34||h&lt;10)||window.opera||t.addEventListener("progress",function(t){e.lastSize=t.loaded},!1)}),f.on("open-xhr-start",function(t){this.params={method:t[0]},i(this,t[1]),this.metrics={}}),f.on("open-xhr-end",function(t,e){"loader_config"in NREUM&amp;&amp;"xpid"in NREUM.loader_config&amp;&amp;this.sameOrigin&amp;&amp;e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),f.on("send-xhr-start",function(t,e){var n=this.metrics,r=t[0],o=this;if(n&amp;&amp;r){var i=l(r);i&amp;&amp;(n.txSize=i)}this.startTime=a.now(),this.listener=function(t){try{"abort"===t.type&amp;&amp;(o.params.aborted=!0),("load"!==t.type||o.called===o.totalCbs&amp;&amp;(o.onloadCalled||"function"!=typeof e.onload))&amp;&amp;o.end(e)}catch(n){try{f.emit("internal-error",[n])}catch(r){}}};for(var c=0;c&lt;d;c++)e.addEventListener(u[c],this.listener,!1)}),f.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&amp;&amp;"function"==typeof n.onload||this.end(n)}),f.on("xhr-load-added",function(t,e){var n=""+p(t)+!!e;this.xhrGuids&amp;&amp;!this.xhrGuids[n]&amp;&amp;(this.xhrGuids[n]=!0,this.totalCbs+=1)}),f.on("xhr-load-removed",function(t,e){var n=""+p(t)+!!e;this.xhrGuids&amp;&amp;this.xhrGuids[n]&amp;&amp;(delete this.xhrGuids[n],this.totalCbs-=1)}),f.on("addEventListener-end",function(t,e){e instanceof m&amp;&amp;"load"===t[0]&amp;&amp;f.emit("xhr-load-added",[t[1],t[2]],e)}),f.on("removeEventListener-end",function(t,e){e instanceof m&amp;&amp;"load"===t[0]&amp;&amp;f.emit("xhr-load-removed",[t[1],t[2]],e)}),f.on("fn-start",function(t,e,n){e instanceof m&amp;&amp;("onload"===n&amp;&amp;(this.onload=!0),("load"===(t[0]&amp;&amp;t[0].type)||this.onload)&amp;&amp;(this.xhrCbStart=a.now()))}),f.on("fn-end",function(t,e){this.xhrCbStart&amp;&amp;f.emit("xhr-cb-time",[a.now()-this.xhrCbStart,this.onload,e],e)})}},{}],16:[function(t,e,n){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");!r.port&amp;&amp;o[1]&amp;&amp;(r.port=o[1].split("/")[0].split("@").pop().split(":")[1]),r.port&amp;&amp;"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,r.protocol=o[0],"/"!==r.pathname.charAt(0)&amp;&amp;(r.pathname="/"+r.pathname);var i=!e.protocol||":"===e.protocol||e.protocol===n.protocol,a=e.hostname===document.domain&amp;&amp;e.port===n.port;return r.sameOrigin=i&amp;&amp;(!e.hostname||a),r}},{}],17:[function(t,e,n){function r(){}function o(t,e,n){return function(){return i(t,[f.now()].concat(c(arguments)),e?null:this,n),e?void 0:this}}var i=t("handle"),a=t(20),c=t(21),s=t("ee").get("tracer"),f=t("loader"),u=NREUM;"undefined"==typeof window.newrelic&amp;&amp;(newrelic=u);var d=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],p="api-",h=p+"ixn-";a(d,function(t,e){u[e]=o(p+e,!0,"api")}),u.addPageAction=o(p+"addPageAction",!0),u.setCurrentRouteName=o(p+"routeName",!0),e.exports=newrelic,u.interaction=function(){return(new r).get()};var l=r.prototype={createTracer:function(t,e){var n={},r=this,o="function"==typeof e;return i(h+"tracer",[f.now(),t,n],r),function(){if(s.emit((o?"":"no-")+"fn-start",[f.now(),r,o],n),o)try{return e.apply(this,arguments)}catch(t){throw s.emit("fn-err",[arguments,this,t],n),t}finally{s.emit("fn-end",[f.now()],n)}}}};a("setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(t,e){l[e]=o(h+e)}),newrelic.noticeError=function(t){"string"==typeof t&amp;&amp;(t=new Error(t)),i("err",[t,f.now()])}},{}],18:[function(t,e,n){e.exports=function(t){if("string"==typeof t&amp;&amp;t.length)return t.length;if("object"==typeof t){if("undefined"!=typeof ArrayBuffer&amp;&amp;t instanceof ArrayBuffer&amp;&amp;t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&amp;&amp;t instanceof Blob&amp;&amp;t.size)return t.size;if(!("undefined"!=typeof FormData&amp;&amp;t instanceof FormData))try{return JSON.stringify(t).length}catch(e){return}}}},{}],19:[function(t,e,n){var r=0,o=navigator.userAgent.match(/Firefox[\/\s](\d+\.\d+)/);o&amp;&amp;(r=+o[1]),e.exports=r},{}],20:[function(t,e,n){function r(t,e){var n=[],r="",i=0;for(r in t)o.call(t,r)&amp;&amp;(n[i]=e(r,t[r]),i+=1);return n}var o=Object.prototype.hasOwnProperty;e.exports=r},{}],21:[function(t,e,n){function r(t,e,n){e||(e=0),"undefined"==typeof n&amp;&amp;(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(o&lt;0?0:o);++r&lt;o;)i[r]=t[e+r];return i}e.exports=r},{}],22:[function(t,e,n){e.exports={exists:"undefined"!=typeof window.performance&amp;&amp;window.performance.timing&amp;&amp;"undefined"!=typeof window.performance.timing.navigationStart}},{}],23:[function(t,e,n){function r(t){return!(t&amp;&amp;t instanceof Function&amp;&amp;t.apply&amp;&amp;!t[a])}var o=t("ee"),i=t(21),a="nr@original",c=Object.prototype.hasOwnProperty,s=!1;e.exports=function(t,e){function n(t,e,n,o){function nrWrapper(){var r,a,c,s;try{a=this,r=i(arguments),c="function"==typeof n?n(r,a):n||{}}catch(f){p([f,"",[r,a,o],c])}u(e+"start",[r,a,o],c);try{return s=t.apply(a,r)}catch(d){throw u(e+"err",[r,a,d],c),d}finally{u(e+"end",[r,a,s],c)}}return r(t)?t:(e||(e=""),nrWrapper[a]=t,d(t,nrWrapper),nrWrapper)}function f(t,e,o,i){o||(o="");var a,c,s,f="-"===o.charAt(0);for(s=0;s&lt;e.length;s++)c=e[s],a=t[c],r(a)||(t[c]=n(a,f?c+o:o,i,c))}function u(n,r,o){if(!s||e){var i=s;s=!0;try{t.emit(n,r,o,e)}catch(a){p([a,n,r,o])}s=i}}function d(t,e){if(Object.defineProperty&amp;&amp;Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){p([r])}for(var o in t)c.call(t,o)&amp;&amp;(e[o]=t[o]);return e}function p(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=o),n.inPlace=f,n.flag=a,n}},{}],ee:[function(t,e,n){function r(){}function o(t){function e(t){return t&amp;&amp;t instanceof r?t:t?s(t,c,i):i()}function n(n,r,o,i){if(!p.aborted||i){t&amp;&amp;t(n,r,o);for(var a=e(o),c=l(n),s=c.length,f=0;f&lt;s;f++)c[f].apply(a,r);var d=u[y[n]];return d&amp;&amp;d.push([b,n,r,a]),a}}function h(t,e){w[t]=l(t).concat(e)}function l(t){return w[t]||[]}function m(t){return d[t]=d[t]||o(n)}function v(t,e){f(t,function(t,n){e=e||"feature",y[n]=e,e in u||(u[e]=[])})}var w={},y={},b={on:h,emit:n,get:m,listeners:l,context:e,buffer:v,abort:a,aborted:!1};return b}function i(){return new r}function a(){(u.api||u.feature)&amp;&amp;(p.aborted=!0,u=p.backlog={})}var c="nr@context",s=t("gos"),f=t(20),u={},d={},p=e.exports=o();p.backlog=u},{}],gos:[function(t,e,n){function r(t,e,n){if(o.call(t,e))return t[e];var r=n();if(Object.defineProperty&amp;&amp;Object.keys)try{return Object.defineProperty(t,e,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return t[e]=r,r}var o=Object.prototype.hasOwnProperty;e.exports=r},{}],handle:[function(t,e,n){function r(t,e,n,r){o.buffer([t],r),o.emit(t,e,n)}var o=t("ee").get("handle");e.exports=r,r.ee=o},{}],id:[function(t,e,n){function r(t){var e=typeof t;return!t||"object"!==e&amp;&amp;"function"!==e?-1:t===window?0:a(t,i,function(){return o++})}var o=1,i="nr@id",a=t("gos");e.exports=r},{}],loader:[function(t,e,n){function r(){if(!x++){var t=g.info=NREUM.info,e=p.getElementsByTagName("script")[0];if(setTimeout(u.abort,3e4),!(t&amp;&amp;t.licenseKey&amp;&amp;t.applicationID&amp;&amp;e))return u.abort();f(y,function(e,n){t[e]||(t[e]=n)}),s("mark",["onload",a()+g.offset],null,"api");var n=p.createElement("script");n.src="https://"+t.agent,e.parentNode.insertBefore(n,e)}}function o(){"complete"===p.readyState&amp;&amp;i()}function i(){s("mark",["domContent",a()+g.offset],null,"api")}function a(){return E.exists&amp;&amp;performance.now?Math.round(performance.now()):(c=Math.max((new Date).getTime(),c))-g.offset}var c=(new Date).getTime(),s=t("handle"),f=t(20),u=t("ee"),d=window,p=d.document,h="addEventListener",l="attachEvent",m=d.XMLHttpRequest,v=m&amp;&amp;m.prototype;NREUM.o={ST:setTimeout,SI:d.setImmediate,CT:clearTimeout,XHR:m,REQ:d.Request,EV:d.Event,PR:d.Promise,MO:d.MutationObserver};var w=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-spa-1071.min.js"},b=m&amp;&amp;v&amp;&amp;v[h]&amp;&amp;!/CriOS/.test(navigator.userAgent),g=e.exports={offset:c,now:a,origin:w,features:{},xhrWrappable:b};t(17),p[h]?(p[h]("DOMContentLoaded",i,!1),d[h]("load",r,!1)):(p[l]("onreadystatechange",o),d[l]("onload",r)),s("mark",["firstbyte",c],null,"api");var x=0,E=t(22)},{}]},{},["loader",2,15,5,3,4]);</script>
+
+    <title>World Cup 2018 Winner betting | Football | Sky Bet Mobile | £5 Free Bet Every Week</title>
+
+    <meta name="robots" content="noodp, noydir, index, follow" />
+    <meta name="description" content="Bet on the World Cup 2018 Winner &amp; all your favourite Football markets with Sky Bet Mobile. Bet now!" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="manifest" href="/manifest.json" />
+
+            <link rel="stylesheet" id="maincss" onerror="window.cssLoadFailed = true" href="//bet.sbgcdn.com/static/assets/mbet-a22ab2d12bc7941fbdb02e18de97c36c.css" />
+        <link rel="shortcut icon" sizes="128x128" href="//bet.sbgcdn.com/static/mbet/img/favicon_default.png" />
+
+    <link rel="apple-touch-icon-precomposed" href="//bet.sbgcdn.com/static/mbet/img/favicon_default.png" />
+    <meta name="apple-mobile-web-app-title" content="Sky Bet" />
+
+    
+            <link rel="canonical" href="https://www.skybet.com/football/world-cup-2018/event/16742642" />
+    
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="react" src="//bet.sbgcdn.com/static/mbet/js/lib/react-15.6.1.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="react-dom" src="//bet.sbgcdn.com/static/mbet/js/lib/react-dom-15.6.1.min.js"></script><style type="text/css">.sba-open, .sba-open body {        height: 100%;        overflow: hidden;    }.sba-open body {        position: static;        margin-left: -320px;        margin-right: 320px;    }.sba-iframe {        background-color: white;        border: 0;        display: block;        height: 100%;        width: 100%;    }.android-app .sba-container {        display: none;    }.sba-container {        height: 1px;        position: absolute;        right: 0;        top: 0;        width: 320px;        color: #fff;        z-index: -1;        overflow: hidden;        -webkit-box-shadow: 0 0 10px rgba(50, 50, 50, 1);        -moz-box-shadow: 0 0 10px rgba(50, 50, 50, 1);        box-shadow: 0 0 10px rgba(50, 50, 50, 1);    }.sba-open .sba-container {        height: 100%;        z-index: 98;    }.android-app.sba-open .sba-container {        display: block;    }.sba-wrapper {        height: 100%;        overflow-x: hidden;        overflow-y: auto;        left: 340px;        position: relative;        right: 0;        top: 0;        width: 100%;        -webkit-overflow-scrolling: touch;        z-index: 1;    }.sba-open .sba-wrapper {        left: 0;    }.sba-overlay {        bottom: 0;        display: none;        height: 100%;        left: 0;        position: absolute;        right: 0;        top: 0;        z-index: -1;        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);    }.sba-open .sba-overlay {        display: block;        z-index: 40;    }.sba-loading {        background: #fff;        border: 1px solid #cccccc;        border-radius: 8px;        -webkit-border-radius: 8px;        -mox-border-radius: 8px;        -webkit-box-shadow: -2px 0px 16px rgba(50, 50, 50, 0.75);        -moz-box-shadow: -2px 0px 16px rgba(50, 50, 50, 0.75);        box-shadow: -2px 0px 16px rgba(50, 50, 50, 0.75);        -webkit-box-sizing: border-box;        -moz-box-sizing: border-box;        box-sizing: border-box;        color: #505050;        display: none;        font-size: 14px;        font-family: "Helvetica Neue", Arial, sans-serif;        font-weight: bold;        left: 50%;        height: auto;        margin-left: -145px;        margin-top: -50px;        padding: 40px;        position: fixed;        text-align: center;        top: 50%;        width: 290px;        z-index: 99;    }.sba-loading p {        margin: 0;    }.sba-spinner {        height: 40px;        left: 50%;        margin-left: -20px;        position: relative;        width: 40px;        background-size: 40px;        top: 0;        transform: translate3d(0,0,0);    }</style><style type="text/css" data-aphrodite="">.navigation_6yo912{width:100% !important;font-family:SkyMedium, Arial, sans-serif !important;color:#FFFFFF !important;background-color:#020231 !important;}.group_xr39n5{padding:0 0 10px 0 !important;}.list_1wi3b2v{margin:0px !important;padding:0px !important;list-style:none !important;clear:both !important;}.listItem_dmn8hc{-webkit-box-align:center !important;-ms-flex-align:center !important;-webkit-box-pack:justify !important;-ms-flex-pack:justify !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;-webkit-justify-content:space-between !important;justify-content:space-between !important;-webkit-align-items:center !important;align-items:center !important;}.link_34ak6x{-webkit-box-align:center !important;-ms-flex-align:center !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;-webkit-align-items:center !important;align-items:center !important;-webkit-flex:1 !important;-ms-flex:1 !important;flex:1 !important;padding:0 16px !important;color:#D0D0DB !important;font-weight:normal !important;font-size:16px !important;line-height:48px !important;cursor:pointer !important;}.icon_1eju892{margin-right:16px !important;font-size:20px !important;font-family:Skycons !important;color:#8B8BA0 !important;vertical-align:text-bottom !important;display:inline-block !important;font-style:normal !important;}.title_utbl8j{line-height:1.4 !important;}.title_1n7rmy8{-webkit-box-align:center !important;-ms-flex-align:center !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;-webkit-align-items:center !important;align-items:center !important;margin:0 16px 8px !important;padding:12px 14px !important;border-radius:4px !important;cursor:pointer !important;background-color:#132C6C !important;font-size:14px !important;font-weight:400 !important;text-transform:uppercase !important;}._1wi3b2v{margin:0px !important;padding:0px !important;list-style:none !important;clear:both !important;}._ty4a3m{-webkit-box-direction:normal !important;-webkit-box-orient:vertical !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;-webkit-flex-direction:column !important;-ms-flex-direction:column !important;flex-direction:column !important;margin:0 4px 4px 4px !important;}._1jv9eiq5{cursor:pointer !important;-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important;}._j30eqf{margin-top:3px !important;}._t0tx82{-ms-flex-positive:1 !important;-webkit-flex-grow:1 !important;flex-grow:1 !important;}._1r6xu6ej{font-family:SkyRegular, sans-serif !important;font-size:13px !important;margin-left:5px !important;white-space:nowrap !important;color:#FFFFFF !important;}._1y9kk7j{-webkit-box-align:center !important;-ms-flex-align:center !important;-webkit-box-pack:center !important;-ms-flex-pack:center !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;-webkit-justify-content:center !important;justify-content:center !important;-webkit-align-items:center !important;align-items:center !important;padding:12px !important;color:#FFFFFF !important;background-color:#132C6C !important;border-top-left-radius:4px !important;border-top-right-radius:4px !important;}._10f4jk4{-ms-flex-positive:1 !important;font-family:SkyRegular, sans-serif !important;font-size:18px !important;-webkit-flex-grow:1 !important;flex-grow:1 !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;line-height:24px !important;}._o9hb19{margin-left:10px !important;}._155ir3q{display:inline-block !important;pointer-events:none !important;}._uhlm2{display:block !important;}._1m5cvgr{border:1px solid #B3BFD3 !important;border-top:none !important;}._iwxxh8{background-color:#EBEFF5 !important;padding:9px !important;border:0 solid #E4EBF3 !important;border-width:1px 0 !important;line-height:1 !important;color:#3399CC !important;}._1a4aqqd{float:left !important;font-size:16px !important;}._1dc5xxv{margin-top:0px !important;margin-bottom:0px !important;margin-left:42px !important;margin-right:0px !important;padding:0px !important;font-size:13px !important;}._i5sy3b{margin-bottom:5px !important;}._i5sy3b:last-of-type{margin-bottom:0px !important;}._1p8kuiz{-webkit-box-direction:normal !important;-webkit-box-orient:horizontal !important;border-bottom:1px solid #E4EBF3 !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;-webkit-flex-direction:row !important;-ms-flex-direction:row !important;flex-direction:row !important;}._1h00h8d{-webkit-flex:3 !important;-ms-flex:3 !important;flex:3 !important;}._dvvlvl{border-left:1px solid #E4EBF3 !important;-webkit-flex:1 !important;-ms-flex:1 !important;flex:1 !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;}._e4y4wr{padding:14px 10px !important;font-family:sans-serif !important;font-weight:bold !important;font-size:13px !important;line-height:13px !important;color:#484848 !important;background-color:#FFFFFF !important;}._1v3logkf{-webkit-box-align:center !important;-ms-flex-align:center !important;-webkit-box-pack:center !important;-ms-flex-pack:center !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;-moz-box-sizing:border-box !important;box-sizing:border-box !important;-webkit-justify-content:center !important;justify-content:center !important;-webkit-align-items:center !important;align-items:center !important;width:100% !important;margin:0px !important;padding:0px !important;font-size:13px !important;font-weight:bold !important;cursor:pointer !important;border:none !important;outline:none !important;background-image:-webkit-linear-gradient(to bottom, #FFFFFF, #EBEFF5) !important;background-image:-moz-linear-gradient(to bottom, #FFFFFF, #EBEFF5) !important;background-image:linear-gradient(to bottom, #FFFFFF, #EBEFF5) !important;color:#D92231 !important;}._1v3logkf:hover{background-image:-webkit-linear-gradient(to bottom, #EBEFF5, #FFFFFF) !important;background-image:-moz-linear-gradient(to bottom, #EBEFF5, #FFFFFF) !important;background-image:linear-gradient(to bottom, #EBEFF5, #FFFFFF) !important;}._1jca28{padding-top:10px !important;padding-bottom:10px !important;padding-left:5px !important;padding-right:5px !important;}._1ey6ouwa{-webkit-box-align:center !important;-ms-flex-align:center !important;-webkit-box-direction:normal !important;-webkit-box-orient:horizontal !important;cursor:pointer !important;border-bottom:1px solid #E4EBF3 !important;display:-webkit-box !important;display:-moz-box !important;display:-ms-flexbox !important;display:-webkit-flex !important;display:flex !important;-webkit-flex-direction:row !important;-ms-flex-direction:row !important;flex-direction:row !important;height:48px !important;-webkit-align-items:center !important;align-items:center !important;margin:auto !important;font-family:SkyMedium !important;font-size:13px !important;line-height:13px !important;color:#484848 !important;}._1oxq3f0{margin:auto !important;font-family:SkyMedium !important;font-size:13px !important;line-height:13px !important;color:#484848 !important;}._1n9w962{vertical-align:bottom !important;margin-left:8px !important;}</style><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="footballMarkets" src="/assets/footballMarkets-054daaa9038106e58d5492c78a154db9.js"></script><style type="text/css">svg.icon {fill: currentColor;}</style></head>
+
+<body class="feature__sbp-betslip-trial feature__one-bet-sticky-betslip">
+        <script id="taggert-data-layer">
+        !function(){"use strict";var n=function(n,t){return Object.prototype.hasOwnProperty.call(t,n)},t=n,e=function(n){if(null==n)throw new TypeError("Cannot convert undefined or null to object");for(var e=Object(n),r=1,o=arguments.length;r&lt;o;){var u=arguments[r];if(null!=u)for(var a in u)t(a,u)&amp;&amp;(e[a]=u[a]);r+=1}return e},r=e,o="function"==typeof Object.assign?Object.assign:r,u=function(n){return null!=n&amp;&amp;"object"==typeof n&amp;&amp;n["@@functional/placeholder"]===!0},a=u,c=function(n){return function t(e){return 0===arguments.length||a(e)?t:n.apply(this,arguments)}},i=c,f=u,l=function(n){return function t(e,r){switch(arguments.length){case 0:return t;case 1:return f(e)?t:i(function(t){return n(e,t)});default:return f(e)&amp;&amp;f(r)?t:f(e)?i(function(t){return n(t,r)}):f(r)?i(function(t){return n(e,t)}):n(e,r)}}},s=o,d=l,p=d(function(n,t){return s({},n,t)}),h=function(n,t,e){var r=[],o=function(t){n.contentWindow.postMessage(t,e)},u=!1;return n.addEventListener("load",function(){u=!0,r.forEach(o)}),function(n,e){var a=p(e,{event:t+"."+n});u?o(a):r.push(a)}},w=function(n,t,e){var r=n.createElement("iframe");return r.id="data-layer-iframe",r.sandbox="allow-scripts allow-same-origin",r.src=t+"/tag-manager.html?consumer="+encodeURIComponent(e),r.style.display="none",r},m=function(n,t){var e=n.SIGNAL_CONSUMER||n.location.hostname,r=w(n.document,t,e);return document.body.appendChild(r),h(r,e,t)};window.Taggert={report:m(window,"https://www.bonne-terre-data-layer.com")}}();
+    </script><iframe id="data-layer-iframe" sandbox="allow-scripts allow-same-origin" src="https://www.bonne-terre-data-layer.com/tag-manager.html?consumer=m.skybet.com" style="display: none;"></iframe>
+    
+    
+    <script>
+        (function() {
+            window.pageStartTime = Date.now();
+        })();
+
+        (function() {
+                        if (window.innerWidth &lt; document.documentElement.clientWidth) {
+                var viewport = document.querySelector('meta[name=viewport]');
+                viewport.setAttribute('content', 'width='+parseInt(window.innerWidth,10)+', minimum-scale=1.0, maximum-scale=1.0');
+            }
+        })();
+    </script>
+
+
+            <div class="flex-layout__wrapper">
+            <div class="close-betslip-overlay" id="js-close-betslip-overlay"></div>
+        <div class="js-scrolling-nav scrolling-nav product-nav-container scrolling-nav--desktop" id="js-product-nav">
+    <div class="js-scrolling-nav__content scrolling-nav__content">
+        <ul class="product-nav">
+            <!-- vegas -->
+            <li>
+                <a rel="external" class="js-app-link" data-app-name="skyvegas" href="https://www.skyvegas.com?dcmp=Bet_IH_Nav" data-analytics="[Tabs] - Skyvegas">
+                    <span class="s  s--sky-vegas-mini">Sky Vegas</span>
+                </a>
+            </li>
+            <!-- casino -->
+            <li>
+                <a rel="external" class="js-app-link" data-app-name="skycasino" href="http://www.skycasino.com?dcmp=Bet_IH_Nav" data-analytics="[Tabs] - Casino">
+                    <span class="s  s--sky-casino-mini">Casino</span>
+                </a>
+            </li>
+            <!-- super6 -->
+                        <!-- live casino -->
+            <li>
+                <a rel="external" class="js-app-link" data-app-name="skycasino" href="http://www.skycasino.com/category/live-casino?dcmp=Bet_IH_Nav" data-analytics="[Tabs] - Live Casino">
+                    <span class="s  s--sky-live-casino-mini">Casino</span>
+                </a>
+            </li>
+            <!-- poker -->
+                        <li>
+                <a rel="external" class="js-app-link" data-app-name="skypoker" href="https://m.skypoker.com?dcmp=Bet_IH_Nav" data-analytics="[Tabs] - Poker">
+                    <span class="s  s--sky-poker-mini">Sky Poker</span>
+                </a>
+            </li>
+                        <!-- bingo -->
+                        <li>
+                <a rel="external" class="js-app-link" data-app-name="skybingo" href="https://www.skybingo.com?dcmp=Bet_IH_Nav" data-analytics="[Tabs] - Bingo">
+                    <span class="s  s--sky-bingo-mini">Sky Bingo</span>
+                </a>
+            </li>
+                        <!-- super6 -->
+                            <li>
+                    <a rel="external" class="js-app-link" data-app-name="super6" href="http://super6.skysports.com?dcmp=SB_IH_Nav" data-analytics="[Tabs] - Super 6">
+                        <span class="s  s--super-6-mini">Super 6</span>
+                    </a>
+                </li>
+                        <!-- fantasy football -->
+            <li>
+                <a rel="external" class="js-app-link" data-app-name="SkyFF" href="http://fantasyfootball.skysports.com/?dcmp=Bet_IH_Nav" data-analytics="[Tabs] Fantasy Football">
+                    <span class="s  s--fantasy-football-mini">Fantasy Football</span>
+                </a>
+            </li>
+            <!-- fantasy 6 a side -->
+            <li>
+                <a rel="external" class="js-app-link" data-app-name="skysixaside" href="https://fantasysixaside.skysports.com/?dcmp=Bet_IH_Nav" data-analytics="[Tabs] Fantasy 6 a side">
+                    <span class="s  s--fantasy-6-a-side-mini">Fantasy 6 A Side</span>
+                </a>
+            </li>
+            <!-- pick7 -->
+            <li>
+                <a rel="external" class="js-app-link" data-app-name="skyc4racingpick6" href="https://itv7.itv.com?dcmp=Bet_IH_Nav" data-analytics="[Tabs] Pick7">
+                    <span class="s  s--pick7-mini">Pick7</span>
+                </a>
+            </li>
+            <!-- skysports -->
+            <li>
+                <a rel="external" href="http://m.skysports.com?dcmp=SBet_IH_Nav" data-analytics="[Tabs] Sky Sports">
+                    <span class="s  s--sky-sports-mini">Sky Sports</span>
+                </a>
+            </li>
+            <!-- sportinglife -->
+            <li>
+                <a rel="external" href="http://www.sportinglife.com/?dcmp=SB_IH_Nav" data-analytics="[Tabs] Sporting Life">
+                    <span class="s  s--sporting-life-mini">Sporting Life</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+                    <a href="/go/event/22028225" id="platinum-banner" data-analytics="[Header Promo] paying-10-places">
+        <div id="platinum-period" class="header-xsell" data-promoid="1522828800">
+            <div class="container">
+                <div class="promo-box" id="platinum-period-text">
+                    <i class="i banner-icon" data-char=""></i>
+                    <h2 class="promo-text">
+                                                    <span class="no-wrap">
+                                PAYING 10 PLACES                                <br />
+                                AT THE MASTERS                            </span>
+                                            </h2>
+                </div>
+                                                        <div id="platinum-countdown" class="platinum-countdown">
+                        <div class="timer-top" style="display: block;">
+                            <span class="days-value">DAYS</span>
+                            <span>HRS</span>
+                            <span>MINS</span>
+                            <span>SECS</span>
+                        </div>
+                        <div class="timer-clock" style="display: block;">
+                            <span class="days">01</span> <span class="days-separator">/</span>
+                            <span class="hours">03</span> /
+                            <span class="minutes">49</span> /
+                            <span class="seconds">27</span>
+                        </div>
+                        <div class="timer-bottom" style="display: block;">
+                            <span>UNTIL FIRST TEE OFF</span>
+                        </div>
+                    </div>
+                            </div>
+            <div class="header-close-button">
+                <i class="i js-close-header-banner" data-char="" id="close-platinum-banner"></i>
+            </div>
+        </div>
+    </a>
+
+    
+    <div class="sbp__flex-layout">
+
+                    <div id="menu" class="responsive-nav menu__content react-nav-menu"><nav data-reactroot="" class="navigation_6yo912"><div><div class="group_xr39n5"><ul class="list_1wi3b2v"><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Home</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Promotions</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">My Bets</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">In-Play</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Responsible Gambling</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Help</span></a></div></ul></div></div><div><div class="title_1n7rmy8">Top Sports</div><div class="group_xr39n5"><ul class="list_1wi3b2v"><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Football</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Horse Racing</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Virtual Sports</span></a></div></ul></div></div><div><div class="title_1n7rmy8">A-Z Sports</div><div class="group_xr39n5"><ul class="list_1wi3b2v"><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">American Football</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Athletics</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Baseball</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Basketball</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Boxing</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Commonwealth Games</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Cricket</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Cycling</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Darts</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">ESports</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Football</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Formula 1</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Gaelic Games</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Golf</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Greyhound Racing</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Handball</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Hockey</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Horse Racing</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Ice Hockey</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Lotto</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Motor Sport</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Music Specials</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Politics</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Rugby League</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Rugby Union</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Snooker</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Speedway</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">TV and Film Specials</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Table Tennis</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Tennis</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">UFC and MMA</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Virtual Football</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Virtual Greyhounds</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Virtual Horse Racing</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Virtual Motor Racing</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Virtual Speedway</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Volleyball</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Winter Sports</span></a></div><div class="listItem_dmn8hc"><a class="link_34ak6x"><i class="icon_1eju892"></i><span class="title_utbl8j">Wrestling</span></a></div></ul></div></div></nav></div>
+        
+        <div class="sbp__main">
+                            <div class="close-nav-overlay" id="js-close-nav-overlay"></div>
+            
+            <div id="js-omni-container" class="omni-container">
+                <div id="js-video-player"></div>
+                <div id="js-omni-close" class="js-hidden omni-close">
+                    <i class="i omni-close_i" data-char=""></i>
+                </div>
+                <div id="js-omni-controls" class="omni-controls"></div>
+            </div>
+
+            <div id="js-omni-spacer" class="omni-spacer" style="padding-top: 0px;"></div>
+
+            <div id="js-content">
+                                <div id="js-inner-content" class="body__content body__content--has-footer-promos feature__one-bet-ui">
+
+    
+
+    <div class="main__content">
+
+    
+            <header class="header-bar" id="js-page-head">
+    <div class="header-bar__left">
+                    <a id="burger-nav-button" class="header-bar__nav" href="/a-z">
+                <i class="i" data-char="" data-char-open="" data-char-closed="" title="A–Z"></i>
+            </a>
+                            <a class="header-bar__back" rel="back">
+                    <i class="i" data-char="" title="Back"></i>
+            </a>
+        
+                    <a class="header-bar__link" href="/my-bets" data-analytics="[Header] - My Bets">
+                <i class="i" data-char="" title="My Bets"></i> My Bets
+            </a>
+            </div>
+    <div class="header-bar__logo">
+        <a href="/">
+            <img alt="Sky Bet logo" src="//bet.sbgcdn.com/static/mbet/img/content/logos/skybet-mobile-logo.png" />
+        </a>
+    </div>
+    <div class="header-bar__right">
+            <a href="https://www.skybet.com/secure/identity/m/register/step-1/mskybet?dl=1&amp;urlconsumer=https://m.skybet.com" rel="myaccount" class="js-register header-bar__join" target="SkyBetAccount">Join</a>
+    <a href="https://www.skybet.com/secure/identity/m/login/mskybet?urlconsumer=https://m.skybet.com&amp;dl=1" rel="myaccount" class="js-login header-bar__log-in" target="SkyBetAccount">Log in</a>
+    </div>
+</header>
+
+        
+        <div id="js-freebet-bar" class="islet free-bet-banner split js-hidden sbp__main_free-bet-banner">
+            <span class="split__title">Free Bets Available</span>
+            <span id="js-freebet-value">0</span>
+        </div>
+
+                    <div id="free-bet-banner-container" class=" sbp__main_free-bet-container">
+                            </div>
+        
+        <!-- This is where the betslip lives -->
+        <div id="betslip-placeholder" class="sbp__betslip-placeholder">
+            
+
+    <div class="islet  bet-slip-bar  js-hidden js-fire-open-betslip" id="js-betslip-cart" style="top: 0px;">
+        <span class="split__title">
+            <span class="split__title__section">
+                <span class="pill--inset  icon-text__icon  js-betslip-cart--count">–</span>
+            </span>
+
+            
+            <span class="split__title__section">
+                <span class="js-betslip-cart--my-betslip">
+                    <span class="accessibility"> bet(s) in </span>My Bet Slip
+                </span>
+                <span class="js-betslip-cart--totaliser js-hidden">
+                    Selection<span class="js-betslip-cart--totaliser-multiple js-hidden">s</span> added
+                    <span style="white-space: nowrap">@ <span class="js-betslip-cart--totaliser-price">false</span></span>
+                </span>
+            </span>
+        </span>
+        <span class="bet-slip-bar-icon">
+            <i class="i  bet-slip-available  js-betslip-cart--idle" data-char=""></i>
+            <div class="js-betslip-cart--busy hidden one-bet-spinner"></div>
+            <small class="js-betslip-cart--busy hidden media">
+                <img class="spinning  media__img--rev" src="//bet.sbgcdn.com/static/mbet/img/spinner_22.png" width="22" height="22" />
+                <span class="media__body bet-slip-bar__spinner-text js-betslip-cart--busy-text">Loading…</span>
+            </small>
+        </span>
+    </div>
+
+        </div>
+
+        
+        
+            
+    <div class="outer-page-content">
+        <div id="page-content">
+            
+        <div class="grid  ">
+        <div class="grid__item  one-whole  ">
+            <section class="islet  event-meta  ">
+                                    
+                    <h1 class="js-ev-desc  event-title__title">World Cup 2018 Winner</h1>
+                
+                <h2 class="delta  minor">World Cup 2018</h2>
+
+                <p class="minor"></p>
+
+
+                
+                            </section><!-- /event-meta -->
+        </div>
+            </div>
+
+                    
+
+
+    <div class="nextgen-markets-container"><div data-reactroot=""><div><div><ul class="_1wi3b2v"><li><div><div class="_ty4a3m"><div><div class="_1jv9eiq5 "><div class="_1y9kk7j"><div class="_10f4jk4"><div class="_t0tx82">Win Outright</div><div class="_1r6xu6ej"></div></div><div class="_o9hb19"><span class="_155ir3q"><div><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 13" width="18px" height="13px" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-labelledby="title-0" style="width:16px;height:16px;fill:#FFFFFF;" data-src="/mbet/img/footballEventMarkets/es/Glyph/icons/arrowUp-175c332a9decdfba63c3b3b2546d262b.svg" class="injected-svg _j30eqf _uhlm2">
+    <title id="title-0">
+        icon-arrow-up
+    </title>
+    <path fill-rule="evenodd" d="M0 9.186L8.895.29 18 9.396l-2.795 2.813-6.152-6.223-6.17 6.188z" role="presentation"/>
+</svg></div></div></span></div></div></div><div class="_1m5cvgr"><div class="_iwxxh8"><div class="_1a4aqqd"><span class="_155ir3q"><div><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" width="2048px" height="2048px" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" style="width:15px;height:15px;fill:#3399CC;" data-src="/mbet/img/footballEventMarkets/es/Glyph/icons/info-3853dd18ebe0f587ae4a800d34d9124a.svg" class="injected-svg _uhlm2">
+    <path d="M1024 0C458.5 0 0 458.5 0 1024s458.5 1024 1024 1024 1024-458.5 1024-1024S1589.5 0 1024 0zm193 320.3c70.6-4.2 125.7 31.1 145.5 74.9 53.7 108.8-31.1 230.3-138.4 241.6-104.5 14.1-170.9-49.5-170.9-142.7 0-46.6 24-94.7 46.6-118.7 31-31 72-49.4 117.2-55.1zM1092.7 716c89-4.2 158.2 31.1 159.6 115.9 7.1 76.3-24 138.5-42.4 193.6-45.2 115.2-87.6 228.2-131.3 348.3-7.1 26.8-15.5 50.9-28.2 86.2-7.1 14.1-24 76.3 2.8 87.6 24 9.9 53.7-18.4 66.4-28.3 35.3-32.5 66.4-69.2 101.7-107.4 12.7-11.3 36.7-46.6 55.1-46.6 11.3 0 24 17 24 32.5 0 14.1-12.7 29.7-16.9 36.7-11.3 25.4-31.1 49.5-48 63.6-70.6 79.1-142.6 142.7-244.3 187.9-83.3 41.7-240.1 77-278.2-21.2-19.8-45.2-7.1-111.6 4.2-159.7 33.9-135.6 86.1-244.4 138.4-372.3 7.1-21.2 87.6-228.9 87.6-228.9 5.6-28.3-1.4-38.2-15.5-42.4-26.8-7.1-55.1 14.1-72 28.3-49.4 38.2-62.1 62.2-104.5 114.5-7.1 8.5-33.9 45.2-57.9 42.4-1.4 0-18.4-14.1-22.6-21.2-7.1-19.8 14.1-48 28.2-62.2 38.1-55.1 77.7-90.4 129.9-138.5 33.9-21.2 69.2-49.5 114.4-70.6 43.6-21.3 97.2-35.4 149.5-38.2z" role="presentation"/>
+    <path fill="transparent" d="M1216.716 320.34c70.6-4.2 125.7 31.1 145.5 74.9 53.7 108.8-31.1 230.3-138.4 241.6-104.5 14.1-170.9-49.5-170.9-142.7 0-46.6 24-94.7 46.6-118.7 31-31 72-49.4 117.2-55.1zm-124.3 395.7c89-4.2 158.2 31.1 159.6 115.9 7.1 76.3-24 138.5-42.4 193.6-45.2 115.2-87.6 228.2-131.3 348.3-7.1 26.8-15.5 50.9-28.2 86.2-7.1 14.1-24 76.3 2.8 87.6 24 9.9 53.7-18.4 66.4-28.3 35.3-32.5 66.4-69.2 101.7-107.4 12.7-11.3 36.7-46.6 55.1-46.6 11.3 0 24 17 24 32.5 0 14.1-12.7 29.7-16.9 36.7-11.3 25.4-31.1 49.5-48 63.6-70.6 79.1-142.6 142.7-244.3 187.9-83.3 41.7-240.1 77-278.2-21.2-19.8-45.2-7.1-111.6 4.2-159.7 33.9-135.6 86.1-244.4 138.4-372.3 7.1-21.2 87.6-228.9 87.6-228.9 5.6-28.3-1.4-38.2-15.5-42.4-26.8-7.1-55.1 14.1-72 28.3-49.4 38.2-62.1 62.2-104.5 114.5-7.1 8.5-33.9 45.2-57.9 42.4-1.4 0-18.4-14.1-22.6-21.2-7.1-19.8 14.1-48 28.2-62.2 38.1-55.1 77.7-90.4 129.9-138.5 33.9-21.2 69.2-49.5 114.4-70.6 43.6-21.3 97.2-35.4 149.5-38.2z" role="presentation"/>
+</svg></div></div></span></div><ul class="_1dc5xxv"><li class="_i5sy3b">2018 World Cup Russia.</li><li class="_i5sy3b">Each way terms: 1/2 for first 2 places</li></ul></div><div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Brazil</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891543"><span class="_1jca28">9/2</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Germany</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891555"><span class="_1jca28">9/2</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Spain</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891519"><span class="_1jca28">11/2</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">France</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891566"><span class="_1jca28">6/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Argentina</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891554"><span class="_1jca28">9/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Belgium</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891570"><span class="_1jca28">10/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">England</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891542"><span class="_1jca28">16/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Portugal</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891560"><span class="_1jca28">25/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Uruguay</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891556"><span class="_1jca28">28/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Croatia</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891548"><span class="_1jca28">33/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Colombia</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891568"><span class="_1jca28">40/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Russia</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891528"><span class="_1jca28">40/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Poland</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891527"><span class="_1jca28">66/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Denmark</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891546"><span class="_1jca28">80/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Mexico</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891562"><span class="_1jca28">100/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Switzerland</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891558"><span class="_1jca28">100/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Senegal</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="319800243"><span class="_1jca28">150/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Sweden</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891518"><span class="_1jca28">150/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Egypt</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891544"><span class="_1jca28">200/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Japan</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891534"><span class="_1jca28">200/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Nigeria</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891561"><span class="_1jca28">200/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Serbia</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891523"><span class="_1jca28">200/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Iceland</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891538"><span class="_1jca28">250/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Korea Republic</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="421220820"><span class="_1jca28">250/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Peru</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="145385942"><span class="_1jca28">250/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Costa Rica</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891567"><span class="_1jca28">500/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Iran</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="144891563"><span class="_1jca28">500/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Morocco</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="373063708"><span class="_1jca28">500/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Australia</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="145385930"><span class="_1jca28">750/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Tunisia</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="373059179"><span class="_1jca28">1000/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Panama</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="373061880"><span class="_1jca28">2000/1</span></div></div></div></div><div><div class="_1p8kuiz"><div class="_1h00h8d"><div class="_e4y4wr">Saudi Arabia</div></div><div class="_dvvlvl"><div class="_1v3logkf" data-oc-id="373060040"><span class="_1jca28">2000/1</span></div></div></div></div></div></div></div></div></div></li></ul></div></div></div></div>
+
+
+<!--breadcrumb is breaking in flex on iPhone 5 and so adding flexed class-->
+<nav class="breadcrumb__flexed">
+    <ol class="nav  breadcrumb  flush--bottom">
+        <li class="breadcrumb__root  breadcrumb__link"><a data-analytics="[Breadcrumb] - Home" href="/"><i class="i  breadcrumb__home-icon" data-char="" title="Home"></i></a></li><!--
+                    --><li class="breadcrumb__link">
+                <a href="/football " data-analytics="[Breadcrumb] - Football">Football</a>
+            </li><!--
+                --><li class="breadcrumb__tail">
+                <a>World Cup 2018 Winner</a>
+            </li><!--
+            --></ol>
+</nav>
+
+<script type="text/template" id="lazy-load-market-spinner">
+    &lt;div class="load-market-container  js-loading-container"&gt;
+        &lt;div class="mask  mask--blue  js-sub-mask  js-hidden" data-section="lastevents"&gt;&lt;/div&gt;
+        &lt;div class="overlay--spinner  js-sub-spinner  js-hidden"&gt;
+            &lt;img class="overlay--spinner__img" src="//bet.sbgcdn.com/static/mbet/img/spinner_48.png"/&gt;
+            &lt;p class="overlay--spinner__title beta"&gt;Loading&amp;hellip;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+</script>        </div>
+    </div>
+
+    
+                    <div class="js-promos  promos">
+                <h2 class="flush--bottom text-center xs-promotion__title">
+                    <div>
+                        <span class="js-promos__promo_title">
+                            ITV7                        </span>
+                        <div class="js-promos__promo_selected_dots promos__dots">
+                                                            <span class="js-promos__promo_dot promos__dot js-selected">●</span>
+                                                            <span class="js-promos__promo_dot promos__dot">●</span>
+                                                            <span class="js-promos__promo_dot promos__dot">●</span>
+                                                    </div>
+                    </div>
+                    <i class="i promos__prev js-promos__prev" data-char=""></i>
+                    <i class="i promos__next js-promos__next" data-char=""></i>
+                </h2>
+                                    <div class="js-promos__promo  " data-title="ITV7">
+                        <a class="" data-app-name="" rel="external" href="https://itv7.itv.com/" data-analytics="[FooterXSell] external - ITV7">
+    <div class="x-sell__container xs-promotion__container--black">
+		<img class="js-lazy-load-image x-sell__image" data-name="footerPromotion" data-index="0" src="/content/cadmin/7f939702f2255da71a52f7380a6a4079.jpg" />
+    </div>
+</a>
+                    </div>
+                                    <div class="js-promos__promo  js-hidden" data-title="Super 6">
+                        <a class="js-app-link" data-app-name="super6" rel="external" href="https://super6.skysports.com?DCMP=bet_footer_super6" data-analytics="[FooterXSell] super 6 - Super 6">
+    <div class="x-sell__container xs-promotion__container--black">
+		<img class="js-lazy-load-image x-sell__image" data-name="footerPromotion" data-index="1" src="/content/cadmin/3ce261420bfdbf678b59c628d8690713.jpg" />
+    </div>
+</a>
+                    </div>
+                                    <div class="js-promos__promo  js-hidden" data-title="Sky Bet Roulette">
+                        <a class="js-app-link" data-app-name="skycasino" rel="external" href="https://www.skycasino.com/category/live-casino?dcmp=bet_footer_skybetroulette&amp;redirectPath=/category/live-casino" data-analytics="[FooterXSell] sky casino - Sky Bet Roulette">
+    <div class="x-sell__container xs-promotion__container--casinoblack">
+		<img class="js-lazy-load-image x-sell__image" data-name="footerPromotion" data-index="2" src="/content/cadmin/346a6346ff46bf4040c0c29147ea0869.jpg" />
+    </div>
+</a>
+                    </div>
+                            </div>
+        
+    
+    </div>
+</div>
+
+
+            </div>
+        </div>
+
+        <aside id="js-betslip-aside" class="sbp__utilities  feature__one-bet-ui" role="complementary">
+            <div id="js-betslip-ajax" class="layout__utilities-betslip js-sticky-polyfill" data-sticky-min-breakpoint="960"></div>
+        </aside>
+
+    </div>
+
+    <footer class="page-foot">
+    <div class="flush--bottom page-foot__wrapper">
+        <div class="feedback-button minor">
+    <a href="#" class="btn btn--secondary js-feedback-survey icon-text" data-survey-id="bet" data-survey-complete-id="bet">
+        <i class="i i--natural icon-text__icon" data-char=""></i>
+        Leave us feedback</a>
+</div>
+
+
+
+        <div class="page-foot__block">
+            <p class="page-foot__title">Proud sponsors of the</p>
+            <span class="s s--football-league">Skybet - English Football League</span>
+        </div>
+
+        <div class="page-foot__block">
+            <ul class="nav  footer-links"><!--
+            --><li><a data-analytics="[Footer] - Privacy" href="https://support.skybet.com/app/answers/detail/a_id/143" target="_blank" rel="external noopener noreferrer">Privacy &amp; Cookies</a></li><!--
+            --><li><a data-analytics="[Footer] - Terms" href="https://support.skybet.com/app/answers/detail/a_id/40" target="_blank" rel="external noopener noreferrer">Terms &amp; Conditions</a></li><!--
+            --><li><a data-analytics="[Footer] - Help" href="https://support.skybet.com/" target="_blank" rel="external noopener noreferrer">Help</a></li>
+            </ul>
+
+            <p class="site-disclaimer block--center">Committed to <a data-analytics="[Footer] - Responsible Gambling" href="https://support.skybet.com/app/answers/detail/a_id/28" rel="external noopener noreferrer" target="_blank">Responsible Gambling</a></p>
+        </div>
+
+        <p class="site-disclaimer block--center page-foot__block">
+            Customers in the  United Kingdom: Sky Bet is licensed and regulated by the <a href="https://secure.gamblingcommission.gov.uk/PublicRegister/Search/Detail/38718" rel="external nofollow noopener noreferrer" target="_blank">Gambling Commission (licence number 38718).</a>
+            All other customers: Sky Bet is licensed and regulated by <a href="http://www.gamblingcontrol.org/" rel="external nofollow noopener noreferrer" target="_blank">Alderney Gambling Control Commission</a>
+        </p>
+        <p class="copyright page-foot__block">
+            © 2018 Bonne Terre Limited or its affiliated companies. The Sky trademarks are owned by the Sky Plc group of companies and are used under licence. All rights reserved.
+        </p>
+
+        <div class="site-switch  page-foot__block">
+            <ul class="nav  footer-links">
+                <li>
+                    <a href="https://www.skybet.it" target="_blank" rel="external noopener noreferrer">
+                        Sky Bet Italia
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.skybet.de" target="_blank" rel="external noopener noreferrer">
+                        Sky Bet Deutschland
+                    </a>
+                </li>
+                <li>
+                    <i class="i site-switch__clock-icon" data-char=""></i>
+                    <time id="js-clock" class="site-switch__clock"><span id="js-clock-hours">11</span><span id="js-clock-separator" class="">:</span><span id="js-clock-minutes">40</span></time>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="nav  partner-logos page-foot__block">
+            <li>
+                <a data-analytics="[Footer] - Gamcare" href="http://www.gamcare.org.uk" rel="external noopener noreferrer" title="Gamcare" class="s  s--gamcare-logo">
+                    GamCare
+                </a>
+            </li>
+            <li>
+                <a data-analytics="[Footer] - IBAS" title="Independent Betting Arbitration Service" href="http://www.ibas-uk.com" rel="external nofollow noopener noreferrer" class="s s--ibas-logo">
+                    IBAS
+                </a>
+            </li>
+            <li>
+                <span class="s  s--cert-18-logo">18+</span>
+            </li>
+        </ul>
+    </div>
+    <div class="senet-footer">
+        <div class="senet-footer__main">
+            <a href="http://www.whenthefunstops.co.uk/" title="When the fun stops" rel="external nofollow noopener noreferrer">
+                When the fun stops
+            </a>
+        </div>
+        <div class="senet-footer__support">
+            <div class="senet-footer__url">
+                <a href="http://www.begambleaware.org/" title="Be Gamble Aware" rel="external nofollow noopener noreferrer">
+                    Be Gamble Aware
+                </a>
+            </div>
+            <div class="senet-footer__age"> </div>
+        </div>
+    </div>
+</footer>
+</div>
+
+    
+            <div class="js-page-cookies cookie-notice">
+    <i class="i fr js-page__cookies-cross cookie-notice__close-icon" data-char=""></i>
+    <h3 class="cookie-notice__title">This website uses cookies</h3>
+    <div class="js-page-cookies cookie-notice__wrapper">
+        Cookies help us and our third party partners to provide, protect and improve our services. By
+        visiting or using this website, you consent to the use of cookies in accordance with our
+        <a href="https://support.skybet.com/app/answers/detail/a_id/143" target="_blank" rel="noopener noreferrer">Cookies policy</a>,
+        which includes details of how you can change your cookie settings. <a class="js-page__cookies-accept">Accept &amp; Close</a>
+    </div>
+</div>
+    
+            <div id="app-banner-container"></div>
+            
+    <div id="js-mask" class="mask js-hidden" style="min-height: 911px;"></div>
+    <div id="js-spinner" class="overlay--spinner js-hidden" style="top: 455.5px;">
+        <img class="overlay--spinner__img" src="//bet.sbgcdn.com/static/mbet/img/spinner_48.png" />
+        <p class="overlay--spinner__title beta">Loading…</p>
+    </div>
+
+    
+    <script type="text/template" id="generic-error">
+        
+    &lt;div class="message-wrapper"&gt;
+        &lt;hgroup class="overlay__title  error-text"&gt;
+            &lt;h1 class="hN"&gt;&lt;i class="i" data-char="&amp;#xF111;"&gt;&lt;/i&gt; Problem&lt;/h1&gt;
+            &lt;p class="hN"&gt;
+                Sorry, there has been a problem. Please try again.
+            &lt;/p&gt;
+        &lt;/hgroup&gt;
+
+        &lt;ul class="btn-group js-modal-buttons"&gt;
+            &lt;li&gt;&lt;a href="#" class="btn  js-close-popup  btn--full  btn--primary"&gt;Close&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+
+    </script>
+    <script type="text/template" id="dynamic-error">
+        
+    &lt;div class="message-wrapper"&gt;
+        &lt;hgroup class="overlay__title  error-text"&gt;
+            &lt;h1 class="hN"&gt;&lt;i class="i" data-char="&amp;#xF111;"&gt;&lt;/i&gt; Problem&lt;/h1&gt;
+            &lt;p class="hN"&gt;
+                {{error}}
+            &lt;/p&gt;
+        &lt;/hgroup&gt;
+
+        &lt;ul class="btn-group js-modal-buttons"&gt;
+            &lt;li&gt;&lt;a href="#" class="btn  js-close-popup  btn--full  btn--primary"&gt;Close&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+
+    </script>
+    <script type="text/template" id="timeout-error">
+        
+    &lt;div class="message-wrapper"&gt;
+        &lt;hgroup class="overlay__title  error-text"&gt;
+            &lt;h1 class="hN"&gt;&lt;i class="i" data-char="&amp;#xF111;"&gt;&lt;/i&gt; Can't connect to Sky Bet&lt;/h1&gt;
+            &lt;p class="hN"&gt;
+                Please check your connection and try again
+            &lt;/p&gt;
+        &lt;/hgroup&gt;
+
+        &lt;ul class="btn-group js-modal-buttons"&gt;
+            &lt;li&gt;&lt;a href="#" class="btn  js-close-popup  btn--full  btn--primary"&gt;Close&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+
+    </script>
+
+        <a id="skybox-popup" href="#" class="skybox-popup js-hidden js-disabled">
+        <i class="js-skybox-logo event-meta__tv-logo s s--tv skybox-popup__logo"></i>
+        <span class="skybox-popup__title js-skybox-title"></span>
+    </a>
+
+    <script id="babel-polyfill" src="//bet.sbgcdn.com/static/mbet/js/lib/babel-polyfill_6.23.0.min.js"></script>
+
+<script>
+    window.meta = {"title":"World Cup 2018 Winner betting | Football | Sky Bet Mobile | \u00a35 Free Bet Every Week","description":"Bet on the World Cup 2018 Winner &amp; all your favourite Football markets with Sky Bet Mobile. Bet now!","htmlClass":null,"enableFacebookTracking":true,"facebookPixelId":"773868212658132","updatedBetslipBarEnabled":false,"notificationsURL":"https:\/\/ho736x06jf.execute-api.eu-west-1.amazonaws.com\/live","notificationsAvailable":true,"notificationsAvailableAndroid":true,"betRecommendationsAPI":"https:\/\/m.skybet.com\/popularbets\/api\/v1\/customer\/recommendations","betslipConfig":{"multiplesTotaliserEnabled":true,"quickDeposit":true,"applyFreeBetFeature":true,"stsUrl":"https:\/\/sts.common.sbgcore.com","stsEnabled":true,"sbpBetslipTrial":true},"platinumEndTime":1522931400,"iovationSnareUrl":"\/\/mpsnare.iesnare.com\/snare.js","navMenu":{"quickLinks":{"sort":["home","promotions","bonusBuilder","myBets","bet&amp;Watch","inPlay","responsibleGambling","help"],"links":{"home":{"url":"\/","external":false,"title":"Home","show":true},"promotions":{"url":"\/promotions","external":false,"title":"Promotions","show":true},"bonusBuilder":{"url":"\/promotions","external":false,"title":"Bonus Builder","tracking":"Bonus Builder","show":false},"myBets":{"url":"\/my-bets","external":false,"title":"My Bets","tracking":"Cash Out","show":true},"bet&amp;Watch":{"url":"\/watch","external":false,"title":"Bet &amp; Watch","show":false},"inPlay":{"url":"\/in-play","external":false,"title":"In-Play","show":true},"responsibleGambling":{"url":"\/lp\/responsible-gambling","external":false,"title":"Responsible Gambling","tracking":"Responsible Gambling","show":true},"help":{"url":"https:\/\/support.skybet.com","title":"Help","external":true,"show":true}}},"topSports":{"title":"Top Sports","links":[{"url":"\/football","external":false,"title":"Football","show":true},{"url":"\/horse-racing","external":false,"title":"Horse Racing","show":true},{"url":"\/virtual-horse-racing","external":false,"title":"Virtual Sports","show":true}],"sort":[0,1,2]},"azSports":{"title":"A-Z Sports","links":{"5":{"url":"\/football","external":false,"title":"Football","show":true},"8":{"url":"\/horse-racing","external":false,"title":"Horse Racing","show":true},"23":{"url":"\/greyhound-racing","external":false,"title":"Greyhound Racing","show":true},"27":{"url":"\/american-football","external":false,"title":"American Football","show":true},"28":{"url":"\/basketball","external":false,"title":"Basketball","show":true},"29":{"url":"\/boxing","external":false,"title":"Boxing","show":true},"30":{"url":"\/cricket","external":false,"title":"Cricket","show":true},"31":{"url":"\/rugby-union","external":false,"title":"Rugby Union","show":true},"33":{"url":"\/darts","external":false,"title":"Darts","show":true},"34":{"url":"\/golf","external":false,"title":"Golf","show":true},"35":{"url":"\/tennis","external":false,"title":"Tennis","show":true},"37":{"url":"\/snooker","external":false,"title":"Snooker","show":true},"38":{"url":"\/rugby-league","external":false,"title":"Rugby League","show":true},"39":{"url":"\/speedway","external":false,"title":"Speedway","show":true},"46":{"url":"\/formula-1","external":false,"title":"Formula 1","show":true},"48":{"url":"\/athletics","external":false,"title":"Athletics","show":true},"54":{"url":"\/cycling","external":false,"title":"Cycling","show":true},"5000026":{"url":"\/baseball","external":false,"title":"Baseball","show":true},"10000001":{"url":"\/ice-hockey","external":false,"title":"Ice Hockey","show":true},"10000007":{"url":"\/gaelic-games","external":false,"title":"Gaelic Games","show":true},"10000013":{"url":"\/virtual-horse-racing","external":false,"title":"Virtual Horse Racing","show":true},"10000037":{"url":"\/politics","external":false,"title":"Politics","show":true},"10000039":{"url":"\/tv-and-film-specials","external":false,"title":"TV and Film Specials","show":true},"10000043":{"url":"\/music-specials","external":false,"title":"Music Specials","show":true},"10000051":{"url":"\/table-tennis","external":false,"title":"Table Tennis","show":true},"10000053":{"url":"\/motor-sport","external":false,"title":"Motor Sport","show":true},"10000058":{"url":"\/winter-sports","external":false,"title":"Winter Sports","show":true},"10000061":{"url":"\/ufc-and-mma","external":false,"title":"UFC and MMA","show":true},"10000078":{"url":"\/hockey","external":false,"title":"Hockey","show":true},"10000082":{"url":"\/commonwealth-games","external":false,"title":"Commonwealth Games","show":true},"10000083":{"url":"\/handball","external":false,"title":"Handball","show":true},"10000084":{"url":"\/volleyball","external":false,"title":"Volleyball","show":true},"10000091":{"url":"\/virtual-greyhounds","external":false,"title":"Virtual Greyhounds","show":true},"10000092":{"url":"\/virtual-football","external":false,"title":"Virtual Football","show":true},"10000093":{"url":"\/virtual-motor-racing","external":false,"title":"Virtual Motor Racing","show":true},"10000094":{"url":"\/virtual-speedway","external":false,"title":"Virtual Speedway","show":true},"10000099":{"url":"\/wrestling","external":false,"title":"Wrestling","show":true},"10000146":{"url":"\/esports","external":false,"title":"ESports","show":true},"10000157":{"url":"\/lotto","external":false,"title":"Lotto","show":true}},"sort":[27,48,5000026,28,29,10000082,30,54,33,10000146,5,46,10000007,34,23,10000083,10000078,8,10000001,10000157,10000053,10000043,10000037,38,31,37,39,10000039,10000051,35,10000061,10000092,10000091,10000013,10000093,10000094,10000084,10000058,10000099]}},"csrf":"4bc913edaa2b25bc618339d86f5cf57ad814ea4861e93fec4d6b5539d263a3aa","enablePushAnalytics":false,"navigationFavourites":false,"nextGenFootballMarkets":true,"reactData":{"markets":{"36233642":{"marketId":36233642,"eventId":16742642,"name":"Win Outright","type":"standard","displayOrder":1,"displayStatus":"active","ewAvailable":true,"notes":{"essential":["2018 World Cup Russia.","Each way terms: 1\/2 for first 2 places"],"promo":[]},"cashoutable":false,"ewDen":2,"ewNum":1,"ewPlaces":2,"handicap":"0.0","outcomes":["144891543","144891555","144891519","144891566","144891554","144891570","144891542","144891560","144891556","144891548","144891568","144891528","144891527","144891546","144891562","144891558","319800243","144891518","144891544","144891534","144891561","144891523","144891538","421220820","145385942","144891567","144891563","373063708","145385930","373059179","373061880","373060040"]}},"outcomes":{"144891543":{"displayOrder":0,"name":"Brazil","outcomeId":144891543,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":9,"den":2},"fbResult":"-","cashoutable":false},"144891555":{"displayOrder":0,"name":"Germany","outcomeId":144891555,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":9,"den":2},"fbResult":"-","cashoutable":false},"144891519":{"displayOrder":0,"name":"Spain","outcomeId":144891519,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":11,"den":2},"fbResult":"-","cashoutable":false},"144891566":{"displayOrder":0,"name":"France","outcomeId":144891566,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":6,"den":1},"fbResult":"-","cashoutable":false},"144891554":{"displayOrder":0,"name":"Argentina","outcomeId":144891554,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":9,"den":1},"fbResult":"-","cashoutable":false},"144891570":{"displayOrder":0,"name":"Belgium","outcomeId":144891570,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":10,"den":1},"fbResult":"-","cashoutable":false},"144891542":{"displayOrder":0,"name":"England","outcomeId":144891542,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":16,"den":1},"fbResult":"-","cashoutable":false},"144891560":{"displayOrder":0,"name":"Portugal","outcomeId":144891560,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":25,"den":1},"fbResult":"-","cashoutable":false},"144891556":{"displayOrder":0,"name":"Uruguay","outcomeId":144891556,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":28,"den":1},"fbResult":"-","cashoutable":false},"144891548":{"displayOrder":0,"name":"Croatia","outcomeId":144891548,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":33,"den":1},"fbResult":"-","cashoutable":false},"144891568":{"displayOrder":0,"name":"Colombia","outcomeId":144891568,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":40,"den":1},"fbResult":"-","cashoutable":false},"144891528":{"displayOrder":0,"name":"Russia","outcomeId":144891528,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":40,"den":1},"fbResult":"-","cashoutable":false},"144891527":{"displayOrder":0,"name":"Poland","outcomeId":144891527,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":66,"den":1},"fbResult":"-","cashoutable":false},"144891546":{"displayOrder":0,"name":"Denmark","outcomeId":144891546,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":80,"den":1},"fbResult":"-","cashoutable":false},"144891562":{"displayOrder":0,"name":"Mexico","outcomeId":144891562,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":100,"den":1},"fbResult":"-","cashoutable":false},"144891558":{"displayOrder":0,"name":"Switzerland","outcomeId":144891558,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":100,"den":1},"fbResult":"-","cashoutable":false},"319800243":{"displayOrder":0,"name":"Senegal","outcomeId":319800243,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":150,"den":1},"fbResult":"-","cashoutable":false},"144891518":{"displayOrder":0,"name":"Sweden","outcomeId":144891518,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":150,"den":1},"fbResult":"-","cashoutable":false},"144891544":{"displayOrder":0,"name":"Egypt","outcomeId":144891544,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":200,"den":1},"fbResult":"-","cashoutable":false},"144891534":{"displayOrder":0,"name":"Japan","outcomeId":144891534,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":200,"den":1},"fbResult":"-","cashoutable":false},"144891561":{"displayOrder":0,"name":"Nigeria","outcomeId":144891561,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":200,"den":1},"fbResult":"-","cashoutable":false},"144891523":{"displayOrder":0,"name":"Serbia","outcomeId":144891523,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":200,"den":1},"fbResult":"-","cashoutable":false},"144891538":{"displayOrder":0,"name":"Iceland","outcomeId":144891538,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":250,"den":1},"fbResult":"-","cashoutable":false},"421220820":{"displayOrder":0,"name":"Korea Republic","outcomeId":421220820,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":250,"den":1},"fbResult":"-","cashoutable":false},"145385942":{"displayOrder":0,"name":"Peru","outcomeId":145385942,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":250,"den":1},"fbResult":"-","cashoutable":false},"144891567":{"displayOrder":0,"name":"Costa Rica","outcomeId":144891567,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":500,"den":1},"fbResult":"-","cashoutable":false},"144891563":{"displayOrder":0,"name":"Iran","outcomeId":144891563,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":500,"den":1},"fbResult":"-","cashoutable":false},"373063708":{"displayOrder":0,"name":"Morocco","outcomeId":373063708,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":500,"den":1},"fbResult":"-","cashoutable":false},"145385930":{"displayOrder":0,"name":"Australia","outcomeId":145385930,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":750,"den":1},"fbResult":"-","cashoutable":false},"373059179":{"displayOrder":0,"name":"Tunisia","outcomeId":373059179,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":1000,"den":1},"fbResult":"-","cashoutable":false},"373061880":{"displayOrder":0,"name":"Panama","outcomeId":373061880,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":2000,"den":1},"fbResult":"-","cashoutable":false},"373060040":{"displayOrder":0,"name":"Saudi Arabia","outcomeId":373060040,"marketId":36233642,"eventId":16742642,"displayStatus":"active","boosted":false,"price":{"num":2000,"den":1},"fbResult":"-","cashoutable":false}},"tabs":{"requested":0,"standard":1},"meta":{"classId":5,"className":"football","eventHasRequestABet":false,"userLoggedIn":false,"isLive":false,"eventId":16742642,"eventName":"World Cup 2018 Winner","eventStart":"1531681200000"}},"pushKeys":["e.16742642","sc.16742642"],"eventId":16742642,"className":"football","requestId":"WsSPa6wQ03wAAJLQVOwAAAAG","omnitureData":{"account":"bskybskybetmobileprod","section":"mbet\/football","contentType":"world-cup-2018\/pre-live\/16742642","site":"","LoggedIn":false,"custId":null,"customerHash":null,"customerTrialGroups":["red7ScoreboardRugbyLeague","reactFootballInPlay","footballInPlayStats","newSuperSixUpgradeModal","reactFootballInPlayMarketSwitcher","promoteReUseSelectionsButton"],"siteOrApp":"Site"},"footerPromotionData":[{"type":"ImageFooterPromotion","title":"ITV7","gradient":"black","product":"external","imgalphax1":"\/48961f93dedbf68aca93330fa1250a09.jpg","imgalphax2":"\/678268682bc8f348092c85329697ebc8.jpg","imgalphax3":"\/228654107189f1ae9139957279db6df4.jpg","imgbetax1":"\/95568933ae1c3de0253f7723e34c2557.jpg","imgbetax2":"\/9451f3ea5147b579cd678fb12d4a788b.jpg","imgbetax3":"\/f74639f5d6a16c6cfb658700f7837e0f.jpg","imggammax1":"\/7f939702f2255da71a52f7380a6a4079.jpg","imggammax2":"\/bb5b2db1c5249250be1f9e93732f3274.jpg","imggammax3":"\/09e6bae76944e7f52bef5c80cdca5587.jpg","url":"https:\/\/itv7.itv.com\/","tracking":"ITV7","proportion":"100","filters":{"datetime":{"startTime":"2018-04-04T08:00","endTime":"2018-04-04T17:45"},"browser":"","usedVegas":"-","favSport":"-","usedSuper6":"-","crmGroup":"-","usedPoker":"-","usedFantasyFootball":"-","usedBingo":"-","contactable":"-"},"external":true,"appName":null,"appLinkClass":"","analytics":"[FooterXSell] external - ITV7","basePath":"\/\/bet.sbgcdn.com\/content\/cadmin"},{"type":"ImageFooterPromotion","title":"Super 6","gradient":"black","product":"super-6","imgalphax1":"\/18a39db3b2f417ca5002eccf0b2dbc8c.jpg","imgalphax2":"\/c0810b9404202f6e534095ad6767fb9c.jpg","imgalphax3":"\/0c567122a148b3847fa37f12c20882b5.jpg","imgbetax1":"\/9e81696f63621f17fd81e1ff2ceed41d.jpg","imgbetax2":"\/82a6981448c1a3104bcd5886aa9ced10.jpg","imgbetax3":"\/3568531b91567a7af429b837e1656acb.jpg","imggammax1":"\/3ce261420bfdbf678b59c628d8690713.jpg","imggammax2":"\/5ccb7679fca38bdca4242a001bf9b84c.jpg","imggammax3":"\/54676258c1088eee00aa255bc6346ef6.jpg","url":"https:\/\/super6.skysports.com?DCMP=bet_footer_super6","tracking":"Super 6","proportion":"100","filters":{"datetime":{"startTime":"2018-04-02T17:15","endTime":""},"browser":"","usedVegas":"-","favSport":"-","usedSuper6":"-","crmGroup":"-","usedPoker":"-","usedFantasyFootball":"-","usedBingo":"-","contactable":"-"},"external":true,"appName":"super6","appLinkClass":"js-app-link","analytics":"[FooterXSell] super 6 - Super 6","basePath":"\/\/bet.sbgcdn.com\/content\/cadmin"},{"type":"ImageFooterPromotion","title":"Sky Bet Roulette","gradient":"casinoblack","product":"sky-casino","imgalphax1":"\/03243997d8cdb2c915595b749cc6c7ac.jpg","imgalphax2":"\/b9ce5c5fde76cbeb622b31b9bc014aae.jpg","imgalphax3":"\/26e4c9ece1254aa104fffd91f4088e54.jpg","imgbetax1":"\/2faf4e1a0a52ac4695a8efba4bc4ad00.jpg","imgbetax2":"\/0e4fa0e0fa8b6ad5a58218885bbdd895.jpg","imgbetax3":"\/146d319a0553aaf5318987aef772f023.jpg","imggammax1":"\/346a6346ff46bf4040c0c29147ea0869.jpg","imggammax2":"\/7632dcbb6caa6df06c506d1e4c291b2c.jpg","imggammax3":"\/4d7ccc941a70868800cfc812e0e32e4a.jpg","url":"https:\/\/www.skycasino.com\/category\/live-casino?dcmp=bet_footer_skybetroulette&amp;redirectPath=\/category\/live-casino","tracking":"Sky Bet Roulette","proportion":"100","filters":{"datetime":{"startTime":"2017-09-03T23:59","endTime":""},"browser":"","usedVegas":"-","favSport":"-","usedSuper6":"-","crmGroup":"-","usedPoker":"-","usedFantasyFootball":"-","usedBingo":"-","contactable":"-"},"external":true,"appName":"skycasino","appLinkClass":"js-app-link","analytics":"[FooterXSell] sky casino - Sky Bet Roulette","basePath":"\/\/bet.sbgcdn.com\/content\/cadmin"}]};
+</script>
+
+<script>
+!function(){function n(){function n(n){p.level=n}function e(n,e){p.info(n,"event emitted"),e=c(e||{}),e.meta=e.meta||{},e.meta.type=n,u.push(e),r(),v.listeners=f(v.listeners,function(n){return!n.disposed})}function o(n,e,o){function r(){return p.info("Replaying events"),t(function(){s(v.events,function(t){c.disposed||l(n,t.meta.type)&amp;&amp;e.call(o,t)})}),f}function i(){return p.info("Disposing event handler"),c.disposed=!0,f}p.info("Attaching event handler for",n);var c={type:n,callback:e,disposed:!1,context:o||window};v.listeners.push(c);var f={replay:r,dispose:i};return f}function t(n){p.info("Calling event handlers"),a++;try{n()}catch(n){p.error("UV API Error",n.stack)}a--,r()}function r(){if(0===u.length&amp;&amp;p.info("No more events to process"),u.length&gt;0&amp;&amp;a&gt;0&amp;&amp;p.info("Event will be processed later"),u.length&gt;0&amp;&amp;0===a){p.info("Processing event");var n=u.shift();v.events.push(n),t(function(){s(v.listeners,function(e){if(!e.disposed&amp;&amp;l(e.type,n.meta.type))try{e.callback.call(e.context,n)}catch(n){p.error("Error emitting UV event",n.stack)}})})}}function i(n,e,o){var t=v.on(n,function(){e.apply(o||window,arguments),t.dispose()});return t}function s(n,e){for(var o=n.length,t=0;t&lt;o;t++)e(n[t],t)}function c(n){var e={};for(var o in n)n.hasOwnProperty(o)&amp;&amp;(e[o]=n[o]);return e}function l(n,e){return"string"==typeof n?n===e:n.test(e)}function f(n,e){for(var o=n.length,t=[],r=0;r&lt;o;r++)e(n[r])&amp;&amp;t.push(n[r]);return t}var u=[],a=0,p={info:function(){p.level&gt;n.INFO||console&amp;&amp;console.info&amp;&amp;console.info.apply(console,arguments)},error:function(){p.level&gt;n.ERROR||console&amp;&amp;console.error&amp;&amp;console.error.apply(console,arguments)}};n.ALL=0,n.INFO=1,n.ERROR=2,n.OFF=3,n(n.ERROR);var v={on:o,emit:e,once:i,events:[],listeners:[],logLevel:n};return v}"object"==typeof module&amp;&amp;module.exports?module.exports=n:window&amp;&amp;void 0===window.uv&amp;&amp;(window.uv=n())}();
+</script>
+
+<script src="https://dd6zx4ibq538k.cloudfront.net/smartserve-4726.js"></script>
+<script>
+  window.__CLIENT_BASE_URL__ = "\/\/bet.sbgcdn.com\/static";
+  window.__CLIENT_VERSION__ = "6deeb2e887be03a733be7724c8498332";
+  window.require = {"baseUrl":"\/\/bet.sbgcdn.com\/static","paths":{"mbet":"\/assets\/mbet-75659bf28dd887c180137d7b59ae249f","modules\/layoutManager":"\/assets\/layoutManager-4eca8eaeae2ede5d5d847f68dd157fb5","hls":"\/assets\/hls-d581312426e2ed836c9be69639a622e7","modules\/footballScoreboard\/footballScoreboard":"\/assets\/footballScoreboard-a26d439c1d44dd6c2df9a10d4560f3dc","modules\/basketballScoreboard":"\/assets\/basketballScoreboard-29636a8a812553f590c20109e5e5a0e0","modules\/cricketScoreboard":"\/assets\/cricketScoreboard-3290a3aebb854f5a39fbef856e1d1463","modules\/scoreboard":"\/assets\/scoreboard-0ef6e86ea70855e0ca43d26b6bfd2b06","modules\/genericScoreboard":"\/assets\/genericScoreboard-f79df8b933647e246705e5e36e5bfe53","modules\/launchVideo":"\/assets\/launchVideo-dea5d6e6cd46af72ea97f091d5490f6c","modules\/videoPlayer":"\/assets\/videoPlayer-124183c3c23b29365958a70eec88a888","footballMarkets":"\/assets\/footballMarkets-054daaa9038106e58d5492c78a154db9","omniControls":"\/assets\/omniControls-44ec611bef2dc7c39280e02d4fc8ab88","hrStreamControls":"\/assets\/hrStreamControls-e3a4d680e3c8c9efd11d52176537a28a","hrOmniStreamControls":"\/assets\/hrOmniStreamControls-2b3555d453f8814145c099fd9a7c025a","hrCalendar":"\/assets\/hrCalendar-6c1c986eaff21524e5572cefc6c425c5","hrEventPage":"\/assets\/hrEventPage-cdb43310c15296044f7a873c0c8062bb","hrTopPricePromise":"\/assets\/hrTopPricePromise-f34df61d5c3432d308839551ca8cfdfd","hrExtraPlaces":"\/assets\/hrExtraPlaces-5da117fe9c945bf4bc5d7e10dee80e09","hrRunnerInfo":"\/assets\/hrRunnerInfo-378eef4dd44b29c8b1b08e54aa7feb80","hrBetAndWatch":"\/assets\/hrBetAndWatch-6e4b80a1e15456226c7e9623059220d8","scoreCentre":"\/assets\/scoreCentre-d2062a26ea6bee9e113892ad12fbd966","navigationMenu":"\/assets\/navigationMenu-abab2c197ebdec826df855bf87616e54","footballInPlay":"\/assets\/footballInPlay-46b34f1a5f2c3fd309d37701d89034cb","thirdPartyScoreboard":"\/assets\/thirdPartyScoreboard-172aa2e0b923932fb1e083510e64c013","nativeAppBanner":"\/assets\/nativeAppBanner-a8d16963e1a8cb008d595e6ef2b7cd0c","virtualSports":"\/assets\/virtualSports-f52c81f80345c4b94025e041c0503ed0","skybetaccount":"https:\/\/st2.skybet.com\/static\/identity\/SkyBetAccount","betTracker":"\/bet-tracker-service\/js\/betTracker","react":"\/\/bet.sbgcdn.com\/static\/mbet\/js\/lib\/react-15.6.1.min","react-dom":"\/\/bet.sbgcdn.com\/static\/mbet\/js\/lib\/react-dom-15.6.1.min","stickyfill":"\/\/bet.sbgcdn.com\/static\/mbet\/js\/lib\/stickyfill-2.0.2.min","nextHLS":"\/\/bet.sbgcdn.com\/static\/mbet\/js\/lib\/hls.light-0.8.9.min"},"config":{"mbet":{"push":{"enabled":true,"url":"https:\/\/1.push.skybet.com:8443\/","secure":true},"myaccount":{"sbaHost":"www.skybet.com","mbetUrl":"https:\/\/m.skybet.com"},"user":{"isLoggedIn":false,"customerHash":null,"oddsFormat":"Odds","currency":"GBP"},"footballMarkets":{"filtersEnabled":true,"surveyEnabled":false,"oneBetAccordions":true,"rabSuggestionLimit":4},"qubit":{"enabled":true},"cmspreview":false,"appFeatureMap":{"ios":{"openAppLink":"3.1","openAppGame":"5.11","nativeBetslip":"3.1","appSessionTransfer":"3.1","localNotifications":"3.2","incidentNotifications":"3.2","betappSlideMenu":"5.8"},"android":{"openAppGame":"1.4","appSessionTransfer":"1.0","incidentNotifications":"2.1.4"}},"buildVersion":"6deeb2e887be03a733be7724c8498332","eventTransition":true,"mobileDevice":false,"enableNativeAppBanner":true,"navigationFavourites":false,"force3ColLayout":false,"useNewSocket":false}}};
+  !function(f){if("object"==typeof exports&amp;&amp;"undefined"!=typeof module)module.exports=f();else if("function"==typeof define&amp;&amp;define.amd)define([],f);else{var g;g="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,g.betConfig=f()}}(function(){return function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a="function"==typeof require&amp;&amp;require;if(!u&amp;&amp;a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}for(var i="function"==typeof require&amp;&amp;require,o=0;o&lt;r.length;o++)s(r[o]);return s}({1:[function(require,module,exports){function get(){return config}function set(key,value){for(var keys="string"==typeof key?[key]:key,obj=overrides,i=0;i&lt;keys.length-1;i++){var key=keys[i],isObject=!!obj[key]&amp;&amp;obj[key].constructor===Object;isObject||(obj[key]={}),obj=obj[key]}obj[keys[keys.length-1]]=value,jsonSessionStorage.set("betConfigOverrides",overrides),config=getNextConfig()}function getNextConfig(){return mergeDeep(clone(getBaseConfig()),overrides)}function clone(value){return JSON.parse(JSON.stringify(value))}var getBaseConfig=require("./lib/getBaseConfig"),jsonSessionStorage=require("./jsonSessionStorage"),mergeDeep=require("./lib/mergeDeep");module.exports={get:get,set:set};var overrides=jsonSessionStorage.get("betConfigOverrides")||{},config=getNextConfig()},{"./jsonSessionStorage":2,"./lib/getBaseConfig":3,"./lib/mergeDeep":6}],2:[function(require,module,exports){var globals=require("./lib/globals"),jsonStorageFactory=require("./lib/jsonStorageFactory");module.exports=jsonStorageFactory(globals.sessionStorage)},{"./lib/globals":4,"./lib/jsonStorageFactory":5}],3:[function(require,module,exports){var globals=require("./globals");module.exports=function(){return globals.require.config.mbet}},{"./globals":4}],4:[function(require,module,exports){(function(global){module.exports={require:global.require||{config:{mbet:{}}},sessionStorage:global.sessionStorage}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],5:[function(require,module,exports){module.exports=function(storageApi){function get(key){return JSON.parse(storageApi.getItem(key))}function remove(key){storageApi.removeItem(key)}function set(key,value){storageApi.setItem(key,JSON.stringify(value))}function canStoreData(){try{var key="storageApiFeatureTest";return set(key,"{}"),get(key),remove(key),!0}catch(err){return!1}}function noop(){}return canStoreData()?{get:get,remove:remove,set:set}:{get:noop,remove:noop,set:noop}}},{}],6:[function(require,module,exports){function mergeDeep(target,source){if(isObject(target)&amp;&amp;isObject(source))for(var key in source)isObject(source[key])?(target[key]||Object.assign(target,_defineProperty({},key,{})),mergeDeep(target[key],source[key])):Object.assign(target,_defineProperty({},key,source[key]));return target}function isObject(item){return item&amp;&amp;"object"===("undefined"==typeof item?"undefined":_typeof(item))&amp;&amp;!Array.isArray(item)}function _defineProperty(obj,key,value){return key in obj?Object.defineProperty(obj,key,{value:value,enumerable:!0,configurable:!0,writable:!0}):obj[key]=value,obj}module.exports=mergeDeep;var _typeof="function"==typeof Symbol&amp;&amp;"symbol"==typeof Symbol.iterator?function(obj){return typeof obj}:function(obj){return obj&amp;&amp;"function"==typeof Symbol&amp;&amp;obj.constructor===Symbol&amp;&amp;obj!==Symbol.prototype?"symbol":typeof obj}},{}]},{},[1])(1)});
+</script>
+<script defer="" src="https://st2.skybet.com/static/identity/SkyBetAccount.js"></script>
+<script defer="" src="//bet.sbgcdn.com/static/assets/mbet-75659bf28dd887c180137d7b59ae249f.js" id="requirejs" data-main="mbet"></script>
+<script>
+  (function () {
+    var rj = document.getElementById('requirejs');
+    rj.onerror = function (e) {
+      window.newrelic &amp;&amp; window.newrelic.noticeError(e);
+      var retries = 0;
+      (function loadRequire() {
+        if (!window.define) {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = '//bet.sbgcdn.com/static/assets/mbet-75659bf28dd887c180137d7b59ae249f.js';
+          rj.parentNode.insertBefore(script, rj);
+          if (retries++ &lt; 2) {
+            setTimeout(loadRequire, 1000);
+          } else {
+            window.newrelic &amp;&amp; window.newrelic.noticeError(new Error("Reached maximum retries for reloading requireJs"));
+            var el = document.createElement('img');
+            el.setAttribute('src', '/monitoring/js-error');
+            document.body.appendChild(el);
+          }
+        }
+      })();
+    };
+  })();
+</script>
+
+<script>
+    (function() {
+        
+        var cssRetries = 0;
+        function cssRetry() {
+            if (cssRetries &gt; 1) {
+                location.reload();
+            } else {
+                cssRetries++;
+                var el = document.createElement('link');
+                el.setAttribute('rel', 'stylesheet');
+                el.setAttribute('href', document.getElementById('maincss').getAttribute('href'));
+                el.addEventListener('error', cssRetry);
+                document.body.appendChild(el);
+            }
+        };
+
+        if (window.cssLoadFailed === true) {
+            cssRetry();
+        } else {
+            document.getElementById('maincss').addEventListener('error', cssRetry);
+        }
+    })();
+</script>
+
+    <script type="text/javascript">
+        window.SKY_TRACKING = {"account":"bskybskybetmobileprod","section":"mbet\/football","contentType":"world-cup-2018\/pre-live\/16742642","site":"","LoggedIn":false,"custId":null,"customerHash":null,"customerTrialGroups":["red7ScoreboardRugbyLeague","reactFootballInPlay","footballInPlayStats","newSuperSixUpgradeModal","reactFootballInPlayMarketSwitcher","promoteReUseSelectionsButton"],"siteOrApp":"Site"};
+    </script>
+    <script type="text/javascript" defer="" src="//bet.sbgcdn.com/static/lib/omniture/s_code_v5.js"></script>
+
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"86fa490fac","applicationID":"18731121","transactionName":"ZlVaZ0BZDUpVUhdYWF8fe0ZBTAxUG20uU1JFbHtcXEwRVlhdBkNrd19XR1BZD1VodBVUWUVzV11GSgxVWFQRCw1QU0xaXVYmT1FfFw==","queueTime":0,"applicationTime":14,"atts":"ShJNEQhDQUtRUABFYVRCS1pdVkEDFgBWHwEfARofEFsPUFFfF2dSQ0NRXFwaWRsCVQZUVQNVAAsFWgYJB1BUAgRTVQ8EAAwAAQAIWwIEAxJFHxBZQQNPTB4=","errorBeacon":"bam.nr-data.net","agent":""}</script>
+
+<div class="sba-overlay"></div><div class="sba-overlay" id="loading-overlay"></div><div class="sba-loading"><p>Loading…</p></div><div class="sba-container" style=""><div class="sba-wrapper"><iframe class="sba-iframe" name="SkyBetAccount" id="SkyBetAccount" src="https://www.skybet.com/secure/identity/m/login-state/mskybet?urlconsumer=https://m.skybet.com&amp;dl=1&amp;ssoTransferToken=" scrolling="auto"></iframe></div></div></body></html>

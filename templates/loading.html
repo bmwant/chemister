@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="siimple-grid">
+  <div class="siimple-grid-row">
+    <div class="siimple-grid-col siimple-grid-col--6">
+      <div class="siimple-tip siimple-tip--teal">
+        No data in cache. Wait for data to load or manually invoke it via
+        <strong>python cli.py monitor</strong>
+      </div>
+      <div class="siimple-spinner siimple-spinner--green"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  $(document).ready(function() {
+    setInterval(function() {
+      $.get('/check', function(data) {
+        if(!data.refreshing) {
+          window.location = '/';
+        }
+      });
+    }, 3000);
+  });
+</script>
+{% endblock %}

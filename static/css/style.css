@@ -1,0 +1,10 @@
+.siimple-table--hover
+.siimple-table-body
+.siimple-table-row:hover
+.siimple-table-cell {
+  background-color: #18d2ba !important;
+}
+
+.siimple-navbar {
+  margin-bottom: 16px;
+}
