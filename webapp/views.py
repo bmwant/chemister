@@ -4,15 +4,10 @@ from functools import partial
 import aiohttp_jinja2
 from aiohttp import web
 
-from webapp.utils import (
-    load_teams,
-    load_resources,
-    get_cached_value,
-    refresh_data,
-)
+from webapp.utils import refresh_data
 
 
-@aiohttp_jinja2.template('dist/index.html')
+@aiohttp_jinja2.template('index.html')
 async def index(request):
     logger = request.app.logger
     logger.info('Accessing index page')
