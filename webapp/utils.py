@@ -37,15 +37,8 @@ async def refresh_data():
     factory = Factory()
     await factory.init_cache()
     factory.load_resources()
-    factory.load_teams()
     tasks = factory.create()
     scheduler = Scheduler(tasks=tasks)
 
     await scheduler.run_once()
     await scheduler.cleanup()
-
-
-async def load_bids():
-    from crawler.models.bid import Bid
-    data = await load_yaml(config.DEV_BID_RESOURCE)
-    return [Bid(**d) for d in data]
