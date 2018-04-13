@@ -65,3 +65,7 @@ def test_default_values_loaded():
     assert res2.proxy.use is False
     assert res2.proxy.ip is None
     assert res2.proxy.port == 80
+
+
+def test_creating_new_bid():
+    pass

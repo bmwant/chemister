@@ -1,6 +1,8 @@
 import attr
+import sqlalchemy as sa
 from attr.validators import instance_of as an
 
+from . import metadata
 from .configs import ProxyConfig, FetcherConfig, URLConfig
 
 
@@ -46,3 +48,13 @@ class Resource(object):
     )
     grabber: str = attr.ib(default='dummy')
     parser: str = attr.ib(default='dummy')
+
+
+resource = sa.Table(
+    'resource', metadata,
+    sa.Column('id', sa.Integer),
+    sa.Column('name', sa.String),
+    sa.Column('url', sa.String),
+
+    sa.PrimaryKeyConstraint('id', name='resource_id_pkey'),
+)

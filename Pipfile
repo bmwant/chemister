@@ -19,6 +19,8 @@ coloredlogs = "*"
 selenium = "*"
 "beautifulsoup4" = "*"
 "html5lib" = "*"
+sqlalchemy = "*"
+aiopg = "*"
 
 
 [dev-packages]

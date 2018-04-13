@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS bid(
   id            SERIAL          NOT NULL,
   rate          REAL            NOT NULL,
   amount        REAL            NOT NULL,
-  currency      REAL            NOT NULL,
-  phone      REAL              NOT NULL,
+  currency      VARCHAR            NOT NULL,
+  phone         VARCHAR         NOT NULL,
   created       TIMESTAMP       NOT NULL,
-
+  dry_run       BOOLEAN         NOT NULL,
   resource_id   INT             NOT NULL,
 
   FOREIGN KEY (resource_id) REFERENCES resource (id),
