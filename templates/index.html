@@ -363,7 +363,7 @@
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Invoices</h3>
+        <h3 class="card-title">In bids</h3>
       </div>
       <div class="table-responsive">
         <table class="table card-table table-vcenter text-nowrap">
@@ -381,57 +381,25 @@
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <td><span class="text-muted">0001</span></td>
-            <td>1000</td>
-            <td>USD</td>
-            <td>26.04</td>
-            <td>+38(098)777-66-55</td>
-            <td>15 Dec 2017</td>
+          {% for bid in in_bids %}
+            <tr>
+            <td><span class="text-muted">{{ bid.id }}</span></td>
+            <td>{{ bid.amount }}</td>
+            <td>{{ bid.currency }}</td>
+            <td>{{ bid.rate }}</td>
+            <td>{{ bid.phone }}</td>
+            <td>{{ bid.date }}</td>
             <td>
-              <span class="status-icon bg-success"></span> Paid
+              <span class="status-icon bg-success"></span> {{ bid.status }}
             </td>
-            <td><a href="#">i.ua</a></td>
+            <td><a href="#">{{ bid.resource }}</a></td>
             <td class="text-right">
               <div class="dropdown">
                 <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
               </div>
             </td>
           </tr>
-          <tr>
-            <td><span class="text-muted">0001</span></td>
-            <td>1000</td>
-            <td>USD</td>
-            <td>26.04</td>
-            <td>+38(098)777-66-55</td>
-            <td>15 Dec 2017</td>
-            <td>
-              <span class="status-icon bg-success"></span> Paid
-            </td>
-            <td><a href="#">i.ua</a></td>
-            <td class="text-right">
-              <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td><span class="text-muted">0001</span></td>
-            <td>1000</td>
-            <td>USD</td>
-            <td>26.04</td>
-            <td>+38(098)777-66-55</td>
-            <td>15 Dec 2017</td>
-            <td>
-              <span class="status-icon bg-success"></span> Paid
-            </td>
-            <td><a href="#">i.ua</a></td>
-            <td class="text-right">
-              <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
-              </div>
-            </td>
-          </tr>
+          {% endfor %}
           </tbody>
         </table>
       </div>

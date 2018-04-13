@@ -1,27 +1,10 @@
 ---
 
-#- name: William Hill
-#  url: "http://sports.williamhill.com"
-#
-- name: bet365
-  url: "https://mobile.bet365.com"
-  parser: "dummy"
+- name: i ua
+  urls:
+    - currency: "USD"
+      in_bids: "https://finance.i.ua/market/kiev/usd/?type=1"
+      out_bids: "https://finance.i.ua/market/kiev/usd/?type=2 "
+  parser: "i_ua"
   fetcher:
     instance: "simple"
-
-- name: Paddy Power
-  url: "https://www.paddypower.com/bet"
-  parser: "paddy_power"
-  fetcher:
-    instance: "browser"
-
-- name: Sky Bet
-  url: "https://www.skybet.com"
-  parser: "sky_bet"
-  fetcher:
-    instance: "browser"
-    driver: "chrome"
-  proxy:
-    use: true
-    ip: "163.172.175.210"
-    port: 3128

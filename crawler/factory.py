@@ -10,7 +10,6 @@ import config
 from utils import get_logger
 from crawler.models import Resource
 from crawler.proxy import Proxy
-from crawler.grabber import Grabber
 from crawler.cache import Cache
 
 
@@ -25,6 +24,7 @@ class Factory(object):
         self.logger.debug('Loading resources..')
         with open(config.RESOURCES_FILEPATH) as f:
             resources = yaml.load(f.read())
+        import pdb; pdb.set_trace()
         self.resources = [Resource(**r) for r in resources]
 
     def load_teams(self):
@@ -86,13 +86,23 @@ class Factory(object):
             driver_cls=driver_cls,
         )
 
+    def get_grabber(self, resource, *, fetcher, parser, cache):
+        grabber_name = resource.grabber
+        grabber_cls = self._load_cls_from_module('grabber', grabber_name)
+        return grabber_cls(
+            name=grabber_name,
+            fetcher=fetcher,
+            parser=parser,
+            cache=cache,
+        )
+
     def create(self):
         grabbers = []
         for res in self.resources:
             fetcher = self.get_fetcher(res)
             parser = self.get_parser(res.parser)
-            grabber = Grabber(
-                name=res.name,
+            grabber = self.get_grabber(
+                resource=res,
                 fetcher=fetcher,
                 parser=parser,
                 cache=self.cache,
