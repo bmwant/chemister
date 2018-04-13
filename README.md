@@ -25,7 +25,7 @@ Make sure you have next items installed:
 ```bash
 $ docker volume create chemister-data
 $ docker run --name local-postgres -v chemister-data:/var/lib/postgresql/data \
--d postgres
+--network host -d postgres
 $ docker run -it -v $(pwd):/opt --rm --link local-postgres:postgres postgres \
 /opt/scripts/run_sql.sh
 ```

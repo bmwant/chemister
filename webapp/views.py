@@ -58,16 +58,7 @@ async def check_refresh_done(request):
     })
 
 
-@aiohttp_jinja2.template('detail.html')
-async def poll(request):
+@aiohttp_jinja2.template('form.html')
+async def form(request):
     async with request.app['db'].acquire() as conn:
-        question_id = request.match_info['question_id']
-        try:
-            question, choices = await db.get_question(conn,
-                                                      question_id)
-        except db.RecordNotFound as e:
-            raise web.HTTPNotFound(text=str(e))
-        return {
-            'question': question,
-            'choices': choices
-        }
+        return {}
