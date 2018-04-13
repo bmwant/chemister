@@ -24,7 +24,6 @@ class Factory(object):
         self.logger.debug('Loading resources..')
         with open(config.RESOURCES_FILEPATH) as f:
             resources = yaml.load(f.read())
-        import pdb; pdb.set_trace()
         self.resources = [Resource(**r) for r in resources]
 
     def load_teams(self):

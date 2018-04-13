@@ -1,5 +1,3 @@
-from collections import Iterable
-
 import attr
 from attr.validators import instance_of as an
 
@@ -21,7 +19,11 @@ def ensure_cls(cl):
 
 
 def list_of(cl):
-    pass
+    def validator(instance, attribute, value):
+        if not isinstance(attribute, list):
+            return False
+        return all([isinstance(el, cl) for el in value])
+    return validator
 
 
 @attr.s
@@ -30,7 +32,7 @@ class Resource(object):
     urls = attr.ib(
         default=attr.Factory(list),
         convert=ensure_cls(URLConfig),
-        # validator=an(URLConfig),
+        validator=list_of(URLConfig),
     )
     proxy = attr.ib(
         default=ProxyConfig(),
