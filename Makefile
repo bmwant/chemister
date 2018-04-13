@@ -86,3 +86,7 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
+
+initdb:
+	docker run -it -v $(shell pwd):/opt --rm --link local-postgres:postgres postgres \
+    /opt/scripts/run_sql.sh
