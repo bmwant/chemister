@@ -7,12 +7,20 @@ from utils import get_logger
 
 
 class BaseGrabber(ABC):
-    def __init__(self, name, fetcher=None, parser=None, cache=None):
-        self.name = name
+    def __init__(self, resource, fetcher=None, parser=None, cache=None):
+        self.resource = resource
         self.fetcher = fetcher
         self.parser = parser
         self.cache = cache
         self.logger = get_logger(self.__class__.__name__.lower())
+
+    @property
+    def name(self):
+        return self.resource.name
+
+    @property
+    def urls(self):
+        return self.resource.urls
 
     def __await__(self):
         return self.update()

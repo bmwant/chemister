@@ -16,10 +16,12 @@ async def schedule_grabbing(scheduler):
     factory = Factory()
     await factory.init_cache()
     factory.load_resources()
-    factory.load_teams()
     tasks = factory.create()
     scheduler.add_tasks(tasks)
-    await scheduler.run_forever()
+    try:
+        await scheduler.run_forever()
+    finally:
+        await scheduler.cleanup()
 
 
 @cli.command()

@@ -26,12 +26,6 @@ class Factory(object):
             resources = yaml.load(f.read())
         self.resources = [Resource(**r) for r in resources]
 
-    def load_teams(self):
-        self.logger.debug('Loading teams...')
-        with open(config.TEAMS_FILEPATH) as f:
-            teams = yaml.load(f.read())
-        self.teams = teams
-
     async def init_cache(self):
         self.logger.debug('Initializing cache...')
         self.cache = Cache()
@@ -80,7 +74,7 @@ class Factory(object):
 
         fetcher_cls = self._load_cls_from_module('fetcher', fetcher_name)
         return fetcher_cls(
-            base_url=resource.url,
+            base_url=None,
             proxy=proxy,
             driver_cls=driver_cls,
         )
@@ -89,7 +83,7 @@ class Factory(object):
         grabber_name = resource.grabber
         grabber_cls = self._load_cls_from_module('grabber', grabber_name)
         return grabber_cls(
-            name=grabber_name,
+            resource=resource,
             fetcher=fetcher,
             parser=parser,
             cache=cache,

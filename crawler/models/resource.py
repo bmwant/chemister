@@ -44,4 +44,5 @@ class Resource(object):
         convert=ensure_cls(FetcherConfig),
         validator=an(FetcherConfig),
     )
+    grabber: str = attr.ib(default='dummy')
     parser: str = attr.ib(default='dummy')
