@@ -13,6 +13,8 @@ from webapp import (
     setup_static_routes,
     setup_cache,
     destroy_cache,
+    init_pg,
+    close_pg,
 )
 
 
@@ -21,7 +23,9 @@ def run():
     logger = get_logger('webapp')
     app.logger = logger
     app.on_startup.append(setup_cache)
+    app.on_startup.append(init_pg)
     app.on_shutdown.append(destroy_cache)
+    app.on_shutdown.append(close_pg)
     setup_routes(app)
     setup_static_routes(app)
     aiohttp_jinja2.setup(

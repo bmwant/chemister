@@ -8,7 +8,7 @@ import yaml
 
 import config
 from utils import get_logger
-from crawler.models import Resource
+from crawler.models.resource import Resource
 from crawler.proxy import Proxy
 from crawler.cache import Cache
 

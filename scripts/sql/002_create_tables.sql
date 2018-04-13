@@ -1,6 +1,5 @@
 SET SCHEMA 'public';
 
-
 CREATE TYPE bid_status AS ENUM (
   'new', 'notified', 'called', 'rejected', 'inactive', 'closed'
 );

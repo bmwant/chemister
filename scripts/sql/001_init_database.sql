@@ -1,0 +1,7 @@
+SET SCHEMA 'public';
+
+CREATE DATABASE chemister;
+
+CREATE USER che WITH PASSWORD 'guevara';
+
+GRANT ALL PRIVILEGES ON DATABASE chemister to che;

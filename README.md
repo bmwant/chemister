@@ -20,6 +20,16 @@ Make sure you have next items installed:
 * [Chrome](https://www.google.com/chrome/) + 
 [chromedriver](https://chromedriver.storage.googleapis.com/index.html)
 
+### Run Postgresql within docker container
+
+```bash
+$ docker volume create chemister-data
+$ docker run --name local-postgres -v chemister-data:/var/lib/postgresql/data \
+-d postgres
+$ docker run -it -v $(pwd):/opt --rm --link local-postgres:postgres postgres \
+psql -h postgres -U postgres -d pr_review_notifier -f /opt/init_database.sql
+```
+
 ### Installation
 ```
 $ git clone https://github.com/bmwant/.git
