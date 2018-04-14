@@ -21,6 +21,8 @@ selenium = "*"
 "html5lib" = "*"
 sqlalchemy = "*"
 aiopg = "*"
+trafaret = "*"
+aiohttp-session = "*"
 
 
 [dev-packages]

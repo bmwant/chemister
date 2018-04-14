@@ -1,4 +1,9 @@
+import datetime
+
 import attr
+import sqlalchemy as sa
+
+from . import metadata
 
 
 @attr.s
@@ -19,3 +24,13 @@ class URLConfig(object):
     currency: str = attr.ib(default=None)
     in_bids: str = attr.ib(default=None)
     out_bids: str = attr.ib(default=None)
+
+
+config = sa.Table(
+    'config', metadata,
+    sa.Column('id', sa.Integer),
+    sa.Column('created', sa.DateTime, default=datetime.datetime.now),
+    sa.Column('value', sa.JSON),
+
+    sa.PrimaryKeyConstraint('id', name='config_id_pkey'),
+)
