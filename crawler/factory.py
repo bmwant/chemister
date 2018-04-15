@@ -6,7 +6,7 @@ import importlib
 
 import yaml
 
-import config
+import settings
 from utils import get_logger
 from crawler.models.resource import Resource
 from crawler.proxy import Proxy
@@ -22,7 +22,7 @@ class Factory(object):
 
     def load_resources(self):
         self.logger.debug('Loading resources..')
-        with open(config.RESOURCES_FILEPATH) as f:
+        with open(settings.RESOURCES_FILEPATH) as f:
             resources = yaml.load(f.read())
         self.resources = [Resource(**r) for r in resources]
 

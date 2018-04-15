@@ -2,7 +2,7 @@
 import aioredis
 import aiopg.sa
 
-import config
+import settings
 from . import views
 from . import endpoints
 
@@ -17,15 +17,15 @@ def setup_routes(app):
 
 def setup_static_routes(app):
     app.router.add_static('/static/',
-                          path=config.PROJECT_ROOT / 'static',
+                          path=settings.PROJECT_ROOT / 'static',
                           name='static')
     app.router.add_static('/node_modules/',
-                          path=config.PROJECT_ROOT / 'node_modules',
+                          path=settings.PROJECT_ROOT / 'node_modules',
                           name='node_modules')
 
 
 async def setup_cache(app):
-    redis = await aioredis.create_redis(config.REDIS_URI)
+    redis = await aioredis.create_redis(settings.REDIS_URI)
     app['cache'] = redis
 
 
@@ -37,9 +37,9 @@ async def destroy_cache(app):
 
 async def init_pg(app):
     engine = await aiopg.sa.create_engine(
-        config.DATABASE_DSN,
-        minsize=config.DATABASE_POOL_MINSIZE,
-        maxsize=config.DATABASE_POOL_MAXSIZE,
+        settings.DATABASE_DSN,
+        minsize=settings.DATABASE_POOL_MINSIZE,
+        maxsize=settings.DATABASE_POOL_MAXSIZE,
         loop=app.loop,
     )
     app['db'] = engine

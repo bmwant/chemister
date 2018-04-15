@@ -3,12 +3,12 @@ Schedule periodic tasks and ensure their execution within given period.
 """
 import asyncio
 
-import config
+import settings
 from utils import get_logger
 
 
 class Scheduler(object):
-    def __init__(self, tasks=None, interval=config.UPDATE_PERIOD):
+    def __init__(self, tasks=None, interval=settings.UPDATE_PERIOD):
         self.tasks = tasks or []
         self.interval = interval
         self.logger = get_logger(self.__class__.__name__.lower())

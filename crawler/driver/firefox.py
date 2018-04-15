@@ -1,12 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
-import config
+import settings
 from crawler.driver import BaseDriver
 
 
 class FirefoxDriver(BaseDriver):
-    EXECUTABLE_PATH = config.GECKO_DRIVER_PATH
+    EXECUTABLE_PATH = settings.GECKO_DRIVER_PATH
 
     def __init__(self):
         super().__init__()

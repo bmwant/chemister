@@ -1,9 +1,9 @@
 import asyncio
 import pytest
-import config
+import settings
 
 
-TESTS_DIR = config.PROJECT_ROOT / 'tests'
+TESTS_DIR = settings.PROJECT_ROOT / 'tests'
 PAGES_DIR = TESTS_DIR / 'pages'
 
 

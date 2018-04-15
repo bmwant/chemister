@@ -26,8 +26,8 @@ DEV_BID_RESOURCE = PROJECT_ROOT / 'resources' / 'bids.yml'
 
 # Override values from config_local.py
 try:
-    import config_local
-    for key, value in config_local.__dict__.items():
+    import settings_local
+    for key, value in settings_local.__dict__.items():
         if key.isupper() and key in globals():
             globals()[key] = value
 except ImportError:

@@ -99,4 +99,4 @@ venv.bak/
 .mypy_cache/
 .idea/
 node_modules/
-config_local.py
+settings_local.py

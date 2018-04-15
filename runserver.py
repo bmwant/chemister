@@ -6,7 +6,7 @@ import aiohttp
 import aiohttp_jinja2
 from aiohttp import web
 
-import config
+import settings
 from utils import get_logger
 from webapp import (
     setup_routes,
@@ -31,7 +31,7 @@ def run():
     setup_static_routes(app)
     aiohttp_jinja2.setup(
         app,
-        loader=jinja2.FileSystemLoader(str(config.TEMPLATES_DIR)),
+        loader=jinja2.FileSystemLoader(str(settings.TEMPLATES_DIR)),
         filters={'checkbox': checkbox},
     )
 

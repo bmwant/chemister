@@ -1,6 +1,6 @@
 import json
 import aioredis
-import config
+import settings
 
 
 class Cache(object):
@@ -13,7 +13,7 @@ class Cache(object):
 
     async def _create_pool(self):
         self._pool = await aioredis.create_redis_pool(
-            config.REDIS_URI,
+            settings.REDIS_URI,
             minsize=self.MIN_POOL_CONNS,
             maxsize=self.MAX_POOL_CONNS,
         )

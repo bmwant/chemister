@@ -3,7 +3,7 @@ import operator
 
 import yaml
 
-import config
+import settings
 from utils import get_logger
 from crawler.scheduler import Scheduler
 from crawler.factory import Factory
@@ -16,12 +16,12 @@ async def load_yaml(filepath):
 
 
 async def load_teams():
-    data = await load_yaml(config.TEAMS_FILEPATH)
+    data = await load_yaml(settings.TEAMS_FILEPATH)
     return data
 
 
 async def load_resources():
-    data = await load_yaml(config.RESOURCES_FILEPATH)
+    data = await load_yaml(settings.RESOURCES_FILEPATH)
     return map(operator.itemgetter('name'), data)
 
 

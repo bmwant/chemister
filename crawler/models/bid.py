@@ -1,5 +1,7 @@
-import sqlalchemy as sa
+from datetime import datetime
+
 import attr
+import sqlalchemy as sa
 
 from . import metadata
 from .resource import resource
@@ -11,24 +13,24 @@ class Bid(object):
     currency: str = attr.ib()
     rate: float = attr.ib()
     phone: str = attr.ib()
-    id: int = attr.ib(default=1)
-    date: str = attr.ib(default='17 Apr 2018')
-    resource: str = attr.ib(default='i.ua')
+    id: int = attr.ib()
+    date: str = attr.ib()
+    resource: str = attr.ib()
 
 
 bid = sa.Table(
     'bid', metadata,
-    sa.Column('id', sa.Integer),
-    sa.Column('rate', sa.Float),
-    sa.Column('amount', sa.Float),
-    sa.Column('currency', sa.String),
-    sa.Column('phone', sa.String),
-    sa.Column('created', sa.DateTime),
-    sa.Column('dry_run', sa.Boolean),
-    sa.Column('resource_id', sa.Integer, nullable=False),
+    sa.Column('id', sa.Integer, nullable=False),
+    sa.Column('rate', sa.Float, nullable=False),
+    sa.Column('amount', sa.Float, nullable=False),
+    sa.Column('currency', sa.String, nullable=False),
+    sa.Column('phone', sa.String, nullable=False),
+    sa.Column('created', sa.DateTime, nullable=False, default=datetime.now),
+    sa.Column('dry_run', sa.Boolean, nullable=False),
+    sa.Column('resource_id', sa.Integer),
 
     sa.PrimaryKeyConstraint('id', name='bid_id_pkey'),
     sa.ForeignKeyConstraint(['resource_id'], [resource.c.id],
                             name='bid_resource_id_fkey',
-                            ondelete='SET NULL'),
+                            ondelete='NO ACTION'),
 )

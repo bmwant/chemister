@@ -1,13 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-import config
+import settings
 from crawler.driver import BaseDriver
 
 
 class ChromeDriver(BaseDriver):
     BINARY_PATH = '/usr/bin/google-chrome'
-    EXECUTABLE_PATH = config.CHROME_DRIVER_PATH
+    EXECUTABLE_PATH = settings.CHROME_DRIVER_PATH
 
     def __init__(self, *, proxy_uri=None):
         super().__init__()
