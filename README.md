@@ -58,9 +58,10 @@ $ pytest -sv tests
 
 ### Checking data within database
 ```
-$ psql -U che -d chemister -h localhost
+$ psql -U che -d chemister -h 172.17.0.2
 
 => \dt
 => select * from bid;
+=> \q
 ```
 

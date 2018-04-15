@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS bid(
   phone         VARCHAR         NOT NULL,
   created       TIMESTAMP       NOT NULL,
   dry_run       BOOLEAN         NOT NULL,
+  status        bid_status      NOT NULL    DEFAULT 'new',
   resource_id   INT             NOT NULL,
 
   FOREIGN KEY (resource_id) REFERENCES resource (id),

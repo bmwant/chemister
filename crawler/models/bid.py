@@ -14,6 +14,7 @@ bid = sa.Table(
     sa.Column('rate', sa.Float, nullable=False),
     sa.Column('amount', sa.Float, nullable=False),
     sa.Column('currency', sa.String, nullable=False),
+    sa.Column('state', sa.String, nullable=False),
     sa.Column('phone', sa.String, nullable=False),
     sa.Column('created', sa.DateTime, nullable=False, default=datetime.now),
     sa.Column('dry_run', sa.Boolean, nullable=False),

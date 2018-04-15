@@ -3,6 +3,7 @@ import datetime
 import attr
 import sqlalchemy as sa
 
+from crawler.db import get_engine
 from . import metadata
 
 
@@ -34,3 +35,11 @@ config = sa.Table(
 
     sa.PrimaryKeyConstraint('id', name='config_id_pkey'),
 )
+
+
+async def insert_new_config(new_config):
+    engine = await get_engine()
+    async with engine.acquire() as conn:
+        await conn.execute(config.insert().values(
+            value=new_config,
+        ))

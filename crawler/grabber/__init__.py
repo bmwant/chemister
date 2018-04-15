@@ -4,7 +4,7 @@ Grab information needed from a resource and store it.
 from abc import ABC, abstractmethod
 
 from utils import get_logger
-from crawler.db import insert_new_bid
+from crawler.models.bid import insert_new_bid
 
 
 class BaseGrabber(ABC):
