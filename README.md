@@ -31,34 +31,36 @@ $ docker run -it -v $(pwd):/opt --rm --link local-postgres:postgres postgres \
 ```
 
 ### Installation
-```
-$ git clone https://github.com/bmwant/.git
+```bash
+$ git clone https://github.com/bmwant/chemister.git
 $ pipenv install
 $ npm install
 $ pipenv shell
 $ python runserver.py
 ```
 or using CLI scripts
-```
+```bash
 $ python cli.py monitor
 $ redis-cli
 > get [resource name]
 # e.g. > get "Sky Bet"
 ```
 You may need to 
-```
+```bash
 $ export PYTHONPATH=`pwd`
 ```
 in case you encounter some import errors.
 
 ### Test
-```
+```bash
 $ pytest -sv tests
 ```
 
-### Extend
-To add new resource follow these steps:
-1. Edit `resources.yml` and add new resource
-2. Add new parser to `crawler.parser` package
-3. Yes, that's it!
+### Checking data within database
+```
+$ psql -U che -d chemister -h localhost
+
+=> \dt
+=> select * from bid;
+```
 

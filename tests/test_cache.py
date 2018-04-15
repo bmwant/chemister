@@ -24,3 +24,20 @@ async def test_json_data(cache):
     assert isinstance(result, dict)
     await cache.close()
 
+
+def test_inserting_attr_model():
+    import attr
+    import json
+
+    @attr.s
+    class Bid(object):
+        amount: float = attr.ib()
+        currency: str = attr.ib()
+
+    b = Bid(amount=5, currency='USD')
+    import pdb; pdb.set_trace()
+    r = json.dumps(b)
+    print(r)
+
+
+
