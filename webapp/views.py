@@ -4,8 +4,8 @@ from functools import partial
 import aiohttp_jinja2
 from aiohttp import web
 
+from crawler.helpers import load_config
 from webapp.utils import refresh_data, load_resources, get_cached_value
-from crawler.models.configs import config as config_model
 
 
 @aiohttp_jinja2.template('index.html')
@@ -59,12 +59,7 @@ async def check_refresh_done(request):
     })
 
 
-@aiohttp_jinja2.template('form.html')
+@aiohttp_jinja2.template('settings.html')
 async def settings(request):
-    async with request.app['db'].acquire() as conn:
-        cursor = await conn.execute(config_model.select())
-        items = await cursor.fetchall()
-        # questions = [dict(q) for q in records]
-        # return {'questions': questions}
-        print(items)
-        return {}
+    config = await load_config()
+    return {'config': config}

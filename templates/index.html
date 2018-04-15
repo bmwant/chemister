@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "helpers/_get_status.html" as get_status %}
 {% block content %}
 <div class="page-header">
   <h1 class="page-title">
@@ -346,7 +347,7 @@
                   </span>
         <div>
           <h4 class="m-0"><a href="javascript:void(0)">In</a></h4>
-          <small class="text-muted">12 bids</small>
+          <small class="text-muted">{{ in_bids | length }} bids</small>
         </div>
       </div>
     </div>
@@ -390,7 +391,8 @@
             <td>{{ bid.phone }}</td>
             <td>{{ bid.date }}</td>
             <td>
-              <span class="status-icon bg-success"></span> {{ bid.status }}
+
+              {{ get_status.status(bid) }}
             </td>
             <td><a href="#">{{ bid.resource }}</a></td>
             <td class="text-right">
@@ -414,7 +416,7 @@
                   </span>
         <div>
           <h4 class="m-0"><a href="javascript:void(0)">Out</a></h4>
-          <small class="text-muted">32 bids</small>
+          <small class="text-muted">{{ out_bids | length }} bids</small>
         </div>
       </div>
     </div>
@@ -457,7 +459,7 @@
               <td>{{ bid.phone }}</td>
               <td>{{ bid.date }}</td>
               <td>
-                <span class="status-icon bg-success"></span> {{ bid.status }}
+                {{ get_status.status(bid) }}
               </td>
               <td><a href="#">{{ bid.resource }}</a></td>
               <td class="text-right">

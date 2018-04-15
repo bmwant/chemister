@@ -1,0 +1,17 @@
+{% macro status(bid) -%}
+{% set status = bid.status %}
+{% if status == 'new' %}
+  {% set icon_class = "bg-light" %}
+{% elif status == 'notified' %}
+  {% set icon_class = "bg-warning" %}
+{% elif status == 'called' %}
+  {% set icon_class = "bg-info" %}
+{% elif status == 'rejected' %}
+  {% set icon_class = "bg-danger" %}
+{% elif status == 'inactive' %}
+  {% set icon_class = "bg-secondary" %}
+{% elif status == 'closed' %}
+  {% set icon_class = "bg-success" %}
+{% endif %}
+<span class="status-icon {{ icon_class }}"></span> {{ status }}
+{%- endmacro %}

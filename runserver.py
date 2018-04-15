@@ -16,6 +16,7 @@ from webapp import (
     init_pg,
     close_pg,
 )
+from webapp.filters import checkbox
 
 
 def run():
@@ -29,7 +30,10 @@ def run():
     setup_routes(app)
     setup_static_routes(app)
     aiohttp_jinja2.setup(
-        app, loader=jinja2.FileSystemLoader(str(config.TEMPLATES_DIR)))
+        app,
+        loader=jinja2.FileSystemLoader(str(config.TEMPLATES_DIR)),
+        filters={'checkbox': checkbox},
+    )
 
     uprint = partial(print, flush=True)
     port = int(os.environ.get('PORT', 8080))

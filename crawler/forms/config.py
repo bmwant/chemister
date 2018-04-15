@@ -8,5 +8,4 @@ config_trafaret = t.Dict(
     CLOSED_BIDS_FACTOR=t.Float,
     TIME_DAY_ENDS=t.String,
     REFRESH_PERIOD_MINUTES=t.Int,
-
 )

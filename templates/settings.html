@@ -15,7 +15,7 @@
               <span class="input-group-prepend">
                 <span class="input-group-text">MIN_BID_AMOUNT</span>
               </span>
-                <input type="text" class="form-control" name="MIN_BID_AMOUNT">
+                <input type="text" value="{{ config.MIN_BID_AMOUNT | int }}" class="form-control" name="MIN_BID_AMOUNT">
               </div>
             </div>
 
@@ -25,14 +25,14 @@
               <span class="input-group-prepend">
                 <span class="input-group-text">MAX_BID_AMOUNT</span>
               </span>
-                <input type="text" class="form-control" name="MAX_BID_AMOUNT">
+                <input type="text" value="{{ config.MAX_BID_AMOUNT | int }}" class="form-control" name="MAX_BID_AMOUNT">
               </div>
             </div>
 
             <div class="form-group">
               <div class="form-label">Close all bids in a test mode</div>
               <label class="custom-switch">
-                <input type="checkbox" name="DRY_RUN" class="custom-switch-input">
+                <input type="checkbox" checked name="DRY_RUN" class="custom-switch-input">
                 <span class="custom-switch-indicator"></span>
                 <span class="custom-switch-description">DRY_RUN</span>
               </label>
@@ -44,7 +44,7 @@
                 <span class="input-group-prepend">
                   <span class="input-group-text">CLOSED_BIDS_FACTOR</span>
                 </span>
-                <input type="text" class="form-control" name="CLOSED_BIDS_FACTOR">
+                <input type="text" value="{{ config.CLOSED_BIDS_FACTOR }}" class="form-control" name="CLOSED_BIDS_FACTOR">
               </div>
             </div>
 
@@ -54,7 +54,7 @@
                 <span class="input-group-prepend">
                   <span class="input-group-text">TIME_DAY_ENDS</span>
                 </span>
-                <input type="text" name="TIME_DAY_ENDS" class="form-control"
+                <input type="text" value="{{ config.TIME_DAY_ENDS }}" name="TIME_DAY_ENDS" class="form-control"
                        data-mask="00:00" data-mask-clearifnotmatch="true"
                        placeholder="00:00" />
               </div>
@@ -66,7 +66,7 @@
                 <span class="input-group-prepend">
                   <span class="input-group-text">REFRESH_PERIOD_MINUTES</span>
                 </span>
-                <input type="text" class="form-control" name="REFRESH_PERIOD_MINUTES">
+                <input type="text" value="{{ config.REFRESH_PERIOD_MINUTES }}" class="form-control" name="REFRESH_PERIOD_MINUTES">
               </div>
             </div>
           </div>
