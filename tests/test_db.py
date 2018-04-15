@@ -34,6 +34,7 @@ async def test_insert_new_bid():
         'rate': 26,
         'amount': 100,
         'currency': 'USD',
-        'phone': '+380987776655'
+        'phone': '+380987776655',
+        'type': 'in',
     }
     await insert_new_bid(bid)

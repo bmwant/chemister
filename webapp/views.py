@@ -5,16 +5,27 @@ import aiohttp_jinja2
 from aiohttp import web
 
 from crawler.helpers import load_config
+from crawler.models.bid import get_daily_bids
 from webapp.utils import refresh_data, load_resources, get_cached_value
 
 
 @aiohttp_jinja2.template('index.html')
 async def index(request):
     logger = request.app.logger
-    cache = request.app['cache']
-    logger.info('Accessing index page')
-    resources = await load_resources()
 
+    logger.info('Accessing index page')
+
+    in_bids = await get_daily_bids(bid_type='in')
+    out_bids = await get_daily_bids(bid_type='out')
+    return {
+        'in_bids': in_bids,
+        'out_bids': out_bids,
+    }
+
+
+async def get_bids_from_cache(cache):
+    # cache = request.app['cache']
+    resources = await load_resources()
     in_bids = []
     out_bids = []
     for resource in resources:
@@ -23,11 +34,6 @@ async def index(request):
         if resource_data is not None:
             in_bids.extend(resource_data['in_bids'])
             out_bids.extend(resource_data['out_bids'])
-
-    return {
-        'in_bids': in_bids,
-        'out_bids': out_bids,
-    }
 
 
 @aiohttp_jinja2.template('loading.html')

@@ -5,6 +5,10 @@ CREATE TYPE bid_status AS ENUM (
   'new', 'notified', 'called', 'rejected', 'inactive', 'closed'
 );
 
+CREATE TYPE bid_type AS ENUM (
+  'in', 'out'
+);
+
 
 CREATE TABLE IF NOT EXISTS config(
   id            SERIAL          NOT NULL,
@@ -34,6 +38,7 @@ CREATE TABLE IF NOT EXISTS bid(
   created       TIMESTAMP       NOT NULL,
   dry_run       BOOLEAN         NOT NULL,
   status        bid_status      NOT NULL    DEFAULT 'new',
+  bid_type      bid_type        NOT NULL,
   resource_id   INT             NOT NULL,
 
   FOREIGN KEY (resource_id) REFERENCES resource (id),
