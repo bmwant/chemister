@@ -38,7 +38,7 @@ bid = sa.Table(
 )
 
 
-async def insert_new_bid(new_bid, resource=None):
+async def insert_new_bid(new_bid, bid_type, resource=None):
     engine = await get_engine()
     config = await load_config()
 
@@ -48,7 +48,7 @@ async def insert_new_bid(new_bid, resource=None):
             amount=new_bid['amount'],
             currency=new_bid['currency'],
             phone=new_bid['phone'],
-            bid_type=new_bid['type'],
+            bid_type=bid_type,
             dry_run=config.DRY_RUN,
             resource_id=1,
         )

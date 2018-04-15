@@ -4,7 +4,7 @@ Grab information needed from a resource and store it.
 from abc import ABC, abstractmethod
 
 from utils import get_logger
-from crawler.models.bid import insert_new_bid
+from crawler.models.bid import insert_new_bid, BidType
 
 
 class BaseGrabber(ABC):
@@ -36,21 +36,21 @@ class BaseGrabber(ABC):
         if self.cache is not None:
             await self.cache.set(self.name, data)
 
-        fetched_bids = [*in_bids, *out_bids]
-        await self.insert_new_bids(fetched_bids)
+        await self.insert_new_bids(in_bids, BidType.IN)
+        await self.insert_new_bids(out_bids, BidType.OUT)
         return data
 
     @abstractmethod
     async def get_in_bids(self):
-        pass
+        return []
 
     @abstractmethod
     async def get_out_bids(self):
-        pass
+        return []
 
-    async def insert_new_bids(self, bids):
+    async def insert_new_bids(self, bids, bid_type):
         resource = None
         for bid in bids:
-            await insert_new_bid(bid, resource)
+            await insert_new_bid(bid, bid_type, resource)
 
 
