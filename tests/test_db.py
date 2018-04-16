@@ -1,6 +1,6 @@
 import pytest
 from crawler.models.configs import insert_new_config
-from crawler.models.bid import insert_new_bid
+from crawler.models.bid import insert_new_bid, BidType
 from crawler.models.resource import insert_new_resource
 
 
@@ -29,12 +29,18 @@ async def test_insert_new_resource():
 
 
 @pytest.mark.run_loop
-async def test_insert_new_bid():
-    bid = {
+async def test_insert_new_bids():
+    in_bid = {
         'rate': 26,
         'amount': 100,
         'currency': 'USD',
         'phone': '+380987776655',
-        'type': 'in',
     }
-    await insert_new_bid(bid)
+    out_bid = {
+        'rate': 26.1,
+        'amount': 100,
+        'currency': 'USD',
+        'phone': '+380987774433',
+    }
+    await insert_new_bid(in_bid, BidType.IN)
+    await insert_new_bid(out_bid, BidType.OUT)

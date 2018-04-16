@@ -1,0 +1,47 @@
+{% import "helpers/_get_status.html" as get_status %}
+{% macro render_bids_table(header, bids) -%}
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">{{ header }}</h3>
+  </div>
+  <div class="table-responsive">
+    <table class="table card-table table-vcenter text-nowrap">
+      <thead>
+      <tr>
+        <th class="w-1">#</th>
+        <th>Amount</th>
+        <th>Currency</th>
+        <th>Rate</th>
+        <th>Phone No.</th>
+        <th>Created</th>
+        <th>Status</th>
+        <th>Source</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for bid in bids %}
+      <tr>
+        <td><span class="text-muted">{{ bid.id }}</span></td>
+        <td>{{ bid.amount }}</td>
+        <td>{{ bid.currency }}</td>
+        <td>{{ bid.rate }}</td>
+        <td>{{ bid.phone }}</td>
+        <td>{{ bid.created }}</td>
+        <td>
+
+          {{ get_status.status(bid) }}
+        </td>
+        <td><a href="#">{{ bid.resource_id }}</a></td>
+        <td class="text-right">
+          <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{%- endmacro %}

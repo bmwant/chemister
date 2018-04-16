@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "helpers/_get_status.html" as get_status %}
+{% import "helpers/_render_bids_table.html" as table %}
 {% block content %}
 <div class="page-header">
   <h1 class="page-title">
@@ -313,50 +313,7 @@
   </div>
 
   <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">In bids</h3>
-      </div>
-      <div class="table-responsive">
-        <table class="table card-table table-vcenter text-nowrap">
-          <thead>
-          <tr>
-            <th class="w-1">#</th>
-            <th>Amount</th>
-            <th>Currency</th>
-            <th>Rate</th>
-            <th>Phone No.</th>
-            <th>Created</th>
-            <th>Status</th>
-            <th>Source</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for bid in in_bids %}
-            <tr>
-            <td><span class="text-muted">{{ bid.id }}</span></td>
-            <td>{{ bid.amount }}</td>
-            <td>{{ bid.currency }}</td>
-            <td>{{ bid.rate }}</td>
-            <td>{{ bid.phone }}</td>
-            <td>{{ bid.date }}</td>
-            <td>
-
-              {{ get_status.status(bid) }}
-            </td>
-            <td><a href="#">{{ bid.resource }}</a></td>
-            <td class="text-right">
-              <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    {{ table.render_bids_table("In bids", in_bids) }}
   </div>
 
   <div class="col-sm-6 col-lg-3">
@@ -381,49 +338,7 @@
     </form>
   </div>
   <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">Out bids</h3>
-      </div>
-      <div class="table-responsive">
-        <table class="table card-table table-vcenter text-nowrap">
-          <thead>
-          <tr>
-            <th class="w-1">#</th>
-            <th>Amount</th>
-            <th>Currency</th>
-            <th>Rate</th>
-            <th>Phone No.</th>
-            <th>Created</th>
-            <th>Status</th>
-            <th>Source</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for bid in out_bids %}
-            <tr>
-              <td><span class="text-muted">{{ bid.id }}</span></td>
-              <td>{{ bid.amount }}</td>
-              <td>{{ bid.currency }}</td>
-              <td>{{ bid.rate }}</td>
-              <td>{{ bid.phone }}</td>
-              <td>{{ bid.date }}</td>
-              <td>
-                {{ get_status.status(bid) }}
-              </td>
-              <td><a href="#">{{ bid.resource }}</a></td>
-              <td class="text-right">
-                <div class="dropdown">
-                  <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
-                </div>
-              </td>
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    {{ table.render_bids_table("Out bids", out_bids) }}
   </div>
 </div>
 <div class="row row-cards row-deck">

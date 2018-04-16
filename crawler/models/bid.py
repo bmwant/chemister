@@ -39,7 +39,7 @@ bid = sa.Table(
 )
 
 
-async def insert_new_bid(new_bid, bid_type, resource=None):
+async def insert_new_bid(new_bid: dict, bid_type: BidType, resource=None):
     engine = await get_engine()
     config = await load_config()
 
@@ -49,24 +49,25 @@ async def insert_new_bid(new_bid, bid_type, resource=None):
             amount=new_bid['amount'],
             currency=new_bid['currency'],
             phone=new_bid['phone'],
-            bid_type=bid_type,
+            bid_type=bid_type.value,
             dry_run=config.DRY_RUN,
             resource_id=1,
         )
         await conn.execute(query)
 
 
-async def get_daily_bids(bid_type):
+async def get_daily_bids(bid_type: BidType):
     engine = await get_engine()
 
     datetime_today = datetime.now()
-    datetime_yesterday = datetime_today - timedelta(days=1)
+    datetime_tomorrow = datetime_today + timedelta(days=1)
     midnight_today = get_midnight(datetime_today)
-    midnight_yesterday = get_midnight(datetime_yesterday)
+    midnight_tomorrow = get_midnight(datetime_tomorrow)
     async with engine.acquire() as conn:
         query = bid.select().where(sa.and_(
-            bid.c.created > midnight_yesterday,
-            bid.c.created <= midnight_today
+            bid.c.created > midnight_today,
+            bid.c.created <= midnight_tomorrow,
+            bid.c.bid_type == bid_type
         ))
         result = await conn.execute(query)
         return await result.fetchall()
