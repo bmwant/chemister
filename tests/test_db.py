@@ -1,6 +1,10 @@
 import pytest
 from crawler.models.configs import insert_new_config
-from crawler.models.bid import insert_new_bid, BidType
+from crawler.models.bid import (
+    insert_new_bid,
+    get_bid_by_signature,
+    BidType,
+)
 from crawler.models.resource import insert_new_resource
 
 
@@ -44,3 +48,28 @@ async def test_insert_new_bids():
     }
     await insert_new_bid(in_bid, BidType.IN)
     await insert_new_bid(out_bid, BidType.OUT)
+
+
+@pytest.mark.run_loop
+async def test_get_bid_by_signature():
+    nonexisting_bid = {
+        'rate': 500,
+        'amount': 100,
+        'currency': 'USD',
+        'phone': '+380971112233',
+        'bid_type': 'out',
+    }
+    the_bid = {
+        'rate': 26.1,
+        'amount': 100,
+        'currency': 'USD',
+        'phone': '+380987774433',
+        'bid_type': 'out',
+    }
+
+    result = await get_bid_by_signature(nonexisting_bid)
+    assert result is None
+
+    result = await get_bid_by_signature(the_bid)
+    assert result is not None
+    print(result)

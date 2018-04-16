@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS resource(
 
 CREATE TABLE IF NOT EXISTS bid(
   id            SERIAL          NOT NULL,
-  rate          REAL            NOT NULL,
-  amount        REAL            NOT NULL,
+  rate          NUMERIC         NOT NULL,
+  amount        NUMERIC         NOT NULL,
   currency      VARCHAR         NOT NULL,
   phone         VARCHAR         NOT NULL,
   created       TIMESTAMP       NOT NULL,

@@ -17,3 +17,4 @@ echo "::running additional sql"
 
 psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" -f "${DIR}/sql/002_create_tables.sql"
 
+# todo: fail on errors

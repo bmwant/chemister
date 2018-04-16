@@ -5,7 +5,7 @@ import aiohttp_jinja2
 from aiohttp import web
 
 from crawler.helpers import load_config
-from crawler.models.bid import get_daily_bids
+from crawler.models.bid import get_daily_bids, BidType
 from webapp.utils import refresh_data, load_resources, get_cached_value
 
 
@@ -15,8 +15,8 @@ async def index(request):
 
     logger.info('Accessing index page')
 
-    in_bids = await get_daily_bids(bid_type='in')
-    out_bids = await get_daily_bids(bid_type='out')
+    in_bids = await get_daily_bids(bid_type=BidType.IN)
+    out_bids = await get_daily_bids(bid_type=BidType.OUT)
     return {
         'in_bids': in_bids,
         'out_bids': out_bids,
