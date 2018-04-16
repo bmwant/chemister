@@ -1,7 +1,7 @@
 {% macro status(bid) -%}
 {% set status = bid.status %}
 {% if status == 'new' %}
-  {% set icon_class = "bg-light" %}
+  {% set icon_class = "bg-teal" %}
 {% elif status == 'notified' %}
   {% set icon_class = "bg-warning" %}
 {% elif status == 'called' %}
