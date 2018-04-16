@@ -1,10 +1,14 @@
 import attr
 
+from utils import get_logger
 from crawler.db import get_engine
 from crawler.forms.config import config_trafaret
 from crawler.models.configs import config as config_model
 
 from sqlalchemy import desc
+
+
+logger = get_logger(__name__)
 
 
 async def load_config():
@@ -24,4 +28,6 @@ async def load_config():
             'Config',
             list(map(lambda x: getattr(x, 'name'), config_trafaret.keys))
         )
-        return Config(**config_value)
+        loaded_config = Config(**config_value)
+        logger.debug('Loaded config %s', loaded_config)
+        return loaded_config

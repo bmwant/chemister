@@ -33,8 +33,11 @@ class IUaGrabber(BaseGrabber):
         return await self.filter_data(data)
 
     async def filter_data(self, data):
-        config = await load_config()
-        filtered_result = Container(data) >> \
-            Filter('amount', operator.gt, config.MIN_BID_AMOUNT) >> \
-            Filter('amount', operator.lt, config.MAX_BID_AMOUNT)
-        return filtered_result.data
+        return data
+        # config = await load_config()
+        # filtered_result = Container(data) >> \
+        #     Filter('amount', operator.gt, config.MIN_BID_AMOUNT) >> \
+        #     Filter('amount', operator.lt, config.MAX_BID_AMOUNT)
+        # self.logger.info('Fetched: %s. Filtered: %s',
+        #                  len(data), len(filtered_result))
+        # return filtered_result.data

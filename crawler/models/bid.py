@@ -59,9 +59,14 @@ async def get_bid_by_signature(bid_item):
         return await result.fetchone()
 
 
-async def insert_new_bid(new_bid: dict, bid_type: BidType, resource=None):
+async def insert_new_bid(new_bid: dict, bid_type: BidType=None, resource=None):
     engine = await get_engine()
     config = await load_config()
+
+    if bid_type is None:
+        bid_type_value = new_bid['bid_type']
+    else:
+        bid_type_value = bid_type.value
 
     async with engine.acquire() as conn:
         query = bid.insert().values(
@@ -69,7 +74,7 @@ async def insert_new_bid(new_bid: dict, bid_type: BidType, resource=None):
             amount=new_bid['amount'],
             currency=new_bid['currency'],
             phone=new_bid['phone'],
-            bid_type=bid_type.value,
+            bid_type=bid_type_value,
             dry_run=config.DRY_RUN,
             resource_id=1,
         )
@@ -87,7 +92,11 @@ async def get_daily_bids(bid_type: BidType):
         query = bid.select().where(sa.and_(
             bid.c.created > midnight_today,
             bid.c.created <= midnight_tomorrow,
-            bid.c.bid_type == bid_type
+            bid.c.bid_type == bid_type.value
         ))
         result = await conn.execute(query)
         return await result.fetchall()
+
+
+async def mark_inactive(bid_ids: list):
+    pass

@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS resource(
 
 
 CREATE TABLE IF NOT EXISTS bid(
+  -- todo: unique together on signature
   id            SERIAL          NOT NULL,
   rate          NUMERIC         NOT NULL,
   amount        NUMERIC         NOT NULL,

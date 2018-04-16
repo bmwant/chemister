@@ -1,10 +1,17 @@
 """
 Grab information needed from a resource and store it.
 """
+import asyncio
 from abc import ABC, abstractmethod
 
 from utils import get_logger
-from crawler.models.bid import insert_new_bid, BidType
+from crawler.models.bid import (
+    insert_new_bid,
+    mark_inactive,
+    get_daily_bids,
+    get_bid_by_signature,
+    BidType,
+)
 
 
 class BaseGrabber(ABC):
@@ -36,8 +43,15 @@ class BaseGrabber(ABC):
         if self.cache is not None:
             await self.cache.set(self.name, data)
 
-        await self.insert_new_bids(in_bids, BidType.IN)
-        await self.insert_new_bids(out_bids, BidType.OUT)
+        in_bids_data = map(lambda b: self._set_bid_type(b, BidType.IN),
+                           in_bids)
+        out_bids_data = map(lambda b: self._set_bid_type(b, BidType.OUT),
+                            out_bids)
+
+        fetched_bids = [*in_bids_data, *out_bids_data]
+        await self.mark_inactive_bids(fetched_bids)
+
+        await self.insert_new_bids(fetched_bids)
         return data
 
     @abstractmethod
@@ -48,9 +62,37 @@ class BaseGrabber(ABC):
     async def get_out_bids(self):
         return []
 
-    async def insert_new_bids(self, bids, bid_type):
+    @staticmethod
+    def _set_bid_type(bid: dict, bid_type: BidType):
+        bid['bid_type'] = bid_type.value
+        return bid
+
+    @staticmethod
+    def _not_in(bid, fetched_bids: list):
+        bid_signature = {
+            'rate': bid.rate,
+            'amount': bid.amount,
+            'phone': bid.phone,
+            'currency': bid.currency,
+            'bid_type': bid.bid_type,
+        }
+        return bid_signature not in fetched_bids
+
+    async def mark_inactive_bids(self, fetched_bids):
+        daily_in_bids = await get_daily_bids(BidType.IN)
+        daily_out_bids = await get_daily_bids(BidType.OUT)
+        daily_bids = [*daily_in_bids, *daily_out_bids]
+        inactive_bids = [b.id for b in daily_bids
+                         if self._not_in(b, fetched_bids)]
+        self.logger.warning('Marking bids as inactive %s', inactive_bids)
+        await mark_inactive(inactive_bids)
+
+    async def insert_new_bids(self, bids):
         resource = None
+        insert_tasks = []
         for bid in bids:
-            await insert_new_bid(bid, bid_type, resource)
+            already_stored = await get_bid_by_signature(bid)
+            if not already_stored:
+                insert_tasks.append(insert_new_bid(bid, resource=resource))
 
-
+        await asyncio.gather(*insert_tasks)
