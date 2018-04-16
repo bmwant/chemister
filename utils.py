@@ -29,3 +29,7 @@ class LoggableMixin(object):
             self._logger = get_logger(self.__class__.__name__.lower())
 
         return self._logger
+
+
+def get_midnight(datetime_value):
+    return datetime_value.replace(hour=0, minute=0, second=0, microsecond=0)

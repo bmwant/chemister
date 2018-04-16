@@ -1,8 +1,9 @@
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import sqlalchemy as sa
 
+from utils import get_midnight
 from . import metadata
 from .resource import resource
 from crawler.db import get_engine
@@ -58,7 +59,14 @@ async def insert_new_bid(new_bid, bid_type, resource=None):
 async def get_daily_bids(bid_type):
     engine = await get_engine()
 
+    datetime_today = datetime.now()
+    datetime_yesterday = datetime_today - timedelta(days=1)
+    midnight_today = get_midnight(datetime_today)
+    midnight_yesterday = get_midnight(datetime_yesterday)
     async with engine.acquire() as conn:
-        query = bid.select()
+        query = bid.select().where(sa.and_(
+            bid.c.created > midnight_yesterday,
+            bid.c.created <= midnight_today
+        ))
         result = await conn.execute(query)
         return await result.fetchall()
