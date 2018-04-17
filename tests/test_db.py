@@ -2,12 +2,14 @@ import pytest
 from crawler.models.configs import insert_new_config
 from crawler.models.bid import (
     insert_new_bid,
+    get_daily_bids,
     get_bid_by_signature,
     get_bid_by_id,
     set_bid_status,
     mark_bids_as_inactive,
     BidType,
     BidStatus,
+    ACTIVE_STATUSES,
 )
 from crawler.models.resource import insert_new_resource
 
@@ -108,3 +110,9 @@ async def test_mark_bids_as_inactive(pg_engine):
     async with pg_engine.acquire() as conn:
         rowcount = await mark_bids_as_inactive(conn, bid_ids)
         assert rowcount == len(bid_ids)
+
+
+@pytest.mark.run_loop
+async def test_get_only_daily_active_bids(pg_engine):
+    async with pg_engine.acquire() as conn:
+        bids = await get_daily_bids(conn, BidType.IN, ACTIVE_STATUSES)

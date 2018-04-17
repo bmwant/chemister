@@ -1,4 +1,5 @@
 from enum import Enum
+from operator import attrgetter
 from datetime import datetime, timedelta
 
 import sqlalchemy as sa
@@ -19,6 +20,16 @@ class BidStatus(Enum):
     REJECTED = 'rejected'
     INACTIVE = 'inactive'
     CLOSED = 'closed'
+
+
+ACTIVE_STATUSES = [
+    *map(attrgetter('value'),
+         (BidStatus.NEW, BidStatus.NOTIFIED, BidStatus.CALLED))
+]
+INACTIVE_STATUSES = [
+    *map(attrgetter('value'),
+         (BidStatus.REJECTED, BidStatus.INACTIVE, BidStatus.CLOSED))
+]
 
 
 class BidType(Enum):
@@ -95,7 +106,7 @@ async def insert_new_bid(
     await conn.execute(query)
 
 
-async def get_daily_bids(conn, bid_type: BidType):
+async def get_daily_bids(conn, bid_type: BidType, statuses=None):
     datetime_today = datetime.now()
     datetime_tomorrow = datetime_today + timedelta(days=1)
     midnight_today = get_midnight(datetime_today)
@@ -105,6 +116,9 @@ async def get_daily_bids(conn, bid_type: BidType):
         bid.c.created <= midnight_tomorrow,
         bid.c.bid_type == bid_type.value
     ))
+    if statuses is not None:
+        query = query.where(bid.c.status.in_(statuses))
+
     result = await conn.execute(query)
     return await result.fetchall()
 
@@ -113,6 +127,14 @@ async def mark_bids_as_inactive(conn, bid_ids: list):
     query = bid.update()\
         .where(bid.c.id.in_(bid_ids))\
         .values(status=BidStatus.INACTIVE.value)
+
+    return (await conn.execute(query)).rowcount
+
+
+async def mark_bids_as_unused(conn, bid_ids: list):
+    query = bid.update()\
+        .where(bid.c.id.in_(bid_ids))\
+        .values(in_use=False)
 
     return (await conn.execute(query)).rowcount
 
