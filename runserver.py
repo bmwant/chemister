@@ -22,7 +22,7 @@ from webapp.filters import checkbox
 def run():
     app = web.Application()
     logger = get_logger('webapp')
-    app.logger = logger
+    app['logger'] = logger
     app.on_startup.append(setup_cache)
     app.on_startup.append(init_pg)
     app.on_shutdown.append(destroy_cache)

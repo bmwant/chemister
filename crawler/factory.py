@@ -37,7 +37,7 @@ class Factory(object):
         await self.cache._create_pool()
 
     async def init(self):
-        await self.load_resources()
+        self.load_resources()
         await self.init_cache()
 
     async def cleanup(self):
@@ -103,13 +103,13 @@ class Factory(object):
             engine=engine,
         )
 
-    def create(self):
+    async def create(self):
         grabbers = []
         # Each grabber is responsible for closing resources within itself
         for res in self.resources:
             fetcher = self.get_fetcher(res)
             parser = self.get_parser(res.parser)
-            engine = get_engine()
+            engine = await get_engine()
             grabber = self.get_grabber(
                 resource=res,
                 fetcher=fetcher,

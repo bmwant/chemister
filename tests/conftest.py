@@ -29,6 +29,15 @@ def loop():
         loop.close()
 
 
+@pytest.fixture
+def pg_engine(loop):
+    engine = None
+
+    yield engine
+
+    # close engine
+
+
 @pytest.mark.tryfirst
 def pytest_pyfunc_call(pyfuncitem):
     if 'run_loop' in pyfuncitem.keywords:

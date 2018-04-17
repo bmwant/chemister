@@ -88,7 +88,7 @@ class BaseGrabber(ABC):
         return bid_signature not in fetched_bids
 
     async def mark_inactive_bids(self, fetched_bids):
-        with self.engine.acquire() as conn:
+        async with self.engine.acquire() as conn:
             daily_in_bids = await get_daily_bids(conn, BidType.IN)
             daily_out_bids = await get_daily_bids(conn, BidType.OUT)
             daily_bids = [*daily_in_bids, *daily_out_bids]
@@ -101,7 +101,7 @@ class BaseGrabber(ABC):
         resource = None
         insert_tasks = []
         # todo: check acquiring with gather
-        with self.engine.acquire() as conn:
+        async with self.engine.acquire() as conn:
             for bid in bids:
                 already_stored = await get_bid_by_signature(conn, bid)
                 if not already_stored:

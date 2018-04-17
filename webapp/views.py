@@ -11,12 +11,15 @@ from webapp.utils import refresh_data, load_resources, get_cached_value
 
 @aiohttp_jinja2.template('index.html')
 async def index(request):
-    logger = request.app.logger
-
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
     logger.info('Accessing index page')
 
-    in_bids = await get_daily_bids(bid_type=BidType.IN)
-    out_bids = await get_daily_bids(bid_type=BidType.OUT)
+    async with engine.acquire() as conn:
+        in_bids = await get_daily_bids(conn, bid_type=BidType.IN)
+        out_bids = await get_daily_bids(conn, bid_type=BidType.OUT)
+
     return {
         'in_bids': in_bids,
         'out_bids': out_bids,
@@ -39,7 +42,7 @@ async def get_bids_from_cache(cache):
 @aiohttp_jinja2.template('loading.html')
 async def loading(request):
     app = request.app
-    logger = app.logger
+    logger = app['logger']
     logger.info('Accessing loading page')
     task = getattr(app, 'refreshing', None)
     if task is None:
@@ -50,7 +53,7 @@ async def loading(request):
 
 
 def done_refresh(app, future):
-    logger = app.logger
+    logger = app['logger']
     if hasattr(app, 'refreshing'):
         del app.refreshing
 
@@ -67,5 +70,12 @@ async def check_refresh_done(request):
 
 @aiohttp_jinja2.template('settings.html')
 async def settings(request):
-    config = await load_config()
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+    logger.info('Accessing settings page')
+
+    async with engine.acquire() as conn:
+        config = await load_config(conn)
+
     return {'config': config}

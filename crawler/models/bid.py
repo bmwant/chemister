@@ -63,7 +63,7 @@ async def insert_new_bid(
     bid_type: BidType=None,
     resource=None,
 ):
-    config = await load_config()
+    config = await load_config(conn)
 
     if bid_type is None:
         bid_type_value = new_bid['bid_type']

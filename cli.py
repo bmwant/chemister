@@ -15,7 +15,7 @@ def cli():
 async def schedule_grabbing(scheduler):
     factory = Factory()
     await factory.init()
-    tasks = factory.create()
+    tasks = await factory.create()
     scheduler.add_tasks(tasks)
     try:
         await scheduler.run_forever()
