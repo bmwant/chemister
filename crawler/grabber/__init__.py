@@ -88,20 +88,24 @@ class BaseGrabber(ABC):
         return bid_signature not in fetched_bids
 
     async def mark_inactive_bids(self, fetched_bids):
-        daily_in_bids = await get_daily_bids(BidType.IN)
-        daily_out_bids = await get_daily_bids(BidType.OUT)
-        daily_bids = [*daily_in_bids, *daily_out_bids]
-        inactive_bids = [b.id for b in daily_bids
-                         if self._not_in(b, fetched_bids)]
-        self.logger.warning('Marking bids as inactive %s', inactive_bids)
-        await mark_inactive(inactive_bids)
+        with self.engine.acquire() as conn:
+            daily_in_bids = await get_daily_bids(conn, BidType.IN)
+            daily_out_bids = await get_daily_bids(conn, BidType.OUT)
+            daily_bids = [*daily_in_bids, *daily_out_bids]
+            inactive_bids = [b.id for b in daily_bids
+                             if self._not_in(b, fetched_bids)]
+            self.logger.warning('Marking bids as inactive %s', inactive_bids)
+            await mark_inactive(conn, inactive_bids)
 
     async def insert_new_bids(self, bids):
         resource = None
         insert_tasks = []
-        for bid in bids:
-            already_stored = await get_bid_by_signature(bid)
-            if not already_stored:
-                insert_tasks.append(insert_new_bid(bid, resource=resource))
+        # todo: check acquiring with gather
+        with self.engine.acquire() as conn:
+            for bid in bids:
+                already_stored = await get_bid_by_signature(conn, bid)
+                if not already_stored:
+                    insert_tasks.append(
+                        insert_new_bid(conn, bid, resource=resource))
 
-        await asyncio.gather(*insert_tasks)
+            await asyncio.gather(*insert_tasks)
