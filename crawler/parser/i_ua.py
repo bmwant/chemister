@@ -11,7 +11,17 @@ from crawler.parser import BaseParser, BaseEngine
 class _BSEngine(BaseEngine, LoggableMixin):
     def process(self, html):
         soup = BeautifulSoup(html, 'html5lib')
-        rows = soup.select('tbody tr')
+        tbodies = soup.select('tbody')
+        tbody = None
+        for tb in tbodies:
+            if 'avoid-sort' not in tb.attrs.get('class', []):
+                tbody = tb
+                break
+
+        if tbody is None:
+            raise ValueError('Cannot find table body with data')
+
+        rows = tbody.select('tr')
         data = []
         for row in rows:
             cells = row.find_all('td')
