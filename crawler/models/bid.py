@@ -4,10 +4,9 @@ from datetime import datetime, timedelta
 import sqlalchemy as sa
 
 from utils import get_midnight, get_logger
+from crawler.helpers import load_config
 from . import metadata
 from .resource import resource
-from crawler.db import get_engine, show_sql_query_for_clause
-from crawler.helpers import load_config
 
 
 logger = get_logger(__name__)
@@ -108,13 +107,12 @@ async def get_daily_bids(conn, bid_type: BidType):
     return await result.fetchall()
 
 
-async def mark_bid_inactive(conn, bid_ids: list):
+async def mark_bids_as_inactive(conn, bid_ids: list):
     query = bid.update()\
         .where(bid.c.id.in_(bid_ids))\
-        .values(status=BidStatus.INACTIVE)
+        .values(status=BidStatus.INACTIVE.value)
 
-    result = await conn.execute(query)
-    return await result.fetchall()
+    return (await conn.execute(query)).rowcount
 
 
 async def set_bid_status(conn, bid_id: int, bid_status: BidStatus):
@@ -122,4 +120,4 @@ async def set_bid_status(conn, bid_id: int, bid_status: BidStatus):
         .where(bid.c.id == bid_id)\
         .values(status=bid_status.value)
 
-    await conn.execute(query)
+    return (await conn.execute(query)).rowcount

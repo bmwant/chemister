@@ -5,6 +5,7 @@ from crawler.models.bid import (
     get_bid_by_signature,
     get_bid_by_id,
     set_bid_status,
+    mark_bids_as_inactive,
     BidType,
     BidStatus,
 )
@@ -99,3 +100,11 @@ async def test_get_bid_by_id(pg_engine):
         bid = await get_bid_by_id(conn, bid_id=1)
 
         assert bid is not None
+
+
+@pytest.mark.run_loop
+async def test_mark_bids_as_inactive(pg_engine):
+    bid_ids = [2, 3, 4, 5]
+    async with pg_engine.acquire() as conn:
+        rowcount = await mark_bids_as_inactive(conn, bid_ids)
+        assert rowcount == len(bid_ids)
