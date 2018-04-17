@@ -14,7 +14,12 @@ logger = get_logger(__name__)
 
 
 class BidStatus(Enum):
-    pass
+    NEW = 'new'
+    NOTIFIED = 'notified'
+    CALLED = 'called'
+    REJECTED = 'rejected'
+    INACTIVE = 'inactive'
+    CLOSED = 'closed'
 
 
 class BidType(Enum):
@@ -41,6 +46,13 @@ bid = sa.Table(
                             name='bid_resource_id_fkey',
                             ondelete='NO ACTION'),
 )
+
+
+async def get_bid_by_id(conn, bid_id):
+    query = bid.select().where(bid.c.id == bid_id)
+
+    result = await conn.execute(query)
+    return await result.fetchone()
 
 
 async def get_bid_by_signature(conn, bid_item):
@@ -96,5 +108,18 @@ async def get_daily_bids(conn, bid_type: BidType):
     return await result.fetchall()
 
 
-async def mark_inactive(conn, bid_ids: list):
-    pass
+async def mark_bid_inactive(conn, bid_ids: list):
+    query = bid.update()\
+        .where(bid.c.id.in_(bid_ids))\
+        .values(status=BidStatus.INACTIVE)
+
+    result = await conn.execute(query)
+    return await result.fetchall()
+
+
+async def set_bid_status(conn, bid_id: int, bid_status: BidStatus):
+    query = bid.update()\
+        .where(bid.c.id == bid_id)\
+        .values(status=bid_status.value)
+
+    await conn.execute(query)

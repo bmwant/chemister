@@ -9,6 +9,7 @@ REDIS_URI = 'redis://localhost'
 
 
 DATABASE_DSN = 'postgres://username:password@127.0.0.1:5432/database'
+TEST_DATABASE_DSN = 'postgres://username:password@127.0.0.1:5432/test_database'
 DATABASE_POOL_MINSIZE = 3
 DATABASE_POOL_MAXSIZE = 10
 

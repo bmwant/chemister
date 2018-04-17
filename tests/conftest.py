@@ -2,6 +2,8 @@ import asyncio
 import pytest
 import settings
 
+from aiopg.sa import create_engine
+
 
 TESTS_DIR = settings.PROJECT_ROOT / 'tests'
 PAGES_DIR = TESTS_DIR / 'pages'
@@ -31,11 +33,16 @@ def loop():
 
 @pytest.fixture
 def pg_engine(loop):
-    engine = None
+    engine = loop.run_until_complete(create_engine(
+        settings.TEST_DATABASE_DSN,
+        minsize=1,
+        maxsize=1,
+    ))
 
     yield engine
 
-    # close engine
+    engine.close()
+    loop.run_until_complete(engine.wait_closed())
 
 
 @pytest.mark.tryfirst

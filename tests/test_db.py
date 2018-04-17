@@ -3,13 +3,16 @@ from crawler.models.configs import insert_new_config
 from crawler.models.bid import (
     insert_new_bid,
     get_bid_by_signature,
+    get_bid_by_id,
+    set_bid_status,
     BidType,
+    BidStatus,
 )
 from crawler.models.resource import insert_new_resource
 
 
 @pytest.mark.run_loop
-async def test_insert_new_config():
+async def test_insert_new_config(pg_engine):
     config = {
         'DRY_RUN': True,
         'CLOSED_BIDS_FACTOR': 1,
@@ -18,22 +21,25 @@ async def test_insert_new_config():
         'TIME_DAY_ENDS': '20:00',
         'REFRESH_PERIOD_MINUTES': 5,
     }
-    await insert_new_config(config)
+    async with pg_engine.acquire() as conn:
+        await insert_new_config(conn, config)
 
 
 @pytest.mark.run_loop
-async def test_insert_new_resource():
+async def test_insert_new_resource(pg_engine):
     resource = {
         'name': 'i ua',
         'url': 'http://www.i.ua/',
     }
-    result = await insert_new_resource(resource)
+    async with pg_engine.acquire() as conn:
+        result = await insert_new_resource(conn, resource)
+
     assert len(result) == 1
     assert isinstance(result[0], int)
 
 
 @pytest.mark.run_loop
-async def test_insert_new_bids():
+async def test_insert_new_bids(pg_engine):
     in_bid = {
         'rate': 26,
         'amount': 100,
@@ -46,12 +52,14 @@ async def test_insert_new_bids():
         'currency': 'USD',
         'phone': '+380987774433',
     }
-    await insert_new_bid(in_bid, BidType.IN)
-    await insert_new_bid(out_bid, BidType.OUT)
+
+    async with pg_engine.acquire() as conn:
+        await insert_new_bid(conn, in_bid, BidType.IN)
+        await insert_new_bid(conn, out_bid, BidType.OUT)
 
 
 @pytest.mark.run_loop
-async def test_get_bid_by_signature():
+async def test_get_bid_by_signature(pg_engine):
     nonexisting_bid = {
         'rate': 500,
         'amount': 100,
@@ -67,9 +75,27 @@ async def test_get_bid_by_signature():
         'bid_type': 'out',
     }
 
-    result = await get_bid_by_signature(nonexisting_bid)
-    assert result is None
+    async with pg_engine.acquire() as conn:
+        result = await get_bid_by_signature(conn, nonexisting_bid)
+        assert result is None
 
-    result = await get_bid_by_signature(the_bid)
-    assert result is not None
-    print(result)
+        result = await get_bid_by_signature(conn, the_bid)
+        assert result is not None
+        print(result)
+
+
+@pytest.mark.run_loop
+async def test_set_bid_status(pg_engine):
+    bid_id = 1
+    async with pg_engine.acquire() as conn:
+        await set_bid_status(conn, bid_id=bid_id, bid_status=BidStatus.CLOSED)
+        updated_bid = await get_bid_by_id(conn, bid_id=bid_id)
+        assert updated_bid.status == BidStatus.CLOSED.value
+
+
+@pytest.mark.run_loop
+async def test_get_bid_by_id(pg_engine):
+    async with pg_engine.acquire() as conn:
+        bid = await get_bid_by_id(conn, bid_id=1)
+
+        assert bid is not None

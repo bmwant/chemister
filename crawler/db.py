@@ -15,6 +15,7 @@ async def get_engine():
 
 def show_sql_query_for_clause(sa_clause, logger=None):
     # todo: this does not display values
+    # http://docs.sqlalchemy.org/en/latest/faq/sqlexpressions.html#faq-sql-expression-string
     compiled_query = sa_clause.compile(dialect=postgresql.dialect())
     sql_query = compiled_query.string
     if logger is not None:
