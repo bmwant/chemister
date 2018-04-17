@@ -7,6 +7,4 @@ DROP TABLE IF EXISTS config CASCADE;
 DROP TABLE IF EXISTS bid CASCADE;
 DROP TABLE IF EXISTS resource CASCADE;
 DROP TABLE IF EXISTS "user" CASCADE;
-
--- todo: drop roles and permissions
-
+DROP ROLE IF EXISTS "che";

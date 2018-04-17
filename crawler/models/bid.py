@@ -38,6 +38,7 @@ bid = sa.Table(
     sa.Column('phone', sa.String, nullable=False),
     sa.Column('created', sa.DateTime, nullable=False, default=datetime.now),
     sa.Column('dry_run', sa.Boolean, nullable=False),
+    sa.Column('in_use', sa.Boolean, nullable=False, default=True),
     sa.Column('resource_id', sa.Integer),
 
     sa.PrimaryKeyConstraint('id', name='bid_id_pkey'),
@@ -61,6 +62,7 @@ async def get_bid_by_signature(conn, bid_item):
         bid.c.currency == bid_item['currency'],
         bid.c.phone == bid_item['phone'],
         bid.c.bid_type == bid_item['bid_type'],
+        bid.c.in_use == True,
     )
 
     query = bid.select(whereclause)

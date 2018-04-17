@@ -79,3 +79,32 @@ async def settings(request):
         config = await load_config(conn)
 
     return {'config': config}
+
+
+@aiohttp_jinja2.template('phones.html')
+async def phones(request):
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+    logger.info('Accessing phones page')
+
+    async with engine.acquire() as conn:
+        config = await load_config(conn)
+
+    return {'config': config}
+
+
+@aiohttp_jinja2.template('statistics.html')
+async def statistics(request):
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+    logger.info('Accessing statistics page')
+
+
+@aiohttp_jinja2.template('resource.html')
+async def resource(request):
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+    logger.info('Accessing resource page')

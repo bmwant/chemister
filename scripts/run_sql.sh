@@ -17,4 +17,7 @@ echo "::running additional sql"
 
 psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" -f "${DIR}/sql/002_create_tables.sql"
 
+echo "::inserting test data"
+psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" -f "${DIR}/sql/003_insert_base_data.sql"
+# todo: add flag for test database
 # todo: fail on errors

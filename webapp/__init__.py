@@ -12,6 +12,9 @@ def setup_routes(app):
     app.router.add_get('/loading', views.loading, name='loading')
     app.router.add_get('/check', views.check_refresh_done)
     app.router.add_get('/settings', views.settings, name='settings')
+    app.router.add_get('/resource', views.resource)
+    app.router.add_get('/statistics', views.statistics, name='statistics')
+    app.router.add_get('/phones', views.phones, name='phones')
     app.router.add_post('/save_config', endpoints.save_config)
 
 
