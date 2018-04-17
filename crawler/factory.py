@@ -11,6 +11,7 @@ from utils import get_logger
 from crawler.models.resource import Resource
 from crawler.proxy import Proxy
 from crawler.cache import Cache
+from crawler.db import get_engine
 
 
 class Factory(object):
@@ -27,9 +28,21 @@ class Factory(object):
         self.resources = [Resource(**r) for r in resources]
 
     async def init_cache(self):
+        """
+        One shared instance for cache, but also may be implemented in the same
+        way as database engine.
+        """
         self.logger.debug('Initializing cache...')
         self.cache = Cache()
         await self.cache._create_pool()
+
+    async def init(self):
+        await self.load_resources()
+        await self.init_cache()
+
+    async def cleanup(self):
+        self.logger.debug('Closing factory resources...')
+        await self.cache.close()
 
     def _load_cls_from_module(self, subpackage, module_name):
         """
@@ -79,7 +92,7 @@ class Factory(object):
             driver_cls=driver_cls,
         )
 
-    def get_grabber(self, resource, *, fetcher, parser, cache):
+    def get_grabber(self, resource, *, fetcher, parser, cache, engine):
         grabber_name = resource.grabber
         grabber_cls = self._load_cls_from_module('grabber', grabber_name)
         return grabber_cls(
@@ -87,18 +100,22 @@ class Factory(object):
             fetcher=fetcher,
             parser=parser,
             cache=cache,
+            engine=engine,
         )
 
     def create(self):
         grabbers = []
+        # Each grabber is responsible for closing resources within itself
         for res in self.resources:
             fetcher = self.get_fetcher(res)
             parser = self.get_parser(res.parser)
+            engine = get_engine()
             grabber = self.get_grabber(
                 resource=res,
                 fetcher=fetcher,
                 parser=parser,
                 cache=self.cache,
+                engine=engine,
             )
             grabbers.append(grabber)
         return grabbers

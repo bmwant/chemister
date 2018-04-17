@@ -14,13 +14,13 @@ def cli():
 
 async def schedule_grabbing(scheduler):
     factory = Factory()
-    await factory.init_cache()
-    factory.load_resources()
+    await factory.init()
     tasks = factory.create()
     scheduler.add_tasks(tasks)
     try:
         await scheduler.run_forever()
     finally:
+        await factory.cleanup()
         await scheduler.cleanup()
 
 
@@ -32,9 +32,7 @@ def monitor():
     try:
         loop.run_until_complete(schedule_grabbing(scheduler))
     except KeyboardInterrupt:
-        logger.debug('Interrupt monitoring...')
-    finally:
-        loop.run_until_complete(scheduler.cleanup())
+        logger.debug('Monitoring interrupted...')
 
 
 @cli.command()

@@ -9,7 +9,7 @@ from utils import get_logger
 
 class Scheduler(object):
     def __init__(self, tasks=None, interval=settings.UPDATE_PERIOD):
-        self.tasks = tasks or []
+        self.tasks = tasks or []  # List of grabbers
         self.interval = interval
         self.logger = get_logger(self.__class__.__name__.lower())
 
@@ -29,3 +29,5 @@ class Scheduler(object):
 
     async def cleanup(self):
         self.logger.info('Cleaning up resources...')
+        for task in self.tasks:
+            await task.close()

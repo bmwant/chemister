@@ -15,11 +15,13 @@ from crawler.models.bid import (
 
 
 class BaseGrabber(ABC):
-    def __init__(self, resource, fetcher=None, parser=None, cache=None):
+    def __init__(self, resource, *,
+                 fetcher=None, parser=None, cache=None, engine=None):
         self.resource = resource
         self.fetcher = fetcher
         self.parser = parser
         self.cache = cache
+        self.engine = engine
         self.logger = get_logger(self.__class__.__name__.lower())
 
     @property
@@ -32,6 +34,13 @@ class BaseGrabber(ABC):
 
     def __await__(self):
         return self.update()
+
+    async def close(self):
+        self.logger.debug('Closing fetcher connections...')
+        await self.fetcher.close()
+        self.logger.debug('Closing db engine connections...')
+        self.engine.close()
+        await self.engine.wait_closed()
 
     async def update(self):
         in_bids = await self.get_in_bids()
