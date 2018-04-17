@@ -14,7 +14,6 @@ DATABASE_POOL_MAXSIZE = 10
 
 UPDATE_PERIOD = 5 * 60  # 5 mins update interval
 
-TEAMS_FILEPATH = PROJECT_ROOT / 'teams.yml'
 RESOURCES_FILEPATH = PROJECT_ROOT / 'resources.yml'
 
 GECKO_DRIVER_PATH = PROJECT_ROOT / 'lib' / 'geckodriver'

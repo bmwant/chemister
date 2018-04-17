@@ -7,7 +7,7 @@ For implementations details and design notes go straight to
 
 ### Features
 * Easily configurable via YAML files
-* Nice UI via web application
+* Nice UI via [tabler](https://github.com/tabler/tabler) for web application
 * Very extensible: add any fetcher/browser driver/parser, customize
 parser engines, choose cache backend for any taste
 * Convenient process of adding new resource
@@ -45,11 +45,6 @@ $ redis-cli
 > get [resource name]
 # e.g. > get "Sky Bet"
 ```
-You may need to 
-```bash
-$ export PYTHONPATH=`pwd`
-```
-in case you encounter some import errors.
 
 ### Test
 ```bash

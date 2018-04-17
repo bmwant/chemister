@@ -99,13 +99,18 @@ class BaseGrabber(ABC):
 
     async def insert_new_bids(self, bids):
         resource = None
-        insert_tasks = []
-        # todo: check acquiring with gather
+        # insert_tasks = []
+        # # todo: check acquiring with gather
+        # async with self.engine.acquire() as conn:
+        #     for bid in bids:
+        #         already_stored = await get_bid_by_signature(conn, bid)
+        #         if not already_stored:
+        #             insert_tasks.append(
+        #                 insert_new_bid(conn, bid, resource=resource))
+        #
+        #     await asyncio.gather(*insert_tasks)
         async with self.engine.acquire() as conn:
             for bid in bids:
                 already_stored = await get_bid_by_signature(conn, bid)
                 if not already_stored:
-                    insert_tasks.append(
-                        insert_new_bid(conn, bid, resource=resource))
-
-            await asyncio.gather(*insert_tasks)
+                    await insert_new_bid(conn, bid, resource=resource)

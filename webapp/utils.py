@@ -7,17 +7,11 @@ import settings
 from utils import get_logger
 from crawler.scheduler import Scheduler
 from crawler.factory import Factory
-from crawler.parser.i_ua import IUaParser
 
 
 async def load_yaml(filepath):
     with open(filepath) as f:
         return yaml.load(f.read())
-
-
-async def load_teams():
-    data = await load_yaml(settings.TEAMS_FILEPATH)
-    return data
 
 
 async def load_resources():

@@ -27,5 +27,4 @@ async def load_config(conn):
         list(map(lambda x: getattr(x, 'name'), config_trafaret.keys))
     )
     loaded_config = Config(**config_value)
-    logger.debug('Loaded config %s', loaded_config)
     return loaded_config
