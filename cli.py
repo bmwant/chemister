@@ -33,6 +33,9 @@ def monitor():
         loop.run_until_complete(schedule_grabbing(scheduler))
     except KeyboardInterrupt:
         logger.debug('Monitoring interrupted...')
+    finally:
+        # cleanup once again?
+        pass
 
 
 @cli.command()

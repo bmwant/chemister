@@ -18,11 +18,5 @@ intervals or manually. Behaves as a supervisor to correctly invoke
 and cleanup set of grabbers.
  
 
-### Things to improve
-* bet365 was not working at the moment of writing, so it can be added as well
-![bet365](bet365_does_not_work.png)
-* Add dumping data to a file
-* Add websockets support to UI for realtime updates
-* Add cache invalidation
-* Discover available browser drivers automatically
-* 100% unittests coverage
+### Useful resouces
+* [aiopg #1](https://github.com/aio-libs/aiopg/issues/128)
