@@ -2,7 +2,6 @@ import attr
 import sqlalchemy as sa
 from attr.validators import instance_of as an
 
-from crawler.db import get_engine
 from . import metadata
 from .configs import ProxyConfig, FetcherConfig, URLConfig
 
@@ -61,13 +60,10 @@ resource = sa.Table(
 )
 
 
-async def insert_new_resource(new_resource):
-    engine = await get_engine()
-
-    async with engine.acquire() as conn:
-        query = resource.insert().values(
-            name=new_resource['name'],
-            url=new_resource['url'],
-        )
-        result = await conn.execute(query)
-        return await result.fetchone()
+async def insert_new_resource(conn, new_resource):
+    query = resource.insert().values(
+        name=new_resource['name'],
+        url=new_resource['url'],
+    )
+    result = await conn.execute(query)
+    return await result.fetchone()

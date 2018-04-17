@@ -43,9 +43,7 @@ bid = sa.Table(
 )
 
 
-async def get_bid_by_signature(bid_item):
-    engine = await get_engine()
-    print(bid_item)
+async def get_bid_by_signature(conn, bid_item):
     whereclause = sa.and_(
         bid.c.rate == bid_item['rate'],
         bid.c.amount == bid_item['amount'],
@@ -53,14 +51,18 @@ async def get_bid_by_signature(bid_item):
         bid.c.phone == bid_item['phone'],
         bid.c.bid_type == bid_item['bid_type'],
     )
-    async with engine.acquire() as conn:
-        query = bid.select(whereclause)
-        result = await conn.execute(query)
-        return await result.fetchone()
+
+    query = bid.select(whereclause)
+    result = await conn.execute(query)
+    return await result.fetchone()
 
 
-async def insert_new_bid(new_bid: dict, bid_type: BidType=None, resource=None):
-    engine = await get_engine()
+async def insert_new_bid(
+    conn,
+    new_bid: dict,
+    bid_type: BidType=None,
+    resource=None,
+):
     config = await load_config()
 
     if bid_type is None:
@@ -68,35 +70,31 @@ async def insert_new_bid(new_bid: dict, bid_type: BidType=None, resource=None):
     else:
         bid_type_value = bid_type.value
 
-    async with engine.acquire() as conn:
-        query = bid.insert().values(
-            rate=new_bid['rate'],
-            amount=new_bid['amount'],
-            currency=new_bid['currency'],
-            phone=new_bid['phone'],
-            bid_type=bid_type_value,
-            dry_run=config.DRY_RUN,
-            resource_id=1,
-        )
-        await conn.execute(query)
+    query = bid.insert().values(
+        rate=new_bid['rate'],
+        amount=new_bid['amount'],
+        currency=new_bid['currency'],
+        phone=new_bid['phone'],
+        bid_type=bid_type_value,
+        dry_run=config.DRY_RUN,
+        resource_id=1,
+    )
+    await conn.execute(query)
 
 
-async def get_daily_bids(bid_type: BidType):
-    engine = await get_engine()
-
+async def get_daily_bids(conn, bid_type: BidType):
     datetime_today = datetime.now()
     datetime_tomorrow = datetime_today + timedelta(days=1)
     midnight_today = get_midnight(datetime_today)
     midnight_tomorrow = get_midnight(datetime_tomorrow)
-    async with engine.acquire() as conn:
-        query = bid.select().where(sa.and_(
-            bid.c.created > midnight_today,
-            bid.c.created <= midnight_tomorrow,
-            bid.c.bid_type == bid_type.value
-        ))
-        result = await conn.execute(query)
-        return await result.fetchall()
+    query = bid.select().where(sa.and_(
+        bid.c.created > midnight_today,
+        bid.c.created <= midnight_tomorrow,
+        bid.c.bid_type == bid_type.value
+    ))
+    result = await conn.execute(query)
+    return await result.fetchall()
 
 
-async def mark_inactive(bid_ids: list):
+async def mark_inactive(conn, bid_ids: list):
     pass
