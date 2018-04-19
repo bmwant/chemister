@@ -25,3 +25,11 @@ async def test_insert_new_bids_with_asyncio_gather(pg_engine):
     ]
 
     await grabber.insert_new_bids(bids)
+
+
+@pytest.mark.run_loop
+async def test_await_grabber():
+    grabber = DummyGrabber(None)
+
+    result = await grabber
+    assert result is None

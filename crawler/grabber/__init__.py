@@ -33,7 +33,7 @@ class BaseGrabber(ABC):
         return self.resource.urls
 
     def __await__(self):
-        return self.update()
+        return self.update().__await__()
 
     async def close(self):
         self.logger.debug('Closing fetcher connections...')
@@ -58,10 +58,11 @@ class BaseGrabber(ABC):
                             out_bids)
 
         fetched_bids = [*in_bids_data, *out_bids_data]
-        await self.mark_inactive_bids(fetched_bids)
+        if fetched_bids:
+            await self.mark_inactive_bids(fetched_bids)
 
-        await self.insert_new_bids(fetched_bids)
-        return data
+            await self.insert_new_bids(fetched_bids)
+            return data
 
     @abstractmethod
     async def get_in_bids(self):

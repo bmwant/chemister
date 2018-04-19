@@ -5,7 +5,7 @@ import asyncio
 from datetime import datetime
 
 import settings
-from utils import get_logger, get_minutes_value, LoggableMixin
+from utils import get_minutes_value, LoggableMixin
 
 
 class Scheduler(LoggableMixin):
@@ -35,7 +35,7 @@ class Scheduler(LoggableMixin):
     async def run_daily_tasks(self):
         for daily_task in self.daily_tasks:
             if daily_task.is_ready():
-                await daily_task()
+                await daily_task
 
     async def cleanup(self):
         self.logger.info('Cleaning up resources...')
@@ -63,4 +63,4 @@ class ScheduledTask(LoggableMixin):
         self.done = True
         self.logger.info('Running task scheduled for %s at %s',
                          self.scheduled_time, self.current_time)
-        return self.task()
+        return self.task().__await__()
