@@ -145,3 +145,14 @@ async def set_bid_status(conn, bid_id: int, bid_status: BidStatus):
         .values(status=bid_status.value)
 
     return (await conn.execute(query)).rowcount
+
+
+async def mark_daily_bids_as_unused():
+    """
+    Daily task that will mark all daily bids as unused not to collide with
+    newcoming bids.
+    """
+    # todo: acquire engine here
+    bid_ids = []
+    return await mark_bids_as_unused(bid_ids)
+

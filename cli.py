@@ -16,7 +16,9 @@ async def schedule_grabbing(scheduler):
     factory = Factory()
     await factory.init()
     tasks = await factory.create()
+    daily_tasks = await factory.create_daily()
     scheduler.add_tasks(tasks)
+    scheduler.add_daily_tasks(daily_tasks)
     try:
         await scheduler.run_forever()
     finally:

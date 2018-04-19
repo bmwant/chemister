@@ -9,15 +9,15 @@ import yaml
 import settings
 from utils import get_logger
 from crawler.models.resource import Resource
+from crawler.scheduled_task import ScheduledTask
 from crawler.proxy import Proxy
 from crawler.cache import Cache
 from crawler.db import get_engine
 
 
 class Factory(object):
-    def __init__(self, resources=None, teams=None):
+    def __init__(self, resources=None):
         self.resources = resources or []
-        self.teams = teams or []
         self.cache = None
         self.logger = get_logger(self.__class__.__name__.lower())
 
@@ -119,3 +119,11 @@ class Factory(object):
             )
             grabbers.append(grabber)
         return grabbers
+
+    async def create_daily(self):
+        return [
+            ScheduledTask(
+                task=None,
+                scheduled_time='23:55',
+            ),
+        ]
