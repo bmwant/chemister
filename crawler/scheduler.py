@@ -2,16 +2,16 @@
 Schedule periodic tasks and ensure their execution within given period.
 """
 import asyncio
+from datetime import datetime
 
 import settings
-from utils import get_logger, get_minutes_value
+from utils import get_logger, get_minutes_value, LoggableMixin
 
 
-class Scheduler(object):
+class Scheduler(LoggableMixin):
     def __init__(self, tasks=None, interval=settings.UPDATE_PERIOD):
         self.tasks = tasks or []  # List of grabbers
         self.interval = interval
-        self.logger = get_logger(self.__class__.__name__.lower())
         self.daily_tasks = []
 
     def add_tasks(self, tasks: list):
@@ -43,16 +43,24 @@ class Scheduler(object):
             await task.close()
 
 
-class ScheduledTask(object):
+class ScheduledTask(LoggableMixin):
     def __init__(self, task, scheduled_time):
         self.task = task
         self.scheduled_time = scheduled_time
         self.done = False
 
     def is_ready(self):
-        return not self.done
+        time_passed = (get_minutes_value(self.scheduled_time) -
+                       get_minutes_value(self.current_time)) > 0
+        return not self.done and time_passed
+
+    @property
+    def current_time(self):
+        return datetime.now().strftime('%H:%M')
 
     def __await__(self):
         # Early, to prevent double launching
         self.done = True
+        self.logger.info('Running task scheduled for %s at %s',
+                         self.scheduled_time, self.current_time)
         return self.task()
