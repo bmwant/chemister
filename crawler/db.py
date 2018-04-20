@@ -13,6 +13,23 @@ async def get_engine():
     return engine
 
 
+async def close_engine(engine):
+    engine.close()
+    await engine.wait_closed()
+
+
+class Engine(object):
+    def __init__(self):
+        self.engine = None
+
+    async def __aenter__(self):
+        self.engine = await get_engine()
+        return self.engine
+
+    async def __aexit__(self, exc_type, exc, tb):
+        await close_engine(self.engine)
+
+
 def show_sql_query_for_clause(sa_clause, logger=None):
     # todo: this does not display values
     # http://docs.sqlalchemy.org/en/latest/faq/sqlexpressions.html#faq-sql-expression-string

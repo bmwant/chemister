@@ -12,6 +12,7 @@ from crawler.models.bid import (
     ACTIVE_STATUSES,
 )
 from crawler.models.resource import insert_new_resource
+from crawler.db import get_engine, close_engine, Engine
 
 
 @pytest.mark.run_loop
@@ -116,3 +117,19 @@ async def test_mark_bids_as_inactive(pg_engine):
 async def test_get_only_daily_active_bids(pg_engine):
     async with pg_engine.acquire() as conn:
         bids = await get_daily_bids(conn, BidType.IN, ACTIVE_STATUSES)
+
+
+@pytest.mark.run_loop
+async def test_engine_closed():
+    engine = await get_engine()
+
+    await close_engine(engine)
+    assert engine.closed
+
+
+@pytest.mark.run_loop
+async def test_engine_used_with_context_manager():
+    async with Engine() as engine:
+        assert engine.name == 'postgresql'
+
+    assert engine.closed

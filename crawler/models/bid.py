@@ -6,6 +6,7 @@ import sqlalchemy as sa
 
 from utils import get_midnight, get_logger
 from crawler.helpers import load_config
+from crawler.db import get_engine, close_engine
 from . import metadata
 from .resource import resource
 
