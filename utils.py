@@ -35,6 +35,6 @@ def get_midnight(datetime_value):
     return datetime_value.replace(hour=0, minute=0, second=0, microsecond=0)
 
 
-def get_minutes_value(scheduled_time):
+def get_hours_and_minutes(scheduled_time):
     hours, mins = map(int, scheduled_time.split(':'))
-    return hours*60 + mins
+    return hours, mins

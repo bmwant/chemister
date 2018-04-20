@@ -125,6 +125,6 @@ class Factory(object):
         return [
             ScheduledTask(
                 task=bid.mark_daily_bids_as_unused,
-                scheduled_time='23:55',
+                scheduled_time='23:59',
             ),
         ]
