@@ -6,7 +6,7 @@ import sqlalchemy as sa
 
 from utils import get_midnight, get_logger
 from crawler.helpers import load_config
-from crawler.db import get_engine, close_engine
+from crawler.db import Engine
 from . import metadata
 from .resource import resource
 
@@ -153,7 +153,7 @@ async def mark_daily_bids_as_unused():
     Daily task that will mark all daily bids as unused not to collide with
     newcoming bids.
     """
-    # todo: acquire engine here
     bid_ids = []
-    return await mark_bids_as_unused(bid_ids)
-
+    async with Engine() as engine:
+        async with engine.acquire() as conn:
+            return await mark_bids_as_unused(conn, bid_ids)

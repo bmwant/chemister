@@ -13,6 +13,7 @@ from crawler.scheduled_task import ScheduledTask
 from crawler.proxy import Proxy
 from crawler.cache import Cache
 from crawler.db import get_engine
+from crawler.models import bid
 
 
 class Factory(object):
@@ -123,7 +124,7 @@ class Factory(object):
     async def create_daily(self):
         return [
             ScheduledTask(
-                task=None,
+                task=bid.mark_daily_bids_as_unused,
                 scheduled_time='23:55',
             ),
         ]

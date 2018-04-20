@@ -1,9 +1,11 @@
+import typing
+
 from datetime import datetime
 from utils import get_minutes_value, LoggableMixin
 
 
 class ScheduledTask(LoggableMixin):
-    def __init__(self, *, task, scheduled_time):
+    def __init__(self, *, task: typing.Callable, scheduled_time):
         self.task = task
         self.scheduled_time = scheduled_time
         self.done = False
