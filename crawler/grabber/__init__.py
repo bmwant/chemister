@@ -12,6 +12,7 @@ from crawler.models.bid import (
     get_bid_by_signature,
     BidType,
     BidStatus,
+    ACTIVE_STATUSES,
 )
 
 
@@ -91,7 +92,7 @@ class BaseGrabber(ABC):
 
     async def mark_inactive_bids(self, fetched_bids):
         async with self.engine.acquire() as conn:
-            daily_bids = await get_daily_bids(conn)
+            daily_bids = await get_daily_bids(conn, statuses=ACTIVE_STATUSES)
             inactive_bids = [b.id for b in daily_bids
                              if self._not_in(b, fetched_bids)]
             if inactive_bids:

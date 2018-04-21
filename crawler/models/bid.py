@@ -32,6 +32,8 @@ ACTIVE_STATUSES = (BidStatus.NEW, BidStatus.NOTIFIED, BidStatus.CALLED)
 
 INACTIVE_STATUSES = (BidStatus.REJECTED, BidStatus.INACTIVE, BidStatus.CLOSED)
 
+GONE_STATUSES = (BidStatus.REJECTED, BidStatus.INACTIVE)
+
 
 class BidType(Enum):
     IN = 'in'

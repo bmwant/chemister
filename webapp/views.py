@@ -6,6 +6,7 @@ from aiohttp import web
 
 from crawler.helpers import load_config
 from crawler.models.bid import get_daily_bids, BidType
+from crawler.models.stats import collect_statistics
 from webapp.utils import refresh_data, load_resources, get_cached_value
 
 
@@ -19,10 +20,12 @@ async def index(request):
     async with engine.acquire() as conn:
         in_bids = await get_daily_bids(conn, bid_type=BidType.IN)
         out_bids = await get_daily_bids(conn, bid_type=BidType.OUT)
+        stats = await collect_statistics(conn)
 
     return {
         'in_bids': in_bids,
         'out_bids': out_bids,
+        'stats': stats,
     }
 
 
@@ -100,6 +103,13 @@ async def statistics(request):
     logger = app['logger']
     engine = app['db']
     logger.info('Accessing statistics page')
+
+    async with engine.acquire() as conn:
+        stats = await collect_statistics(conn)
+
+    return {
+        'stats': stats
+    }
 
 
 @aiohttp_jinja2.template('resource.html')

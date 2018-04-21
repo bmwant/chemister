@@ -1,0 +1,61 @@
+<div class="row">
+  <div class="col-sm-6 col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Profit (daily)</h2>
+      </div>
+      <table class="table card-table">
+        <tbody>
+          <tr>
+            <td>Total profit</td>
+            <td class="text-right">
+              <span class="text-muted">{{ stats.total_profit }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Expected profit</td>
+            <td class="text-right">
+              <span class="text-muted">{{ stats.expected_profit }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Current profit</td>
+            <td class="text-right">
+              <span class="text-muted">{{ stats.current_profit }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Bid status (daily)</h2>
+      </div>
+      <table class="table card-table">
+        <tbody>
+          <tr>
+            <td>Total bids</td>
+            <td class="text-right">
+              <span class="text-muted">{{ stats.total_bids }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Dropped bids</td>
+            <td class="text-right">
+              <span class="text-muted">{{ stats.dropped_bids }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Closed bids</td>
+            <td class="text-right">
+              <span class="text-muted">{{ stats.closed_bids }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
