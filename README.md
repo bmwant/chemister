@@ -64,3 +64,8 @@ $ psql -U che -d chemister -h 172.17.0.2
 1. Update `crawler.forms.config.config_trafaret`
 2. Update `templates/settings.html`
 
+### Deployment
+```bash
+$ ansible-playbook deploy/init.yml
+```
+

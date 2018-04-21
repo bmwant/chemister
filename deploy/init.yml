@@ -1,0 +1,13 @@
+---
+- hosts: all
+
+  tasks:
+
+    - include_vars: "vars/common.yml"
+
+    - name: clone project repository
+      git:
+        repo: "{{ repository_url }}"
+        dest: "{{ project_root }}"
+        version: "{{ repository_branch }}"
+        accept_hostkey: true
