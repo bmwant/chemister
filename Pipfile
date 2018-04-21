@@ -23,6 +23,7 @@ sqlalchemy = "*"
 aiopg = "*"
 trafaret = "*"
 aiohttp-session = "*"
+ansible = "*"
 
 
 [dev-packages]
