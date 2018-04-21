@@ -1,14 +1,14 @@
 import typing
 
 from datetime import datetime, timedelta
-from utils import get_hours_and_minutes, LoggableMixin
+from utils import make_datetime, LoggableMixin
 
 
 class ScheduledTask(LoggableMixin):
     def __init__(self, *, task: typing.Callable, scheduled_time):
         self.task = task
         self.scheduled_time = scheduled_time
-        self._scheduled_time = self._make_datetime(scheduled_time)
+        self._scheduled_time = make_datetime(scheduled_time)
         self.done = False
 
     def is_ready(self):
@@ -20,12 +20,6 @@ class ScheduledTask(LoggableMixin):
         Reschedule execution for the next day.
         """
         self._scheduled_time += timedelta(days=1)
-
-    def _make_datetime(self, time_spec: str):
-        hours, minutes = get_hours_and_minutes(time_spec)
-        daily_datetime = datetime.now()
-        scheduled_datetime = daily_datetime.replace(hour=hours, minute=minutes)
-        return scheduled_datetime
 
     @property
     def current_time(self):

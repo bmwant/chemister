@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+
 import coloredlogs
 
 
@@ -38,3 +40,13 @@ def get_midnight(datetime_value):
 def get_hours_and_minutes(scheduled_time):
     hours, mins = map(int, scheduled_time.split(':'))
     return hours, mins
+
+
+def make_datetime(time_spec: str):
+    """
+    Create datetime object for current day from time specification.
+    """
+    hours, minutes = get_hours_and_minutes(time_spec)
+    daily_datetime = datetime.now()
+    datetime_from_spec = daily_datetime.replace(hour=hours, minute=minutes)
+    return datetime_from_spec

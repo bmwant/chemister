@@ -1,6 +1,7 @@
 import attr
 
 from utils import get_logger
+from crawler.db import Engine
 from crawler.forms.config import config_trafaret
 from crawler.models.configs import config as config_model
 
@@ -28,3 +29,13 @@ async def load_config(conn):
     )
     loaded_config = Config(**config_value)
     return loaded_config
+
+
+async def get_config():
+    """
+    A wrapper to load config in case you do not have any created engine you can
+    bind to.
+    """
+    async with Engine() as engine:
+        async with engine.acquire() as conn:
+            return await load_config(conn)
