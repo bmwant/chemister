@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Iterable
 from operator import attrgetter
 from datetime import datetime, timedelta
 
@@ -23,14 +24,13 @@ class BidStatus(Enum):
     CLOSED = 'closed'
 
 
-ACTIVE_STATUSES = [
-    *map(attrgetter('value'),
-         (BidStatus.NEW, BidStatus.NOTIFIED, BidStatus.CALLED))
-]
-INACTIVE_STATUSES = [
-    *map(attrgetter('value'),
-         (BidStatus.REJECTED, BidStatus.INACTIVE, BidStatus.CLOSED))
-]
+def get_statuses(*args):
+    return [*map(attrgetter('value'), args)]
+
+
+ACTIVE_STATUSES = (BidStatus.NEW, BidStatus.NOTIFIED, BidStatus.CALLED)
+
+INACTIVE_STATUSES = (BidStatus.REJECTED, BidStatus.INACTIVE, BidStatus.CLOSED)
 
 
 class BidType(Enum):
@@ -107,7 +107,12 @@ async def insert_new_bid(
     await conn.execute(query)
 
 
-async def get_daily_bids(conn, *, bid_type: BidType=None, statuses=None):
+async def get_daily_bids(
+    conn,
+    *,
+    bid_type: BidType=None,
+    statuses: Iterable[BidStatus]=None
+):
     datetime_today = datetime.now()
     datetime_tomorrow = datetime_today + timedelta(days=1)
     midnight_today = get_midnight(datetime_today)
@@ -121,7 +126,8 @@ async def get_daily_bids(conn, *, bid_type: BidType=None, statuses=None):
         query = query.where(bid.c.bid_type == bid_type.value)
 
     if statuses is not None:
-        query = query.where(bid.c.status.in_(statuses))
+        status_values = get_statuses(*statuses)
+        query = query.where(bid.c.status.in_(status_values))
 
     result = await conn.execute(query)
     return await result.fetchall()
@@ -173,4 +179,6 @@ async def _autoclose_bids():
             daily_bids = await get_daily_bids(conn, statuses=statuses)
 
             bid_ids = [b.id for b in daily_bids]
-            await mark_bids_as(conn, bid_ids, BidStatus.CLOSED)
+            if bid_ids:
+                logger.debug('Closing bids %s', bid_ids)
+                await mark_bids_as(conn, bid_ids, BidStatus.CLOSED)

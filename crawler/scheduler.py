@@ -29,7 +29,8 @@ class Scheduler(LoggableMixin):
     async def run_forever(self):
         # todo: add exceptions handling within child processes
         while True:
-            if self.working_time:
+            is_working = await self.working_time
+            if is_working:
                 await self.run_tasks()
                 await self.run_extra()
 
