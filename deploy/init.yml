@@ -1,4 +1,5 @@
 ---
+
 - hosts: all
 
   tasks:
@@ -21,5 +22,21 @@
         version: "{{ repository_branch }}"
         accept_hostkey: true
 
+    - name: install requirements with pipenv
+      shell: "pipenv install"
+      args:
+        chdir: "{{ project_root }}"
 
-    - name:
+    - name: render supervisor config
+      template:
+        src: "templates/supervisor_che.conf.j2"
+        dest: "/etc/supervisor/conf.d/che.conf"
+      become: true
+      notify: supervisor reload
+
+    - name: render nginx config
+      template:
+        src: "templates/nginx_che.conf.j2"
+        dest: "/etc/nginx/conf.d/che.conf"
+      become: true
+      notify: nginx reload
