@@ -16,7 +16,7 @@ from webapp import (
     init_pg,
     close_pg,
 )
-from webapp.filters import checkbox
+from webapp import filters
 
 
 def run():
@@ -32,7 +32,10 @@ def run():
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.FileSystemLoader(str(settings.TEMPLATES_DIR)),
-        filters={'checkbox': checkbox},
+        filters={
+            'checkbox': filters.checkbox,
+            'format_time': filters.format_time,
+        },
     )
 
     uprint = partial(print, flush=True)

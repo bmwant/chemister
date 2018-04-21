@@ -26,10 +26,9 @@
         <td>{{ bid.amount }}</td>
         <td>{{ bid.currency }}</td>
         <td>{{ bid.rate }}</td>
-        <td>{{ bid.phone }}</td>
-        <td>{{ bid.created }}</td>
+        <td><a href="tel:{{ bid.phone }}">{{ bid.phone }}</a></td>
+        <td>{{ bid.created | format_time }}</td>
         <td>
-
           {{ get_status.status(bid) }}
         </td>
         <td><a href="#">{{ bid.resource_id }}</a></td>
