@@ -95,7 +95,7 @@ venv.bak/
 # mkdocs documentation
 /site
 
-# mypy
+*.retry
 .mypy_cache/
 .idea/
 node_modules/

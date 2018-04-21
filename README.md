@@ -66,6 +66,7 @@ $ psql -U che -d chemister -h 172.17.0.2
 
 ### Deployment
 ```bash
-$ ansible-playbook deploy/init.yml
+$ cd deploy
+$ ansible-playbook init.yml
 ```
 
