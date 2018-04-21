@@ -107,7 +107,7 @@ async def insert_new_bid(
     await conn.execute(query)
 
 
-async def get_daily_bids(conn, bid_type: BidType, statuses=None):
+async def get_daily_bids(conn, *, bid_type: BidType=None, statuses=None):
     datetime_today = datetime.now()
     datetime_tomorrow = datetime_today + timedelta(days=1)
     midnight_today = get_midnight(datetime_today)
@@ -115,8 +115,11 @@ async def get_daily_bids(conn, bid_type: BidType, statuses=None):
     query = bid.select().where(sa.and_(
         bid.c.created > midnight_today,
         bid.c.created <= midnight_tomorrow,
-        bid.c.bid_type == bid_type.value
     ))
+
+    if bid_type is not None:
+        query = query.where(bid.c.bid_type == bid_type.value)
+
     if statuses is not None:
         query = query.where(bid.c.status.in_(statuses))
 
@@ -124,10 +127,10 @@ async def get_daily_bids(conn, bid_type: BidType, statuses=None):
     return await result.fetchall()
 
 
-async def mark_bids_as_inactive(conn, bid_ids: list):
+async def mark_bids_as(conn, bid_ids: list, bid_status: BidStatus):
     query = bid.update()\
         .where(bid.c.id.in_(bid_ids))\
-        .values(status=BidStatus.INACTIVE.value)
+        .values(status=bid_status.value)
 
     return (await conn.execute(query)).rowcount
 
@@ -157,3 +160,17 @@ async def mark_daily_bids_as_unused():
     async with Engine() as engine:
         async with engine.acquire() as conn:
             return await mark_bids_as_unused(conn, bid_ids)
+
+
+async def _autoclose_bids():
+    """
+    Helper function for developer mode simulating closing bids after
+    notifications being sent.
+    """
+    async with Engine() as engine:
+        async with engine.acquire() as conn:
+            statuses = [BidStatus.NOTIFIED]
+            daily_bids = await get_daily_bids(conn, statuses=statuses)
+
+            bid_ids = [b.id for b in daily_bids]
+            await mark_bids_as(conn, bid_ids, BidStatus.CLOSED)

@@ -24,7 +24,7 @@ async def load_config(conn):
     config_value = row.value
     Config = attr.make_class(
         'Config',
-        list(map(lambda x: getattr(x, 'name'), config_trafaret.keys))
+        {key.name: attr.ib(default=None) for key in config_trafaret.keys}
     )
     loaded_config = Config(**config_value)
     return loaded_config

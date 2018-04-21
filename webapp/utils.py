@@ -34,5 +34,5 @@ async def refresh_data():
     tasks = factory.create()
     scheduler = Scheduler(tasks=tasks)
 
-    await scheduler.run_once()
+    await scheduler.run_tasks()
     await scheduler.cleanup()

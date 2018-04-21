@@ -6,6 +6,9 @@ import asyncio
 import settings
 from utils import LoggableMixin
 
+from crawler.notifier import notify
+from crawler.models.bid import _autoclose_bids
+
 
 class Scheduler(LoggableMixin):
     def __init__(self, *, tasks=None, daily_tasks=None,
@@ -24,14 +27,29 @@ class Scheduler(LoggableMixin):
     async def run_forever(self):
         # todo: add exceptions handling within child processes
         while True:
-            await self.run_once()
+            await self.run_tasks()
+            await self.run_extra()
             self.logger.info('Waiting %s seconds to make next update...' %
                              self.interval)
             await asyncio.sleep(self.interval)
+            # todo: call soon without blocking
             await self.run_daily_tasks()
 
-    async def run_once(self):
+    async def run_tasks(self):
+        """
+        Run grabber tasks which are executed in parallel for each resource.
+        """
         await asyncio.gather(*self.tasks)
+
+    async def run_extra(self):
+        """
+        Run extra tasks which depend on data received from tasks.
+        """
+
+        self.logger.debug('Sending sms to every new bid owner...')
+        await notify()
+        self.logger.debug('Closing all bids with their owners...')
+        await _autoclose_bids()
 
     async def run_daily_tasks(self):
         for daily_task in self.daily_tasks:

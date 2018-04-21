@@ -49,6 +49,18 @@
             </div>
 
             <div class="form-group">
+              <label class="form-label">Begin processing bids starting this time</label>
+              <div class="input-group">
+                <span class="input-group-prepend">
+                  <span class="input-group-text">TIME_DAY_STARTS</span>
+                </span>
+                <input type="text" value="{{ config.TIME_DAY_STARTS }}" name="TIME_DAY_STARTS" class="form-control"
+                       data-mask="00:00" data-mask-clearifnotmatch="true"
+                       placeholder="00:00" />
+              </div>
+            </div>
+
+            <div class="form-group">
               <label class="form-label">No more activity after this time</label>
               <div class="input-group">
                 <span class="input-group-prepend">

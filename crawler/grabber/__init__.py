@@ -7,10 +7,11 @@ from abc import ABC, abstractmethod
 from utils import get_logger
 from crawler.models.bid import (
     insert_new_bid,
-    mark_bids_as_inactive,
+    mark_bids_as,
     get_daily_bids,
     get_bid_by_signature,
     BidType,
+    BidStatus,
 )
 
 
@@ -90,14 +91,12 @@ class BaseGrabber(ABC):
 
     async def mark_inactive_bids(self, fetched_bids):
         async with self.engine.acquire() as conn:
-            daily_in_bids = await get_daily_bids(conn, BidType.IN)
-            daily_out_bids = await get_daily_bids(conn, BidType.OUT)
-            daily_bids = [*daily_in_bids, *daily_out_bids]
+            daily_bids = await get_daily_bids(conn)
             inactive_bids = [b.id for b in daily_bids
                              if self._not_in(b, fetched_bids)]
             if inactive_bids:
                 self.logger.warning('Marking bids as inactive %s', inactive_bids)
-                await mark_bids_as_inactive(conn, inactive_bids)
+                await mark_bids_as(conn, inactive_bids, BidStatus.INACTIVE)
 
     async def insert_new_bids(self, bids):
         resource = None
