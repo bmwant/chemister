@@ -1,0 +1,24 @@
+---
+
+- include_vars: "common.yml"
+- include_vars: "roles/app/vars/main.yml"
+
+- name: clone project repository
+  git:
+    repo: "{{ repository_url }}"
+    dest: "{{ project_root }}"
+    version: "{{ repository_branch }}"
+    accept_hostkey: true
+
+- name: install requirements with pipenv
+  shell: "pipenv install"
+  args:
+    chdir: "{{ project_root }}"
+
+- name: install node modules
+  npm:
+    path: "{{ project_root }}"
+
+- name: restart application
+  shell: "supervisorctl restart che"
+  become: true
