@@ -42,5 +42,5 @@ class IUaGrabber(BaseGrabber):
 
         self.logger.info('Fetched: %s. Filter applied: %s',
                          len(data), len(filtered_result))
-        
+
         return filtered_result.data
