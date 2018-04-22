@@ -3,6 +3,7 @@
 # not needed, just an example of including top-level vars
 - include_vars: "common.yml"
 - include_vars: "vars/vault.yml"
+  no_log: true
 
 - name: install postgres
   yum:
