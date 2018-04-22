@@ -1,7 +1,10 @@
 ---
 
 - include_vars: "common.yml"
+- include_vars: "vault.yml"
+  no_log: true
 - include_vars: "roles/app/vars/main.yml"
+- include_vars: "roles/postgres/vars/main.yml"
 
 - name: clone project repository
   git:
@@ -21,7 +24,7 @@
 
 - name: render application config
   template:
-    src: "templates/settings_local.py.j2"
+    src: "roles/app/templates/settings_local.py.j2"
     dest: "{{ project_root }}/settings_local.py"
 
 - name: restart application
