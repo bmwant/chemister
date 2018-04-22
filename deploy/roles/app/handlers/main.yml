@@ -1,7 +1,5 @@
 ---
 
-handlers:
-
 - name: nginx reload
   shell: "nginx -t && nginx -s reload"
   become: true

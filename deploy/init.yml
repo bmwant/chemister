@@ -3,40 +3,8 @@
 - hosts: all
 
   tasks:
-
     - include_vars: "vars/common.yml"
 
-    - name: create project directory
-      file:
-        path: "{{ project_root }}"
-        state: directory
-        mode: 0755
-        owner: "{{ ansible_ssh_user }}"
-        group: "{{ ansible_ssh_user }}"
-      become: true
-
-    - name: clone project repository
-      git:
-        repo: "{{ repository_url }}"
-        dest: "{{ project_root }}"
-        version: "{{ repository_branch }}"
-        accept_hostkey: true
-
-    - name: install requirements with pipenv
-      shell: "pipenv install"
-      args:
-        chdir: "{{ project_root }}"
-
-    - name: render supervisor config
-      template:
-        src: "templates/supervisor_che.conf.j2"
-        dest: "/etc/supervisor/conf.d/che.conf"
-      become: true
-      notify: supervisor reload
-
-    - name: render nginx config
-      template:
-        src: "templates/nginx_che.conf.j2"
-        dest: "/etc/nginx/conf.d/che.conf"
-      become: true
-      notify: nginx reload
+  roles:
+    - postgres
+    - app
