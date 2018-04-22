@@ -4,14 +4,14 @@
 - include_vars: "../vars/common.yml"
 - include_vars: "../roles/postgres/vars/main.yml"
 
-- name: create project directory
-  file:
-    path: "{{ project_root }}"
-    state: directory
-    mode: 0755
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-  become: true
+#- name: create project directory
+#  file:
+#    path: "{{ project_root }}"
+#    state: directory
+#    mode: 0755
+#    owner: "{{ ansible_ssh_user }}"
+#    group: "{{ ansible_ssh_user }}"
+#  become: true
 
 - name: clone project repository
   git:
@@ -19,11 +19,11 @@
     dest: "{{ project_root }}"
     version: "{{ repository_branch }}"
     accept_hostkey: true
-
-- name: install requirements with pipenv
-  shell: "pipenv install"
-  args:
-    chdir: "{{ project_root }}"
+#
+#- name: install requirements with pipenv
+#  shell: "pipenv install"
+#  args:
+#    chdir: "{{ project_root }}"
 
 - name: run database initialization
   shell: "{{ project_root }}/scripts/run_sql.sh"

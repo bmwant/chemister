@@ -18,6 +18,13 @@
     creates: "/var/lib/pgsql/data"
   become: true
 
+- postgresql_user:
+    db: postgres
+    name: postgres
+    password: "{{ postgres_default_pass }}"
+    expire: infinity
+  become: true
+
 - name: copy configuration file
   copy:
     src: "files/pg_hba.conf"
