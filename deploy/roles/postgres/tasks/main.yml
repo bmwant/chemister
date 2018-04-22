@@ -17,6 +17,7 @@
   shell: "postgresql-setup initdb"
   args:
     creates: "/var/lib/pgsql/data"
+  register: pg_initdb
   become: true
 
 - name: set password to postgres user
@@ -24,6 +25,7 @@
     sudo -u postgres psql \
     -c "ALTER USER postgres with password '{{ postgres_default_pass }}';"
   no_log: true  # no password in output
+  when: pg_initdb is defined and pg_initdb.changed
   become: true
 
 - name: copy configuration file

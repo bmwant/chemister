@@ -3,15 +3,16 @@
 # should be within its own vars.yml, just an example
 - include_vars: "../vars/common.yml"
 - include_vars: "../roles/postgres/vars/main.yml"
+- include_vars: "roles/postgres/vars/vault.yml"
 
-#- name: create project directory
-#  file:
-#    path: "{{ project_root }}"
-#    state: directory
-#    mode: 0755
-#    owner: "{{ ansible_ssh_user }}"
-#    group: "{{ ansible_ssh_user }}"
-#  become: true
+- name: create project directory
+  file:
+    path: "{{ project_root }}"
+    state: directory
+    mode: 0755
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+  become: true
 
 - name: clone project repository
   git:
@@ -19,11 +20,11 @@
     dest: "{{ project_root }}"
     version: "{{ repository_branch }}"
     accept_hostkey: true
-#
-#- name: install requirements with pipenv
-#  shell: "pipenv install"
-#  args:
-#    chdir: "{{ project_root }}"
+
+- name: install requirements with pipenv
+  shell: "pipenv install"
+  args:
+    chdir: "{{ project_root }}"
 
 - name: run database initialization
   shell: "{{ project_root }}/scripts/run_sql.sh"
@@ -33,6 +34,7 @@
     PG_DATABASE: "{{ pg_database }}"
     PG_USER: "{{ pg_user }}"
     PG_PASSWORD: "{{ pg_password }}"
+    POSTGRES_USER_PASS: "{{ postgres_default_pass }}"
 
 - name: render supervisor config
   template:

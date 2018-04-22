@@ -3,17 +3,21 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Fallback to local values when not defined
 HOST=${PG_HOST:="local-postgres"}
 DBNAME=${PG_DATABSE:="chemister"}
 USER=${PG_USER:="che"}
 PASSWORD=${PG_PASSWORD:="guevara"}
+POSTGRES_USER_PASS=${POSTGRES_USER_PASS:="postgres"}
 TEST=${TEST:=true}
 
+# PGPASSWORD should be exported to the environment
+export PGPASSWORD="${POSTGRES_USER_PASS}"
 echo "::running base sql"
 psql -U postgres -h "${HOST}" -f "${DIR}/sql/000_drop_everything.sql"
 psql -U postgres -h "${HOST}" -f "${DIR}/sql/001_init_database.sql"
 
-# PGPASSWORD should be exported to the environment
+# Update password to correspond with the new user
 export PGPASSWORD="${PASSWORD}"
 echo "::running additional sql"
 
