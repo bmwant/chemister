@@ -2,8 +2,11 @@
 
 # should be within its own vars.yml, just an example
 - include_vars: "../vars/common.yml"
+- include_vars: "vars/vault.yml"
+  no_log: true
 - include_vars: "../roles/postgres/vars/main.yml"
 - include_vars: "roles/postgres/vars/vault.yml"
+  no_log: true
 
 - name: create project directory
   file:
