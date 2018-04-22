@@ -10,8 +10,8 @@ PASSWORD=${PG_PASSWORD:="guevara"}
 TEST=${TEST:=true}
 
 echo "::running base sql"
-psql -U postgres -h "${HOST}" -f "${DIR}/sql/000_drop_everything.sql"
-psql -U postgres -h "${HOST}" -f "${DIR}/sql/001_init_database.sql"
+sudo -u postgres psql -h "${HOST}" -f "${DIR}/sql/000_drop_everything.sql"
+sudo -u postgres psql -h "${HOST}" -f "${DIR}/sql/001_init_database.sql"
 
 # PGPASSWORD should be exported to the environment
 export PGPASSWORD="${PASSWORD}"
