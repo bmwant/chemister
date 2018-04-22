@@ -1,7 +1,3 @@
 ---
 
-- name: restart postgres
-  systemd:
-    name: postgresql
-    state: restarted
-  become: true
+# handlers? anyone?

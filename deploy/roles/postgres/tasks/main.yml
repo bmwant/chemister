@@ -2,6 +2,7 @@
 
 # not needed, just an example of including top-level vars
 - include_vars: "common.yml"
+- include_vars: "vars/vault.yml"
 
 - name: install postgres
   yum:
@@ -18,11 +19,11 @@
     creates: "/var/lib/pgsql/data"
   become: true
 
-- postgresql_user:
-    db: postgres
-    name: postgres
-    password: "{{ postgres_default_pass }}"
-    expire: infinity
+- name: set password to postgres user
+  shell: |
+    sudo -u postgres psql \
+    -c "ALTER USER postgres with password '{{ postgres_default_pass }}';"
+  no_log: true  # no password in output
   become: true
 
 - name: copy configuration file
@@ -32,7 +33,14 @@
     owner: postgres
     group: postgres
     mode: 0600
-  notify: restart postgres
+  register: pg_config
+  become: true
+
+- name: restart postgres service
+  systemd:
+    name: postgresql
+    state: restarted
+  when: pg_config.changed
   become: true
 
 - name: enable postgres service
