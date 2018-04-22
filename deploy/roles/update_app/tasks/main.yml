@@ -19,6 +19,11 @@
   npm:
     path: "{{ project_root }}"
 
+- name: render application config
+  template:
+    src: "templates/settings_local.py.j2"
+    dest: "{{ project_root }}/settings_local.py"
+
 - name: restart application
   shell: "supervisorctl restart che"
   become: true

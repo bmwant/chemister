@@ -36,6 +36,11 @@
     PG_PASSWORD: "{{ pg_password }}"
     POSTGRES_USER_PASS: "{{ postgres_default_pass }}"
 
+- name: render application config
+  template:
+    src: "templates/settings_local.py.j2"
+    dest: "{{ project_root }}/settings_local.py"
+
 - name: render supervisor config
   template:
     src: "templates/supervisor_che.conf.j2"
