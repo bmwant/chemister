@@ -1,6 +1,7 @@
 ---
 
-- include_vars: "../vars/common.yml"
+# not needed, just an example of including top-level vars
+- include_vars: "common.yml"
 
 - name: install postgres
   yum:
@@ -24,6 +25,7 @@
     owner: postgres
     group: postgres
     mode: 0600
+  notify: restart postgres
   become: true
 
 - name: enable postgres service
@@ -32,12 +34,3 @@
     state: started
     enabled: true
   become: true
-
-- name: run database initialization
-  shell: "{{ project_root }}/scripts/run_sql.sh"
-  environment:
-    TEST: ""
-    PG_HOST: "{{ pg_host }}"
-    PG_DATABASE: "{{ pg_database }}"
-    PG_USER: "{{ pg_user }}"
-    PG_PASSWORD: "{{ pg_password }}"

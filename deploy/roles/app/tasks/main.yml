@@ -1,6 +1,8 @@
 ---
 
+# should be within its own vars.yml, just an example
 - include_vars: "../vars/common.yml"
+- include_vars: "../roles/postgres/vars/main.yml"
 
 - name: create project directory
   file:
@@ -22,6 +24,15 @@
   shell: "pipenv install"
   args:
     chdir: "{{ project_root }}"
+
+- name: run database initialization
+  shell: "{{ project_root }}/scripts/run_sql.sh"
+  environment:
+    TEST: ""
+    PG_HOST: "{{ pg_host }}"
+    PG_DATABASE: "{{ pg_database }}"
+    PG_USER: "{{ pg_user }}"
+    PG_PASSWORD: "{{ pg_password }}"
 
 - name: render supervisor config
   template:
