@@ -1,0 +1,43 @@
+---
+
+- include_vars: "../vars/common.yml"
+
+- name: install postgres
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - postgresql-server
+    - postgresql-contrib
+  become: true
+
+- name: create new database cluster
+  shell: "postgresql-setup initdb"
+  args:
+    creates: "/var/lib/pgsql/data"
+  become: true
+
+- name: copy configuration file
+  copy:
+    src: "files/pg_hba.conf"
+    dest: "/var/lib/pgsql/data/pg_hba.conf"
+    owner: postgres
+    group: postgres
+    mode: 0600
+  become: true
+
+- name: enable postgres service
+  systemd:
+    name: postgresql
+    state: started
+    enabled: true
+  become: true
+
+- name: run database initialization
+  shell: "{{ project_root }}/scripts/run_sql.sh"
+  environment:
+    TEST: ""
+    PG_HOST: "{{ pg_host }}"
+    PG_DATABASE: "{{ pg_database }}"
+    PG_USER: "{{ pg_user }}"
+    PG_PASSWORD: "{{ pg_password }}"

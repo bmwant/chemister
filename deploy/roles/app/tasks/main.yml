@@ -1,5 +1,7 @@
 ---
 
+- include_vars: "../vars/common.yml"
+
 - name: create project directory
   file:
     path: "{{ project_root }}"

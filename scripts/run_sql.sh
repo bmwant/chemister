@@ -2,10 +2,10 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-HOST="local-postgres"
-DBNAME="chemister"
-USER="che"
-PASSWORD="guevara"
+HOST=${PG_HOST:="local-postgres"}
+DBNAME=${PG_DATABSE:="chemister"}
+USER=${PG_USER:="che"}
+PASSWORD=${PG_PASSWORD:="guevara"}
 
 echo "::running base sql"
 psql -U postgres -h "${HOST}" -f "${DIR}/sql/000_drop_everything.sql"

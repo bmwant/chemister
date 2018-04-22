@@ -1,6 +1,5 @@
 ---
 
 repository_url: "git@github.com:bmwant/chemister.git"
-project_root: "/data/projects/chemister"
 repository_branch: "master"
 che_run_port: 8555

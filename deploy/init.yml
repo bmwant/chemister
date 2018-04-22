@@ -2,9 +2,6 @@
 
 - hosts: all
 
-  tasks:
-    - include_vars: "vars/common.yml"
-
   roles:
     - postgres
     - app

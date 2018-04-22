@@ -65,6 +65,9 @@ $ psql -U che -d chemister -h 172.17.0.2
 2. Update `templates/settings.html`
 
 ### Deployment
+Encrypt your credentials with ansible-vault running 
+`ansible-vault encrypt deploy/roles/role/vars/vault.yml`.
+
 ```bash
 $ cd deploy
 $ ansible-playbook init.yml
