@@ -35,6 +35,7 @@ def run():
         filters={
             'checkbox': filters.checkbox,
             'format_time': filters.format_time,
+            'format_datetime': filters.format_datetime,
         },
     )
 

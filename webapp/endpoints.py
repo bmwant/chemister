@@ -2,6 +2,7 @@ from aiohttp import web
 
 from crawler.forms.config import config_trafaret
 from crawler.models.configs import insert_new_config
+from crawler.models.phone import add_new_phone_to_blacklist
 from crawler.models.bid import (
     BidStatus,
     get_bid_by_id,
@@ -87,10 +88,14 @@ async def ban_bid_phone(request):
     engine = app['db']
 
     bid_id = request.match_info.get('bid_id')
-    logger.info('Adding phone %s to blacklist' % bid_id)
 
     async with engine.acquire() as conn:
         bid = await get_bid_by_id(conn, bid_id)
+        logger.info('Adding phone %s to blacklist' % bid.phone)
+        await add_new_phone_to_blacklist(
+            conn,
+            phone_number=bid.phone,
+            reason='Вони дебіли',
+        )
 
-
-    return web.HTTPFound(router['index'].url_for())
+    return web.HTTPFound(router['phones'].url_for())

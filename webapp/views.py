@@ -6,6 +6,7 @@ from aiohttp import web
 
 from crawler.helpers import load_config
 from crawler.models.bid import get_daily_bids, BidType
+from crawler.models.phone import get_phones
 from crawler.models.stats import collect_statistics
 from webapp.utils import refresh_data, load_resources, get_cached_value
 
@@ -92,9 +93,9 @@ async def phones(request):
     logger.info('Accessing phones page')
 
     async with engine.acquire() as conn:
-        config = await load_config(conn)
+        phones = await get_phones(conn)
 
-    return {'config': config}
+    return {'phones': phones}
 
 
 @aiohttp_jinja2.template('statistics.html')

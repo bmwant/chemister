@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import sqlalchemy as sa
 
 from utils import get_logger
@@ -12,6 +14,8 @@ phone = sa.Table(
     sa.Column('id', sa.Integer, nullable=False),
     sa.Column('phone', sa.String, nullable=False),
     sa.Column('reason', sa.String, nullable=False),
+    sa.Column('created', sa.DateTime, nullable=False, default=datetime.now),
+
     sa.PrimaryKeyConstraint('id', name='phone_id_pkey'),
 )
 
@@ -25,3 +29,8 @@ async def add_new_phone_to_blacklist(conn, *, phone_number, reason=''):
     row_id = (await result.fetchone())[0]
     return row_id
 
+
+async def get_phones(conn):
+    query = phone.select()
+    result = await conn.execute(query)
+    return await result.fetchall()

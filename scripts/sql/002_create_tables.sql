@@ -12,7 +12,7 @@ CREATE TYPE bid_type AS ENUM (
 
 CREATE TABLE IF NOT EXISTS config(
   id            SERIAL          NOT NULL,
-  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_DATE,
+  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
   value         JSON            NOT NULL
 
 --   user_id  INT NOT NULL
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS bid(
   amount        NUMERIC         NOT NULL,
   currency      VARCHAR         NOT NULL,
   phone         VARCHAR         NOT NULL,
-  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_DATE,
+  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
   dry_run       BOOLEAN         NOT NULL,
   in_use        BOOLEAN         NOT NULL    DEFAULT TRUE,
   status        bid_status      NOT NULL    DEFAULT 'new',
@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS phone(
   id            SERIAL          NOT NULL,
   phone         VARCHAR         NOT NULL,
   reason        VARCHAR         NOT NULL,
+  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
 
   PRIMARY KEY (id)
 )
