@@ -9,19 +9,19 @@
           <tr>
             <td>Total profit</td>
             <td class="text-right">
-              <span class="text-muted">{{ stats.total_profit }}</span>
+              <span class="text-muted">{{ stats.total_profit | round(2) }}</span>
             </td>
           </tr>
           <tr>
             <td>Expected profit</td>
             <td class="text-right">
-              <span class="text-muted">{{ stats.expected_profit }}</span>
+              <span class="text-muted">{{ stats.expected_profit | round(2) }}</span>
             </td>
           </tr>
           <tr>
             <td>Current profit</td>
             <td class="text-right">
-              <span class="text-muted">{{ stats.current_profit }}</span>
+              <span class="text-muted">{{ stats.current_profit | round(2) }}</span>
             </td>
           </tr>
         </tbody>

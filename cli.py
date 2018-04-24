@@ -27,7 +27,7 @@ async def schedule_grabbing(scheduler):
 
 
 @cli.command()
-def monitor():
+def monicha():
     logger = get_logger()
     loop = asyncio.get_event_loop()
     scheduler = Scheduler()
