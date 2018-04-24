@@ -23,7 +23,7 @@ INSERT INTO bid(id, rate, amount, currency, phone, dry_run, bid_type, resource_i
 VALUES (15, 26.15, 115, 'USD', '+380987771115', TRUE, 'out', 1);
 
 INSERT INTO config("value")
-VALUES ('{"MIN_BID_AMOUNT": 100, "MAX_BID_AMOUNT": 100, "DRY_RUN": true, "CLOSED_BIDS_FACTOR": 1, "TIME_DAY_ENDS": "20:00", "REFRESH_PERIOD_MINUTES": 5}');
+VALUES ('{"MIN_BID_AMOUNT": 100, "MAX_BID_AMOUNT": 1000, "DRY_RUN": true, "CLOSED_BIDS_FACTOR": 1, "TIME_DAY_ENDS": "20:00", "TIME_DAY_STARTS": "06:00", "REFRESH_PERIOD_MINUTES": 5}');
 
 
 ALTER SEQUENCE config_id_seq RESTART WITH 2;
