@@ -2,7 +2,11 @@ from aiohttp import web
 
 from crawler.forms.config import config_trafaret
 from crawler.models.configs import insert_new_config
-from crawler.models.bid import BidStatus, set_bid_status
+from crawler.models.bid import (
+    BidStatus,
+    get_bid_by_id,
+    set_bid_status,
+)
 
 
 async def save_config(request):
@@ -72,5 +76,21 @@ async def set_bid_closed(request):
             bid_id=bid_id,
             bid_status=BidStatus.CLOSED,
         )
+
+    return web.HTTPFound(router['index'].url_for())
+
+
+async def ban_bid_phone(request):
+    app = request.app
+    router = app.router
+    logger = app['logger']
+    engine = app['db']
+
+    bid_id = request.match_info.get('bid_id')
+    logger.info('Adding phone %s to blacklist' % bid_id)
+
+    async with engine.acquire() as conn:
+        bid = await get_bid_by_id(conn, bid_id)
+
 
     return web.HTTPFound(router['index'].url_for())

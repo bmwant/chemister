@@ -21,7 +21,9 @@ def setup_routes(app):
     # todo: make post and ajax
     app.router.add_get('/bid/set_closed/{bid_id}', endpoints.set_bid_closed)
     app.router.add_get('/bid/set_called/{bid_id}', endpoints.set_bid_called)
-    app.router.add_get('/bid/set_rejected/{bid_id}', endpoints.set_bid_rejected)
+    app.router.add_get('/bid/set_rejected/{bid_id}',
+                       endpoints.set_bid_rejected)
+    app.router.add_get('/bid/ban_phone/{bid_id}', endpoints.ban_bid_phone)
 
 
 def setup_static_routes(app):

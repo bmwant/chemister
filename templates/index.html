@@ -9,6 +9,17 @@
 
 {% include "components/index_metrics.html" %}
 
+<div class="row">
+  <div class="col-12">
+    {% if stats.current_profit < 0 %}
+      <div class="alert alert-icon alert-danger" role="alert">
+        <i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+        You have to close more OUT bids.
+      </div>
+    {% endif %}
+  </div>
+</div>
+
 <div class="row row-cards">
   <div class="col-md-6">
     <div class="row">

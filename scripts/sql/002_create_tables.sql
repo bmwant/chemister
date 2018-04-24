@@ -48,6 +48,15 @@ CREATE TABLE IF NOT EXISTS bid(
 );
 
 
+CREATE TABLE IF NOT EXISTS phone(
+  id            SERIAL          NOT NULL,
+  phone         VARCHAR         NOT NULL,
+  reason        VARCHAR         NOT NULL,
+
+  PRIMARY KEY (id)
+)
+
+
 -- CREATE TABLE IF NOT EXISTS "user"(
 --   id            SERIAL          NOT NULL,
 --   name          VARCHAR         NOT NULL,
