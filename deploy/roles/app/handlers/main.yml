@@ -7,3 +7,11 @@
 - name: supervisor reload
   shell: "supervisorctl reread && supervisorctl update"
   become: true
+
+- name: restart monicha
+  shell: "supervisorctl restart monicha"
+  become: true
+
+- name: restart che
+  shell: "supervisorctl restart che"
+  become: true
