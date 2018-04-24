@@ -3,10 +3,12 @@ Schedule periodic tasks and ensure their execution within given period.
 """
 import asyncio
 from datetime import datetime
+from http import HTTPStatus
+
+import aiohttp
 
 import settings
 from utils import make_datetime, LoggableMixin
-
 from crawler.notifier import notify
 from crawler.models.bid import _autoclose_bids
 from crawler.helpers import get_config
@@ -54,11 +56,25 @@ class Scheduler(LoggableMixin):
         await notify()
         self.logger.debug('Closing all bids with their owners...')
         await _autoclose_bids()
+        self.logger.debug('Sending healthcheck...')
+        await self.send_healthcheck()
 
     async def run_daily_tasks(self):
         for daily_task in self.daily_tasks:
             if daily_task.is_ready():
                 await daily_task
+
+    async def send_healthcheck(self):
+        endpoint = settings.HEALTHCHECK_ENDPOINT
+        if not endpoint:
+            self.logger.info('Healthcheck service is disabled')
+            return
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(endpoint) as resp:
+                if resp.status != HTTPStatus.OK:
+                    text = await resp.text()
+                    self.logger.error('Request failed %s', text)
 
     @property
     async def working_time(self):
