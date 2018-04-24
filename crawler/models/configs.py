@@ -40,3 +40,8 @@ async def insert_new_config(conn, new_config):
     return await conn.execute(config.insert().values(
         value=new_config,
     ))
+
+
+async def get_config_history(conn):
+    result = await conn.execute(config.select())
+    return await result.fetchall()

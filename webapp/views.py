@@ -8,6 +8,7 @@ from crawler.helpers import load_config
 from crawler.models.bid import get_daily_bids, BidType
 from crawler.models.phone import get_phones
 from crawler.models.stats import collect_statistics
+from crawler.models.configs import get_config_history
 from webapp.utils import refresh_data, load_resources, get_cached_value
 
 
@@ -81,8 +82,9 @@ async def settings(request):
 
     async with engine.acquire() as conn:
         config = await load_config(conn)
+        config_history = await get_config_history(conn)
 
-    return {'config': config}
+    return {'config': config, 'history': config_history}
 
 
 @aiohttp_jinja2.template('phones.html')
