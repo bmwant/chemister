@@ -13,12 +13,14 @@ class SimpleFetcher(BaseFetcher):
     def __init__(self, base_url, *, proxy=None, **kwargs):
         super().__init__(base_url, proxy=proxy, **kwargs)
         self._session = None
+        self.verify_ssl = False
         self.logger = get_logger(self.__class__.__name__.lower())
 
     @property
     def session(self):
         if self._session is None:
-            self._session = aiohttp.ClientSession()
+            self._session = aiohttp.ClientSession(
+                connector=aiohttp.TCPConnector(verify_ssl=self.verify_ssl))
         return self._session
 
     async def close(self):

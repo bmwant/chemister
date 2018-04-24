@@ -37,8 +37,8 @@ class IUaGrabber(BaseGrabber):
             config = await load_config(conn)
 
         filtered_result = Container(data) >> \
-            Filter('amount', operator.gt, config.MIN_BID_AMOUNT) >> \
-            Filter('amount', operator.lt, config.MAX_BID_AMOUNT)
+            Filter('amount', operator.ge, config.MIN_BID_AMOUNT) >> \
+            Filter('amount', operator.le, config.MAX_BID_AMOUNT)
 
         self.logger.info('Fetched: %s. Filter applied: %s',
                          len(data), len(filtered_result))

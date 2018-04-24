@@ -3,8 +3,8 @@
 - name: i ua
   urls:
     - currency: "USD"
-      in_bids: "https://finance.i.ua/market/kiev/usd/?type=1"
-      out_bids: "https://finance.i.ua/market/kiev/usd/?type=2"
+      in_bids: "https://finance.i.ua/market/kiev/usd/?type=2"
+      out_bids: "https://finance.i.ua/market/kiev/usd/?type=1"
   grabber: "i_ua"
   parser: "i_ua"
   fetcher:

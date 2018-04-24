@@ -79,3 +79,7 @@ install: clean ## install the package to the active Python's site-packages
 initdb:
 	docker run -it -v $(shell pwd):/opt --rm --link local-postgres:postgres \
 	postgres /opt/scripts/run_sql.sh
+
+run-postgres:
+	docker run --name local-postgres -v chemister-data:/var/lib/postgresql/data \
+    -d postgres
