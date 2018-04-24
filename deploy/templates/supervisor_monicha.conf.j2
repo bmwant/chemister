@@ -1,13 +1,12 @@
 [program:monicha]
 environment=
     HOME="/home/{{ ansible_ssh_user }}",
-    USER="{{ ansible_ssh_user }}",
-    PORT="{{ che_run_port }}"
+    USER="{{ ansible_ssh_user }}"
 command=pipenv run python cli.py
 directory={{ project_root }}
 user={{ ansible_ssh_user }}
 autostart=true
 autorestart=true
 redirect_stderr=true
-stdout_logfile=/var/log/che.supervisor.stdout
+stdout_logfile=/var/log/monicha.supervisor.stdout
 stopsignal=QUIT

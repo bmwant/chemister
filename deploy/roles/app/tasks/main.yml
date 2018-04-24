@@ -42,10 +42,17 @@
     src: "templates/settings_local.py.j2"
     dest: "{{ project_root }}/settings_local.py"
 
-- name: render supervisor config
+- name: render supervisor config for che application
   template:
     src: "templates/supervisor_che.conf.j2"
     dest: "/etc/supervisor/conf.d/che.conf"
+  become: true
+  notify: supervisor reload
+
+- name: render supervisor config for monicha appliction
+  template:
+    src: "templates/supervisor_monicha.conf.j2"
+    dest: "/etc/supervisor/conf.d/monicha.conf"
   become: true
   notify: supervisor reload
 
