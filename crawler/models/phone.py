@@ -21,4 +21,7 @@ async def add_new_phone_to_blacklist(conn, *, phone_number, reason=''):
         phone=phone_number,
         reason=reason,
     )
-    await conn.execute(query)
+    result = await conn.execute(query)
+    row_id = (await result.fetchone())[0]
+    return row_id
+
