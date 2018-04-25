@@ -36,6 +36,7 @@
     PG_USER: "{{ pg_user }}"
     PG_PASSWORD: "{{ pg_password }}"
     POSTGRES_USER_PASS: "{{ postgres_default_pass }}"
+  when: recreate_db
 
 - name: render application config
   template:
