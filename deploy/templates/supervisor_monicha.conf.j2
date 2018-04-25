@@ -2,7 +2,7 @@
 environment=
     HOME="/home/{{ ansible_ssh_user }}",
     USER="{{ ansible_ssh_user }}"
-command=pipenv run python cli.py
+command=pipenv run python cli.py monicha
 directory={{ project_root }}
 user={{ ansible_ssh_user }}
 autostart=true

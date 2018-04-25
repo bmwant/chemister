@@ -6,27 +6,42 @@
 - include_vars: "roles/app/vars/main.yml"
 - include_vars: "roles/postgres/vars/main.yml"
 
-- name: clone project repository
-  git:
-    repo: "{{ repository_url }}"
-    dest: "{{ project_root }}"
-    version: "{{ repository_branch }}"
-    accept_hostkey: true
 
-- name: install requirements with pipenv
-  shell: "pipenv install"
-  args:
-    chdir: "{{ project_root }}"
-
-- name: install node modules
-  npm:
-    path: "{{ project_root }}"
+#- name: clone project repository
+#  git:
+#    repo: "{{ repository_url }}"
+#    dest: "{{ project_root }}"
+#    version: "{{ repository_branch }}"
+#    accept_hostkey: true
+#
+#- name: install requirements with pipenv
+#  shell: "pipenv install"
+#  args:
+#    chdir: "{{ project_root }}"
+#
+#- name: install node modules
+#  npm:
+#    path: "{{ project_root }}"
 
 - name: render application config
   template:
     src: "roles/app/templates/settings_local.py.j2"
     dest: "{{ project_root }}/settings_local.py"
 
-- name: restart application
-  shell: "supervisorctl restart che"
+- name: render supervisor config for che application
+  template:
+    src: "templates/supervisor_che.conf.j2"
+    dest: "/etc/supervisor/conf.d/che.conf"
   become: true
+  notify:
+    - supervisor reload
+    - restart che
+
+- name: render supervisor config for monicha appliction
+  template:
+    src: "templates/supervisor_monicha.conf.j2"
+    dest: "/etc/supervisor/conf.d/monicha.conf"
+  become: true
+  notify:
+    - supervisor reload
+    - restart monicha
