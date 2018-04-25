@@ -121,3 +121,12 @@ async def resource(request):
     logger = app['logger']
     engine = app['db']
     logger.info('Accessing resource page')
+
+
+@aiohttp_jinja2.template('admin.html')
+async def control_panel(request):
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+
+    logger.info('Accessing admin page')

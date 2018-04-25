@@ -10,16 +10,6 @@ CREATE TYPE bid_type AS ENUM (
 );
 
 
-CREATE TABLE IF NOT EXISTS config(
-  id            SERIAL          NOT NULL,
-  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
-  value         JSON            NOT NULL
-
---   user_id  INT NOT NULL
---   FOREIGN KEY (user_id) REFERENCES user (id),
-);
-
-
 CREATE TABLE IF NOT EXISTS resource(
   id            SERIAL          NOT NULL,
   name          VARCHAR         NOT NULL,
@@ -55,15 +45,39 @@ CREATE TABLE IF NOT EXISTS phone(
   created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
 
   PRIMARY KEY (id)
-)
+);
 
 
--- CREATE TABLE IF NOT EXISTS "user"(
---   id            SERIAL          NOT NULL,
---   name          VARCHAR         NOT NULL,
---   email          VARCHAR         NOT NULL,
---   password          VARCHAR         NOT NULL,
---   permissions   JSON,
---
---   PRIMARY KEY (id)
--- );
+CREATE TABLE IF NOT EXISTS "user"(
+  id            SERIAL          NOT NULL,
+  name          VARCHAR         NOT NULL,
+  email         VARCHAR         NOT NULL,
+  password      VARCHAR         NOT NULL,
+  permissions   JSON,
+
+  PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS fund(
+  id            SERIAL          NOT NULL,
+  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
+  amount        NUMERIC         NOT NULL    DEFAULT 0,
+--   value          JSON         NOT NULL,
+  user_id   INT             NOT NULL,
+
+  FOREIGN KEY (user_id) REFERENCES "user" (id),
+  PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS config(
+  id            SERIAL          NOT NULL,
+  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
+  value         JSON            NOT NULL,
+  user_id       INT             NOT NULL,
+
+  FOREIGN KEY (user_id) REFERENCES "user" (id),
+  PRIMARY KEY (id)
+);
+

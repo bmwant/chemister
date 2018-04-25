@@ -15,6 +15,8 @@ def setup_routes(app):
     app.router.add_get('/resource', views.resource)
     app.router.add_get('/statistics', views.statistics, name='statistics')
     app.router.add_get('/phones', views.phones, name='phones')
+    app.router.add_get('/admin', views.control_panel, name='admin')
+
     app.router.add_post('/save_config', endpoints.save_config)
 
     # bids

@@ -1,4 +1,5 @@
-INSERT INTO resource(id, "name", url) VALUES(1, 'test resource', 'http://google.com');
+INSERT INTO resource(id, "name", url)
+VALUES(1, 'test resource', 'http://google.com');
 
 INSERT INTO bid(id, rate, amount, currency, phone, dry_run, bid_type, resource_id)
 VALUES (1, 26.01, 101, 'USD', '+380987771101', TRUE, 'in', 1);
@@ -22,10 +23,17 @@ VALUES (14, 26.14, 114, 'USD', '+380987771114', TRUE, 'out', 1);
 INSERT INTO bid(id, rate, amount, currency, phone, dry_run, bid_type, resource_id)
 VALUES (15, 26.15, 115, 'USD', '+380987771115', TRUE, 'out', 1);
 
-INSERT INTO config("value")
-VALUES ('{"MIN_BID_AMOUNT": 100, "MAX_BID_AMOUNT": 1000, "DRY_RUN": true, "CLOSED_BIDS_FACTOR": 1, "TIME_DAY_ENDS": "20:00", "TIME_DAY_STARTS": "06:00", "REFRESH_PERIOD_MINUTES": 5}');
+INSERT INTO "user"(id, "name", email, password)
+VALUES (1, 'test', 'test@gmail.com', 'test')
 
+INSERT INTO config(id, "value", user_id)
+VALUES (1, '{"MIN_BID_AMOUNT": 100, "MAX_BID_AMOUNT": 1000, "DRY_RUN": true, "CLOSED_BIDS_FACTOR": 1, "TIME_DAY_ENDS": "20:00", "TIME_DAY_STARTS": "06:00", "REFRESH_PERIOD_MINUTES": 5}', 1);
 
+INSERT INTO fund(id, amount, user_id)
+VALUES (1, 0, 1);
+
+ALTER SEQUENCE user_id_seq RESTART WITH 2;
 ALTER SEQUENCE config_id_seq RESTART WITH 2;
 ALTER SEQUENCE resource_id_seq RESTART WITH 2;
+ALTER SEQUENCE fund_id_seq RESTART WITH 2;
 ALTER SEQUENCE bid_id_seq RESTART WITH 20;
