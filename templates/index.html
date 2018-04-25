@@ -79,7 +79,9 @@
         <div class="card">
           <div class="card-body text-center">
             <div class="h5">Daily fund</div>
-            <div class="display-4 font-weight-bold mb-4">652</div>
+            <div class="display-4 font-weight-bold mb-4">
+              {{ (stats.fund + stats.current_profit) | round(2) }}
+            </div>
             <span class="tag tag-azure">UAH</span>
           </div>
         </div>
@@ -88,7 +90,9 @@
         <div class="card">
           <div class="card-body text-center">
             <div class="h5">Fund</div>
-            <div class="display-4 font-weight-bold mb-4">25678</div>
+            <div class="display-4 font-weight-bold mb-4">
+              {{ stats.fund | int }}
+            </div>
             <span class="tag tag-azure">UAH</span>
           </div>
         </div>

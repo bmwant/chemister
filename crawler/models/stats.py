@@ -1,14 +1,11 @@
-import operator
-from sqlalchemy import sql
-
 from crawler.helpers import load_config
 from crawler.models.bid import (
-    bid,
     get_daily_bids,
     BidType,
     BidStatus,
     GONE_STATUSES,
 )
+from crawler.models.fund import get_current_fund_amount
 
 
 def get_bare_value_for_bids(bids):
@@ -54,6 +51,8 @@ async def collect_statistics(conn):
     current_profit = await get_current_profit(conn)
     expected_profit = total_profit * config.CLOSED_BIDS_FACTOR
 
+    fund_amount = await get_current_fund_amount(conn)
+
     return {
         'total_profit': total_profit,
         'expected_profit': expected_profit,
@@ -61,4 +60,5 @@ async def collect_statistics(conn):
         'total_bids': total_bids_count,
         'dropped_bids': dropped_bids_count,
         'closed_bids': closed_bids_count,
+        'fund': fund_amount,
     }
