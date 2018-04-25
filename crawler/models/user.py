@@ -4,10 +4,15 @@ from . import metadata
 
 
 user = sa.Table(
-    'resource', metadata,
-    sa.Column('id', sa.Integer),
-    # sa.Column('name', sa.String),
-    # sa.Column('url', sa.String),
-    #
+    'user', metadata,
+    sa.Column('id', sa.Integer, nullable=False),
+    sa.Column('name', sa.String, nullable=False),
+    sa.Column('password', sa.String, nullable=False),
+    sa.Column('permissions', sa.JSON),
+
     sa.PrimaryKeyConstraint('id', name='user_id_pkey'),
 )
+
+
+async def insert_new_user(conn):
+    pass

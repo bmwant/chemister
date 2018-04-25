@@ -4,6 +4,7 @@ import attr
 import sqlalchemy as sa
 
 from . import metadata
+from .user import user
 
 
 @attr.s
@@ -32,7 +33,12 @@ config = sa.Table(
     sa.Column('created', sa.DateTime, default=datetime.datetime.now),
     sa.Column('value', sa.JSON),
 
+    sa.Column('user_id', sa.Integer),
+
     sa.PrimaryKeyConstraint('id', name='config_id_pkey'),
+    sa.ForeignKeyConstraint(['user_id'], [user.c.id],
+                            name='config_user_id_fkey',
+                            ondelete='NO ACTION'),
 )
 
 
