@@ -26,17 +26,19 @@ psql -U postgres -h "${HOST}" \
 # Update password to correspond with the new user
 export PGPASSWORD="${PASSWORD}"
 _info "running additional sql"
-
 psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
 -f "${DIR}/sql/002_create_tables.sql" -v ON_ERROR_STOP=1
 
+_info "inserting base data"
+psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
+-f "${DIR}/sql/003_insert_base_data.sql" -v ON_ERROR_STOP=1
 
 if [ -z "${TEST}" ]; then
   _info "production env, do nothing"
 else
   _info "inserting test data"
   psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
-  -f "${DIR}/sql/003_insert_base_data.sql" -v ON_ERROR_STOP=1
+  -f "${DIR}/sql/004_insert_test_data.sql" -v ON_ERROR_STOP=1
 fi
 
 _note "done!"
