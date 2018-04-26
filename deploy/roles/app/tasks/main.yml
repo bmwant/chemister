@@ -56,9 +56,6 @@
     src: "templates/supervisor_che.conf.j2"
     dest: "/etc/supervisor/conf.d/che.conf"
   become: true
-  notify:
-    - supervisor reload
-    - restart che
 
 - name: render supervisor config for monicha appliction
   template:
@@ -66,7 +63,14 @@
     dest: "/etc/supervisor/conf.d/monicha.conf"
   become: true
   notify:
+    - restart monicha
+  changed_when: true
+
+- name: restart services with supervisor
+  command: "/bin/true"
+  notify:
     - supervisor reload
+    - restart che
     - restart monicha
 
 - name: render nginx config
