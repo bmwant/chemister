@@ -15,16 +15,6 @@ if [ -z ${TEST+x} ]; then
  TEST=true
 fi
 
-echo "HOST ${HOST}"
-echo "DBNAME ${DBNAME}"
-echo "USER ${USER}"
-echo "PASSWORD ${PASSWORD}"
-echo "POSTGRES_USER_PASS ${POSTGRES_USER_PASS}"
-echo "TEST ${TEST}"
-if [ -z "${TEST}" ]; then
-  _info "|| production env, not test"
-fi
-exit
 # PGPASSWORD should be exported to the environment
 export PGPASSWORD="${POSTGRES_USER_PASS}"
 _info "|| running base sql"
