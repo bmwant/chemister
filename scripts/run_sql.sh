@@ -17,22 +17,26 @@ fi
 
 # PGPASSWORD should be exported to the environment
 export PGPASSWORD="${POSTGRES_USER_PASS}"
-_info "|| running base sql"
-psql -U postgres -h "${HOST}" -f "${DIR}/sql/000_drop_everything.sql"
-psql -U postgres -h "${HOST}" -f "${DIR}/sql/001_init_database.sql"
+_info "running base sql"
+psql -U postgres -h "${HOST}" \
+-f "${DIR}/sql/000_drop_everything.sql" -v ON_ERROR_STOP=1
+psql -U postgres -h "${HOST}" \
+-f "${DIR}/sql/001_init_database.sql" -v ON_ERROR_STOP=1
 
 # Update password to correspond with the new user
 export PGPASSWORD="${PASSWORD}"
-info "|| running additional sql"
+_info "running additional sql"
 
-psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" -f "${DIR}/sql/002_create_tables.sql"
+psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
+-f "${DIR}/sql/002_create_tables.sql" -v ON_ERROR_STOP=1
 
 
 if [ -z "${TEST}" ]; then
-  _info "|| production env, do nothing"
+  _info "production env, do nothing"
 else
-  _info "|| inserting test data"
-  psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" -f "${DIR}/sql/003_insert_base_data.sql"
+  _info "inserting test data"
+  psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
+  -f "${DIR}/sql/003_insert_base_data.sql" -v ON_ERROR_STOP=1
 fi
 
-_note "|| done!"
+_note "done!"
