@@ -38,6 +38,7 @@ class Scheduler(LoggableMixin):
 
             # todo: call soon without blocking
             await self.run_daily_tasks()
+            await self.send_healthcheck()
             self.logger.info('Waiting %s seconds to make next update...' %
                              self.interval)
             await asyncio.sleep(self.interval)
@@ -56,8 +57,6 @@ class Scheduler(LoggableMixin):
         await notify()
         self.logger.debug('Closing all bids with their owners...')
         await _autoclose_bids()
-        self.logger.debug('Sending healthcheck...')
-        await self.send_healthcheck()
 
     async def run_daily_tasks(self):
         for daily_task in self.daily_tasks:
@@ -70,6 +69,7 @@ class Scheduler(LoggableMixin):
             self.logger.info('Healthcheck service is disabled')
             return
 
+        self.logger.debug('Sending healthcheck...')
         async with aiohttp.ClientSession() as session:
             async with session.get(endpoint) as resp:
                 if resp.status != HTTPStatus.OK:
@@ -82,7 +82,14 @@ class Scheduler(LoggableMixin):
         work_starts = make_datetime(config.TIME_DAY_STARTS)
         work_ends = make_datetime(config.TIME_DAY_ENDS)
         time_now = datetime.now()
-        return work_starts <= time_now <= work_ends
+        is_working = work_starts <= time_now <= work_ends
+        if not is_working:
+            self.logger.debug('s %s, e %s', work_starts, work_ends)
+            self.logger.debug(
+                'Standby period [%s-%s]: %s' %
+                config.TIME_DAY_STARTS, config.TIME_DAY_ENDS, time_now
+            )
+        return is_working
 
     async def cleanup(self):
         self.logger.info('Cleaning up resources...')
