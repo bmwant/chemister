@@ -27,6 +27,14 @@
   args:
     chdir: "{{ project_root }}"
 
+- name: stop applications not to use db connection
+  shell: "supervisorctl stop {{ item }}"
+  with_items:
+    - che
+    - monicha
+  when: recreate_db
+  become: true
+
 - name: run database initialization
   shell: "{{ project_root }}/scripts/run_sql.sh"
   environment:

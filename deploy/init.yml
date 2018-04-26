@@ -3,6 +3,9 @@
 - hosts: all
   gather_facts: no
 
+  vars:
+    recreate_db: yes
+
   roles:
     - postgres
     - app

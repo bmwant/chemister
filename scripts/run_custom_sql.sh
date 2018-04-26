@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 if [ $# -ne 4 ]; then
   echo "Usage: $0 <server> <user> <password> <sql_file>"

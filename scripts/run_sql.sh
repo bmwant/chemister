@@ -3,9 +3,11 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# todo: out variables here
+
 # Fallback to local values when not defined
 HOST=${PG_HOST:="local-postgres"}
-DBNAME=${PG_DATABSE:="chemister"}
+DBNAME=${PG_DATABASE:="chemister"}
 USER=${PG_USER:="che"}
 PASSWORD=${PG_PASSWORD:="guevara"}
 POSTGRES_USER_PASS=${POSTGRES_USER_PASS:="postgres"}
