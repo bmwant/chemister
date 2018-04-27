@@ -31,6 +31,7 @@ def list_of(cl):
 @attr.s
 class Resource(object):
     name: str = attr.ib()
+    link: str = attr.ib()
     urls = attr.ib(
         default=attr.Factory(list),
         convert=ensure_cls(URLConfig),

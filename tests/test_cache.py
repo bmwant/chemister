@@ -1,3 +1,6 @@
+import json
+
+import attr
 import pytest
 
 from crawler.cache import Cache
@@ -25,9 +28,7 @@ async def test_json_data(cache):
     await cache.close()
 
 
-def test_inserting_attr_model():
-    import attr
-    import json
+def test_serializing_attr_object():
 
     @attr.s
     class Bid(object):
@@ -35,9 +36,5 @@ def test_inserting_attr_model():
         currency: str = attr.ib()
 
     b = Bid(amount=5, currency='USD')
-    import pdb; pdb.set_trace()
-    r = json.dumps(b)
-    print(r)
-
-
-
+    result = json.dumps(b.__dict__)
+    assert isinstance(result, str)

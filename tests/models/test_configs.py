@@ -1,11 +1,16 @@
 import yaml
 
-from crawler.models import Resource, FetcherConfig, ProxyConfig
+from crawler.models.resource import Resource
+from crawler.models.configs import FetcherConfig, ProxyConfig
 
 
 SINGLE_DATA = """
 - name: The Name 1
-  url: "https://example.com/"
+  link: "https://example.com/"
+  urls:
+    - currency: "USD"
+      in_bids: "https://example.com/usd/in
+      out_bids: "https://example.com/usd/out"
   parser: "the_name_parser"
   fetcher:
     instance: "browser"
@@ -19,11 +24,19 @@ SINGLE_DATA = """
 
 DEFAULT_DATA = """
 - name: The Default 1
-  url: "https://example.com/default1"
+  link: "https://example.com/default1"
+  urls:
+    - currency: "USD"
+      in_bids: "https://example.com/default1/in
+      out_bids: "https://example.com/default1/out"
   proxy:
     use: false
 - name: The Default 2
-  url: "https://example.com/default2"
+  link: "https://example.com/default2"
+  urls:
+    - currency: "USD"
+      in_bids: "https://example.com/default2/in
+      out_bids: "https://example.com/default2/out"
   parser: "the_name_parser"
   fetcher:
     instance: "simple"
@@ -65,7 +78,3 @@ def test_default_values_loaded():
     assert res2.proxy.use is False
     assert res2.proxy.ip is None
     assert res2.proxy.port == 80
-
-
-def test_creating_new_bid():
-    pass

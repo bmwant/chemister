@@ -27,6 +27,7 @@ class Factory(object):
         with open(settings.RESOURCES_FILEPATH) as f:
             resources = yaml.load(f.read())
         self.resources = [Resource(**r) for r in resources]
+        return self.resources
 
     async def init_cache(self):
         """
