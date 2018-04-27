@@ -51,6 +51,11 @@
     src: "templates/settings_local.py.j2"
     dest: "{{ project_root }}/settings_local.py"
 
+- name: init resources for application
+  shell: "pipenv run python cli.py insert_resources"
+  args:
+    chdir: "{{ project_root }}"
+
 - name: render supervisor config for che application
   template:
     src: "templates/supervisor_che.conf.j2"
