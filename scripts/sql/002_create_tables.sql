@@ -9,6 +9,10 @@ CREATE TYPE bid_type AS ENUM (
   'in', 'out'
 );
 
+CREATE TYPE currency AS ENUM (
+  'UAH', 'USD'
+);
+
 
 CREATE TABLE IF NOT EXISTS resource(
   id            SERIAL          NOT NULL,
@@ -24,7 +28,7 @@ CREATE TABLE IF NOT EXISTS bid(
   id            SERIAL          NOT NULL,
   rate          NUMERIC         NOT NULL,
   amount        NUMERIC         NOT NULL,
-  currency      VARCHAR         NOT NULL,
+  currency      currency        NOT NULL,
   phone         VARCHAR         NOT NULL,
   created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
   dry_run       BOOLEAN         NOT NULL,
@@ -63,6 +67,7 @@ CREATE TABLE IF NOT EXISTS fund(
   id            SERIAL          NOT NULL,
   created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
   amount        NUMERIC         NOT NULL    DEFAULT 0,
+  currency      currency        NOT NULL,
 --   value          JSON         NOT NULL,
   user_id   INT             NOT NULL,
 
@@ -80,4 +85,3 @@ CREATE TABLE IF NOT EXISTS config(
   FOREIGN KEY (user_id) REFERENCES "user" (id),
   PRIMARY KEY (id)
 );
-

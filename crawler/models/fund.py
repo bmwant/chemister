@@ -1,3 +1,4 @@
+from enum import Enum
 from datetime import datetime
 
 import sqlalchemy as sa
@@ -14,6 +15,7 @@ logger = get_logger(__name__)
 fund = sa.Table(
     'fund', metadata,
     sa.Column('id', sa.Integer, nullable=False),
+    sa.Column('currency', sa.String, nullable=False),
     sa.Column('amount',
               sa.Numeric(asdecimal=False), nullable=False, default=0),
     sa.Column('created', sa.DateTime, nullable=False, default=datetime.now),
@@ -27,7 +29,14 @@ fund = sa.Table(
 )
 
 
-async def get_current_fund_amount(conn):
-    query = fund.select().order_by(desc(fund.c.created))
+class Currency(Enum):
+    UAH = 'UAH'
+    USD = 'USD'
+
+
+async def get_current_fund_amount(conn, currency: Currency):
+    query = fund.select()\
+        .where(fund.c.currency == currency.value)\
+        .order_by(desc(fund.c.created))
     result = await conn.execute(query)
     return (await result.fetchone()).amount
