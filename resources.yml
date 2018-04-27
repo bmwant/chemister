@@ -1,6 +1,7 @@
 ---
 
 - name: i ua
+  link: "https://finance.i.ua/market/kiev/?"
   urls:
     - currency: "USD"
       in_bids: "https://finance.i.ua/market/kiev/usd/?type=2"

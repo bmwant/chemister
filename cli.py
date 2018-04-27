@@ -4,6 +4,7 @@ import click
 
 from crawler.factory import Factory
 from crawler.scheduler import Scheduler
+from crawler.helpers import insert_resources
 from utils import get_logger
 
 
@@ -43,6 +44,12 @@ def monicha():
 @cli.command()
 def check_drivers():
     pass
+
+
+@cli.command(name='insert_resources')
+def insert_resources_command():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(insert_resources())
 
 
 if __name__ == '__main__':

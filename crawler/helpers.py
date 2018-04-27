@@ -1,9 +1,12 @@
 import attr
+import yaml
 
+import settings
 from utils import get_logger
 from crawler.db import Engine
 from crawler.forms.config import config_trafaret
 from crawler.models.configs import config as config_model
+from crawler.models.resource import insert_new_resource, get_resource_by_name
 
 from sqlalchemy import desc
 
@@ -39,3 +42,17 @@ async def get_config():
     async with Engine() as engine:
         async with engine.acquire() as conn:
             return await load_config(conn)
+
+
+async def insert_resources():
+    with open(settings.RESOURCES_FILEPATH) as f:
+        resources = yaml.load(f.read())
+
+    async with Engine() as engine:
+        async with engine.acquire() as conn:
+            for resource in resources:
+                resource_name = resource['name']
+                res = await get_resource_by_name(conn, resource_name)
+                if res is None:
+                    logger.info('Adding new resource: %s', resource_name)
+                    await insert_new_resource(conn, resource)
