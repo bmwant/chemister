@@ -31,7 +31,9 @@
         <td>
           {{ get_status.status(bid) }}
         </td>
-        <td><a href="#">{{ bid.resource_id }}</a></td>
+        <td>
+          <a href="/resource/{{ bid.resource_id }}">resource #{{ bid.resource_id }}</a>
+        </td>
         <td class="text-right">
           <div class="dropdown">
             <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>

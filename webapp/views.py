@@ -6,6 +6,7 @@ from aiohttp import web
 
 from crawler.helpers import load_config
 from crawler.models.bid import get_daily_bids, BidType
+from crawler.models.resource import get_resource_by_id
 from crawler.models.phone import get_phones
 from crawler.models.stats import collect_statistics
 from crawler.models.configs import get_config_history
@@ -120,7 +121,15 @@ async def resource(request):
     app = request.app
     logger = app['logger']
     engine = app['db']
-    logger.info('Accessing resource page')
+
+    resource_id = request.match_info.get('resource_id')
+    logger.info('Accessing resource #%s page' % resource_id)
+    async with engine.acquire() as conn:
+        resource = await get_resource_by_id(conn, resource_id)
+
+    return {
+        'resource': resource
+    }
 
 
 @aiohttp_jinja2.template('admin.html')

@@ -70,6 +70,14 @@ async def insert_new_resource(conn, new_resource):
     return await result.fetchone()
 
 
+async def get_resource_by_id(conn, resource_id):
+    query = resource.select().where(
+        resource.c.id == resource_id
+    )
+    result = await conn.execute(query)
+    return await result.fetchone()
+
+
 async def get_resource_by_name(conn, resource_name):
     query = resource.select().where(
         resource.c.name == resource_name
