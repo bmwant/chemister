@@ -3,6 +3,7 @@ from functools import partial
 
 import aiohttp_jinja2
 from aiohttp import web
+from aiohttp_session import get_session
 
 from crawler.helpers import load_config
 from crawler.models.bid import get_daily_bids, BidType
@@ -12,8 +13,10 @@ from crawler.models.user import get_user
 from crawler.models.stats import collect_statistics
 from crawler.models.configs import get_config_history
 from webapp.utils import refresh_data, load_resources, get_cached_value
+from webapp.helpers import login_required
 
 
+@login_required
 @aiohttp_jinja2.template('index.html')
 async def index(request):
     app = request.app
@@ -162,12 +165,19 @@ async def do_login(request):
     password = form['password']
 
     async with engine.acquire() as conn:
+        # todo: passwords
         user = await get_user(conn, email, password)
 
     if user is None:
         # todo: flash login something
+        logger.warning('Cannot find user %s' % email)
         return web.HTTPFound(router['login'].url_for())
 
-
-    # todo: set user_id to session
+    # todo: flash login successful
+    session = await get_session(request)
+    session['user_id'] = user.id
     return web.HTTPFound(router['index'].url_for())
+
+
+async def logout(request):
+    pass
