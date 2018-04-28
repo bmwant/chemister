@@ -9,8 +9,8 @@
           <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
             <span class="avatar" style="background-image: url(/static/demo/faces/female/25.jpg)"></span>
             <span class="ml-2 d-none d-lg-block">
-              <span class="text-default">Misha Behersky</span>
-              <small class="text-muted d-block mt-1">Administrator</small>
+              <span class="text-default">{{ user.name }}</span>
+              <small class="text-muted d-block mt-1">Administrator {{ user.role }}</small>
             </span>
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
@@ -53,9 +53,6 @@
           </li>
           <li class="nav-item dropdown">
             <a href="/phones" class="nav-link"><i class="fe fe-smartphone"></i> Phones</a>
-          </li>
-          <li class="nav-item">
-            <a href="/resource" class="nav-link"><i class="fe fe-target"></i> Resource</a>
           </li>
           <li class="nav-item dropdown">
             <a href="/settings" class="nav-link"><i class="fe fe-settings"></i> Settings</a>

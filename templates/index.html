@@ -92,65 +92,69 @@
   </div>
 
   <!--In bids section-->
-  <div class="row">
-    <div class="col-sm-6 col-lg-3">
-      <div class="card p-3">
-        <div class="d-flex align-items-center">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-sm-6 col-lg-3">
+        <div class="card p-3">
+          <div class="d-flex align-items-center">
                   <span class="stamp stamp-md bg-blue mr-3">
                     <i class="fe fe-chevrons-down"></i>
                   </span>
-          <div>
-            <h4 class="m-0"><a href="javascript:void(0)">In</a></h4>
-            <small class="text-muted">{{ in_bids | length }} bids</small>
+            <div>
+              <h4 class="m-0"><a href="javascript:void(0)">In</a></h4>
+              <small class="text-muted">{{ in_bids | length }} bids</small>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-lg-3">
-      <form class="input-icon my-3 my-lg-0">
-        <input type="search" class="form-control header-search" placeholder="Filter by phone number&hellip;" tabindex="1">
-        <div class="input-icon-addon">
-          <i class="fe fe-search"></i>
-        </div>
-      </form>
-    </div>
-    <div class="col-lg-3">
-      <form>
-        <button type="button" class="btn btn-outline-secondary"><i class="fe fe-minimize-2"></i>Collapse</button>
-        <button type="button" class="btn btn-outline-secondary"><i class="fe fe-maximize-2 mr-2"></i>Show</button>
-      </form>
-    </div>
+      <div class="col-lg-3">
+        <form class="input-icon my-3 my-lg-0">
+          <input type="search" class="form-control header-search" placeholder="Filter by phone number&hellip;" tabindex="1">
+          <div class="input-icon-addon">
+            <i class="fe fe-search"></i>
+          </div>
+        </form>
+      </div>
+      <div class="col-lg-3">
+        <form>
+          <button type="button" class="btn btn-outline-secondary"><i class="fe fe-minimize-2"></i>Collapse</button>
+          <button type="button" class="btn btn-outline-secondary"><i class="fe fe-maximize-2 mr-2"></i>Show</button>
+        </form>
+      </div>
 
-    <div class="col-12">
-      {{ table.render_bids_table("In bids", in_bids) }}
+      <div class="col-12">
+        {{ table.render_bids_table("In bids", in_bids) }}
+      </div>
     </div>
   </div>
 
   <!--Out bids section-->
-  <div class="row">
-    <div class="col-sm-6 col-lg-3">
-      <div class="card p-3">
-        <div class="d-flex align-items-center">
-                  <span class="stamp stamp-md bg-green mr-3">
-                    <i class="fe fe-chevrons-up"></i>
-                  </span>
-          <div>
-            <h4 class="m-0"><a href="javascript:void(0)">Out</a></h4>
-            <small class="text-muted">{{ out_bids | length }} bids</small>
+  <div class="col-12">
+    <div class="row">
+      <div class="col-sm-6 col-lg-3">
+        <div class="card p-3">
+          <div class="d-flex align-items-center">
+                    <span class="stamp stamp-md bg-green mr-3">
+                      <i class="fe fe-chevrons-up"></i>
+                    </span>
+            <div>
+              <h4 class="m-0"><a href="javascript:void(0)">Out</a></h4>
+              <small class="text-muted">{{ out_bids | length }} bids</small>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-lg-3">
-      <form class="input-icon my-3 my-lg-0">
-        <input type="search" class="form-control header-search" placeholder="Filter by phone number&hellip;" tabindex="1">
-        <div class="input-icon-addon">
-          <i class="fe fe-search"></i>
-        </div>
-      </form>
-    </div>
-    <div class="col-12">
-      {{ table.render_bids_table("Out bids", out_bids) }}
+      <div class="col-lg-3">
+        <form class="input-icon my-3 my-lg-0">
+          <input type="search" class="form-control header-search" placeholder="Filter by phone number&hellip;" tabindex="1">
+          <div class="input-icon-addon">
+            <i class="fe fe-search"></i>
+          </div>
+        </form>
+      </div>
+      <div class="col-12">
+        {{ table.render_bids_table("Out bids", out_bids) }}
+      </div>
     </div>
   </div>
 </div>

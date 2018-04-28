@@ -22,6 +22,7 @@ async def index(request):
     app = request.app
     logger = app['logger']
     engine = app['db']
+    user = app['user']
     logger.info('Accessing index page')
 
     async with engine.acquire() as conn:
@@ -33,6 +34,7 @@ async def index(request):
         'in_bids': in_bids,
         'out_bids': out_bids,
         'stats': stats,
+        'user': user,
     }
 
 
@@ -170,7 +172,7 @@ async def do_login(request):
 
     if user is None:
         # todo: flash login something
-        logger.warning('Cannot find user %s' % email)
+        logger.warning('Cannot find user %s', email)
         return web.HTTPFound(router['login'].url_for())
 
     # todo: flash login successful
@@ -179,5 +181,15 @@ async def do_login(request):
     return web.HTTPFound(router['index'].url_for())
 
 
+@login_required
 async def logout(request):
-    pass
+    app = request.app
+    router = app.router
+    logger = app['logger']
+    user = app['user']
+
+    session = await get_session(request)
+    del session['user_id']
+    logger.info('Sign out user %s', user.email)
+    # todo: flash
+    return web.HTTPFound(router['login'].url_for())

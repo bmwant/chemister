@@ -22,6 +22,7 @@ def setup_routes(app):
     app.router.add_get('/admin', views.control_panel, name='admin')
     app.router.add_get('/login', views.login, name='login')
     app.router.add_post('/do_login', views.do_login)
+    app.router.add_get('/logout', views.logout)
 
     app.router.add_post('/save_config', endpoints.save_config)
 
