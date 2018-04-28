@@ -4,8 +4,9 @@ from datetime import datetime
 import coloredlogs
 
 
-FORMAT = '[%(name)s] %(levelname)s:%(message)s'
-FORMATTER = logging.Formatter(fmt=FORMAT)
+FORMAT = '%(asctime)s [%(name)s] %(levelname)s:%(message)s'
+DATE_FORMAT = '%H:%M:%S %d-%m-%y'
+FORMATTER = logging.Formatter(fmt=FORMAT, datefmt=DATE_FORMAT)
 
 
 def get_logger(name='default', level=logging.DEBUG, colored=False):
