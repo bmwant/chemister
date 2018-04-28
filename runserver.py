@@ -10,6 +10,7 @@ import settings
 from utils import get_logger
 from webapp import (
     setup_routes,
+    setup_session,
     setup_static_routes,
     setup_cache,
     destroy_cache,
@@ -27,8 +28,11 @@ def run():
     app.on_startup.append(init_pg)
     app.on_shutdown.append(destroy_cache)
     app.on_shutdown.append(close_pg)
+
+    setup_session(app)
     setup_routes(app)
     setup_static_routes(app)
+
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.FileSystemLoader(str(settings.TEMPLATES_DIR)),

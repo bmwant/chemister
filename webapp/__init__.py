@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
+import base64
+
 import aioredis
 import aiopg.sa
+import aiohttp_session
+from aiohttp_session.cookie_storage import EncryptedCookieStorage
+from cryptography import fernet
 
 import settings
 from . import views
@@ -37,6 +42,12 @@ def setup_static_routes(app):
     app.router.add_static('/node_modules/',
                           path=settings.PROJECT_ROOT / 'node_modules',
                           name='node_modules')
+
+
+def setup_session(app):
+    fernet_key = fernet.Fernet.generate_key()
+    secret_key = base64.urlsafe_b64decode(fernet_key)
+    aiohttp_session.setup(app, EncryptedCookieStorage(secret_key))
 
 
 async def setup_cache(app):
