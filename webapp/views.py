@@ -8,6 +8,7 @@ from crawler.helpers import load_config
 from crawler.models.bid import get_daily_bids, BidType
 from crawler.models.resource import get_resource_by_id
 from crawler.models.phone import get_phones
+from crawler.models.user import get_user
 from crawler.models.stats import collect_statistics
 from crawler.models.configs import get_config_history
 from webapp.utils import refresh_data, load_resources, get_cached_value
@@ -139,3 +140,34 @@ async def control_panel(request):
     engine = app['db']
 
     logger.info('Accessing admin page')
+
+
+@aiohttp_jinja2.template('login.html')
+async def login(request):
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+
+    logger.info('Accessing login page')
+
+
+async def do_login(request):
+    app = request.app
+    router = app.router
+    logger = app['logger']
+    engine = app['db']
+
+    form = await request.post()
+    email = form['email']
+    password = form['password']
+
+    async with engine.acquire() as conn:
+        user = await get_user(conn, email, password)
+
+    if user is None:
+        # todo: flash login something
+        return web.HTTPFound(router['login'].url_for())
+
+
+    # todo: set user_id to session
+    return web.HTTPFound(router['index'].url_for())
