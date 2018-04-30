@@ -24,7 +24,11 @@ CHROME_DRIVER_PATH = PROJECT_ROOT / 'lib' / 'chromedriver'
 HEALTHCHECK_ENDPOINT = None
 
 
-## DEVELOPING
+# AIOHTTP
+FLASH_SESSION_KEY = 'flash'
+FLASH_REQUEST_KEY = 'flash'
+
+# DEVELOPING
 DEV_BID_RESOURCE = PROJECT_ROOT / 'resources' / 'bids.yml'
 
 
