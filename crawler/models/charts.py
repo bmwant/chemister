@@ -60,7 +60,15 @@ async def get_bids_statuses_last_month(conn):
     for bid in bids:
         data[bid.status] += 1
 
-    return [{'label': key, 'value': value} for key, value in data.items()]
+    # return [data]  # for donut chart
+    # return [{'label': key, 'value': value} for key, value in data.items()]
+    return [{
+        'notified': 50,
+        'called': 3,
+        'closed': 10,
+        'rejected': 5,
+        'inactive': 15,
+    }]
 
 
 async def get_closed_bids_for_period(

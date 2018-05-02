@@ -36,19 +36,6 @@ async def index(request):
     }
 
 
-async def get_bids_from_cache(cache):
-    # cache = request.app['cache']
-    resources = await load_resources()
-    in_bids = []
-    out_bids = []
-    for resource in resources:
-        resource_data = await get_cached_value(cache=cache,
-                                               key=resource)
-        if resource_data is not None:
-            in_bids.extend(resource_data['in_bids'])
-            out_bids.extend(resource_data['out_bids'])
-
-
 @aiohttp_jinja2.template('loading.html')
 async def loading(request):
     app = request.app
@@ -78,6 +65,7 @@ async def check_refresh_done(request):
     })
 
 
+@login_required
 @aiohttp_jinja2.template('settings.html')
 async def settings(request):
     app = request.app
@@ -92,6 +80,7 @@ async def settings(request):
     return {'config': config, 'history': config_history}
 
 
+@login_required
 @aiohttp_jinja2.template('phones.html')
 async def phones(request):
     app = request.app
@@ -105,6 +94,7 @@ async def phones(request):
     return {'phones': phones}
 
 
+@login_required
 @aiohttp_jinja2.template('statistics.html')
 async def statistics(request):
     app = request.app
@@ -120,6 +110,7 @@ async def statistics(request):
     }
 
 
+@login_required
 @aiohttp_jinja2.template('resource.html')
 async def resource(request):
     app = request.app
@@ -136,6 +127,7 @@ async def resource(request):
     }
 
 
+@login_required
 @aiohttp_jinja2.template('admin.html')
 async def control_panel(request):
     app = request.app
