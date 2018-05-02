@@ -1,23 +1,20 @@
 import os
 from functools import partial
 
-import jinja2
 import aiohttp
-import aiohttp_jinja2
 from aiohttp import web
 
-import settings
 from utils import get_logger
 from webapp import (
     setup_routes,
     setup_session,
+    setup_templates,
     setup_static_routes,
     setup_cache,
     destroy_cache,
     init_pg,
     close_pg,
 )
-from webapp import filters
 
 
 def run():
@@ -32,16 +29,7 @@ def run():
     setup_session(app)
     setup_routes(app)
     setup_static_routes(app)
-
-    aiohttp_jinja2.setup(
-        app,
-        loader=jinja2.FileSystemLoader(str(settings.TEMPLATES_DIR)),
-        filters={
-            'checkbox': filters.checkbox,
-            'format_time': filters.format_time,
-            'format_datetime': filters.format_datetime,
-        },
-    )
+    setup_templates(app)
 
     uprint = partial(print, flush=True)
     port = int(os.environ.get('PORT', 8080))

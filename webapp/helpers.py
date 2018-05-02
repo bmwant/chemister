@@ -62,3 +62,10 @@ async def context_processor(request):
     return {
         'get_flashed_messages': partial(pop_flash, request),
     }
+
+"""
+aiohttp_mako_context_processors.setup(app, [
+    ...
+    aiohttp_session_flash.context_processor,
+])
+"""

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import base64
 
+import jinja2
 import aioredis
 import aiopg.sa
+import aiohttp_jinja2
 import aiohttp_session
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from cryptography import fernet
@@ -10,6 +12,7 @@ from cryptography import fernet
 import settings
 from . import views
 from . import endpoints
+from . import filters
 
 
 def setup_routes(app):
@@ -45,6 +48,19 @@ def setup_static_routes(app):
     app.router.add_static('/node_modules/',
                           path=settings.PROJECT_ROOT / 'node_modules',
                           name='node_modules')
+
+
+def setup_templates(app):
+
+    aiohttp_jinja2.setup(
+        app,
+        loader=jinja2.FileSystemLoader(str(settings.TEMPLATES_DIR)),
+        filters={
+            'checkbox': filters.checkbox,
+            'format_time': filters.format_time,
+            'format_datetime': filters.format_datetime,
+        },
+    )
 
 
 def setup_session(app):
