@@ -2,10 +2,10 @@
   <div class="card-header">
     <h3 class="card-title">Daily profit for the month</h3>
   </div>
-  <div id="daily-profit-chart" style="height: 10rem"></div>
+  <div id="daily-profit-chart" style="height: 20rem"></div>
 </div>
 <script>
-  require(['c3', 'jquery'], function(c3, $) {
+  require(['c3', 'd3', 'jquery'], function(c3, d3, $) {
     $(document).ready(function() {
 
       $.get('/charts/get_profit_month', function(jsonData) {
@@ -13,15 +13,16 @@
           bindto: '#daily-profit-chart', // id of chart wrapper
           data: {
             json: jsonData,
-              keys:{
-                value: ['value']
-              },
-            type: 'area', // default type of chart
+            keys: {
+              x: 'date',
+              value: ['value']
+            },
+            xFormat: '%d/%m/%y',
+            type: 'area',
             colors: {
-              'data1': tabler.colors["blue"]
+              'data1': tabler.colors['blue']
             },
             names: {
-              // name of each serie
               'value': 'Profit, UAH'
             }
           },
@@ -37,11 +38,16 @@
               }
             },
             x: {
+              type: 'timeseries',
+              tick: {
+                fit: true,
+                format: '%d/%m/%y'
+              },
               padding: {
                 left: 0,
                 right: 0
               },
-              show: false
+              show: true
             }
           },
           legend: {
@@ -55,8 +61,15 @@
             }
           },
           tooltip: {
+            grouped: false,
             format: {
               title: function (x) {
+                return d3.time.format('%d/%m/%y')(x);
+              },
+              name: function (name, ratio, id, index) {
+                return jsonData[index].value + ', UAH';
+              },
+              value: function (name, ratio, id, index) {
                 return '';
               }
             }
