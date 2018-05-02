@@ -13,7 +13,7 @@ TEST_DATABASE_DSN = 'postgres://username:password@127.0.0.1:5432/test_database'
 DATABASE_POOL_MINSIZE = 3
 DATABASE_POOL_MAXSIZE = 10
 
-UPDATE_PERIOD = 5 * 60  # 5 mins update interval
+DEFAULT_UPDATE_PERIOD = 5  # update interval in minutes
 
 RESOURCES_FILEPATH = PROJECT_ROOT / 'resources.yml'
 

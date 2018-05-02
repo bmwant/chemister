@@ -8,18 +8,21 @@ from crawler.models.bid import (
     get_bid_by_id,
     set_bid_status,
 )
+from webapp.helpers import login_required
 
 
+@login_required
 async def save_config(request):
     app = request.app
     logger = app['logger']
     engine = app['db']
-    logger.info('Saving new config')
+    user = app['user']
 
     data = await request.post()
     value = config_trafaret.check(data)
+    logger.info('Saving new config initiated by user %s' % user.email)
     async with engine.acquire() as conn:
-        await insert_new_config(conn, value)
+        await insert_new_config(conn, new_config=value, user_id=user.id)
 
     return web.HTTPFound('/settings')
 

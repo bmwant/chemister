@@ -42,9 +42,15 @@ config = sa.Table(
 )
 
 
-async def insert_new_config(conn, new_config):
+async def insert_new_config(
+    conn,
+    *,
+    new_config,
+    user_id,
+):
     return await conn.execute(config.insert().values(
         value=new_config,
+        user_id=user_id,
     ))
 
 

@@ -22,7 +22,6 @@ async def index(request):
     app = request.app
     logger = app['logger']
     engine = app['db']
-    user = app['user']
     logger.info('Accessing index page')
 
     async with engine.acquire() as conn:
@@ -34,7 +33,6 @@ async def index(request):
         'in_bids': in_bids,
         'out_bids': out_bids,
         'stats': stats,
-        'user': user,
     }
 
 

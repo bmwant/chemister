@@ -45,6 +45,11 @@ def pg_engine(loop):
     loop.run_until_complete(engine.wait_closed())
 
 
+@pytest.fixture
+def user():
+    return None
+
+
 @pytest.mark.tryfirst
 def pytest_pyfunc_call(pyfuncitem):
     if 'run_loop' in pyfuncitem.keywords:

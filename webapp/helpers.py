@@ -7,6 +7,12 @@ import settings
 from crawler.models.user import get_user_by_id
 
 
+# todo: add permission required decorator
+def permissions_required(fn):
+    async def wrapped(request, *args, **kwargs):
+        pass
+
+
 def login_required(fn):
     async def wrapped(request, *args, **kwargs):
         app = request.app

@@ -16,11 +16,11 @@ from crawler.helpers import get_config
 
 class Scheduler(LoggableMixin):
     def __init__(self, *, tasks=None, daily_tasks=None,
-                 interval=settings.UPDATE_PERIOD):
+                 interval=settings.DEFAULT_UPDATE_PERIOD):
         self.tasks = tasks or []  # List of grabbers
         # List of tasks to be executed on daily basis
         self.daily_tasks = daily_tasks or []
-        self.interval = interval
+        self.default_interval = interval
 
     def add_tasks(self, tasks: list):
         self.tasks.extend(tasks)
@@ -39,9 +39,10 @@ class Scheduler(LoggableMixin):
             # todo: call soon without blocking
             await self.run_daily_tasks()
             await self.send_healthcheck()
+            interval = await self._get_update_interval()
             self.logger.info('Waiting %s seconds to make next update...' %
-                             self.interval)
-            await asyncio.sleep(self.interval)
+                             interval)
+            await asyncio.sleep(interval)
 
     async def run_tasks(self):
         """
@@ -75,6 +76,12 @@ class Scheduler(LoggableMixin):
                 if resp.status != HTTPStatus.OK:
                     text = await resp.text()
                     self.logger.error('Request failed %s', text)
+
+    async def _get_update_interval(self):
+        config = await get_config()
+        interval = config.REFRESH_PERIOD_MINUTES or self.default_interval
+        # value in minutes
+        return interval * 60
 
     @property
     async def working_time(self):

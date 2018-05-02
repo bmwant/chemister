@@ -16,7 +16,7 @@ from crawler.db import get_engine, close_engine, Engine
 
 
 @pytest.mark.run_loop
-async def test_insert_new_config(pg_engine):
+async def test_insert_new_config(pg_engine, user):
     config = {
         'DRY_RUN': True,
         'CLOSED_BIDS_FACTOR': 1,
@@ -26,7 +26,7 @@ async def test_insert_new_config(pg_engine):
         'REFRESH_PERIOD_MINUTES': 5,
     }
     async with pg_engine.acquire() as conn:
-        await insert_new_config(conn, config)
+        await insert_new_config(conn, new_config=config, user_id=user.id)
 
 
 @pytest.mark.run_loop

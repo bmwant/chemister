@@ -50,6 +50,14 @@
               {% block page_title %}Page title{% endblock %}
             </h1>
           </div>
+          <div class="row">
+            <div class="col-8">
+              {% block alerts %}
+              <div class="alert alert-primary">Are you in trouble? <a href="./docs/index.html" class="alert-link">Read our documentation</a> with code samples.</div>
+              <div class="alert alert-primary">Another alert</div>
+              {% endblock %}
+            </div>
+          </div>
           {% endblock %}
           {% block content %}
           {% endblock %}
