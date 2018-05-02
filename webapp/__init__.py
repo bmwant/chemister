@@ -13,6 +13,7 @@ import settings
 from . import views
 from . import endpoints
 from . import filters
+from . import helpers
 
 
 def setup_routes(app):
@@ -51,7 +52,6 @@ def setup_static_routes(app):
 
 
 def setup_templates(app):
-
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.FileSystemLoader(str(settings.TEMPLATES_DIR)),
@@ -60,6 +60,9 @@ def setup_templates(app):
             'format_time': filters.format_time,
             'format_datetime': filters.format_datetime,
         },
+        context_processors=(
+           helpers.flash_context_processor,
+        )
     )
 
 

@@ -83,3 +83,6 @@ initdb:
 run-postgres:
 	docker run --name local-postgres -v chemister-data:/var/lib/postgresql/data \
     -d postgres
+
+rm-postgres:
+	@docker rm local-postgres
