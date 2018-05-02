@@ -8,7 +8,8 @@ from crawler.models.bid import (
     get_bid_by_id,
     set_bid_status,
 )
-from webapp.helpers import login_required
+from crawler.models.charts import get_profit_last_month
+from webapp.helpers import login_required, flash
 
 
 @login_required
@@ -24,6 +25,7 @@ async def save_config(request):
     async with engine.acquire() as conn:
         await insert_new_config(conn, new_config=value, user_id=user.id)
 
+    flash(request, 'New config was saved. Using it from this point')
     return web.HTTPFound('/settings')
 
 
@@ -102,3 +104,15 @@ async def ban_bid_phone(request):
         )
 
     return web.HTTPFound(router['phones'].url_for())
+
+
+async def get_daily_profit_month(request):
+    app = request.app
+    router = app.router
+    logger = app['logger']
+    engine = app['db']
+
+    async with engine.acquire() as conn:
+        data = await get_profit_last_month(conn)
+
+    return web.json_response(data=data)
