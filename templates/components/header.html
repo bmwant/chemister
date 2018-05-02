@@ -4,6 +4,7 @@
       <a class="header-brand" href="/">
         <img src="/static/demo/brand/tabler.svg" class="header-brand-img" alt="logo">
       </a>
+      {% if user is not None %}
       <div class="d-flex order-lg-2 ml-auto">
         <div class="dropdown">
           <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
@@ -34,6 +35,7 @@
           </div>
         </div>
       </div>
+      {% endif %}
       <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0" data-toggle="collapse" data-target="#headerMenuCollapse">
         <span class="header-toggler-icon"></span>
       </a>

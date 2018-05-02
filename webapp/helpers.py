@@ -58,6 +58,12 @@ async def flash_middleware(app, handler):
     return process
 
 
+async def user_context_processor(request):
+    return {
+        'user': request.app.get('user')
+    }
+
+
 async def flash_context_processor(request):
     return {
         'get_flash': partial(pop_flash, request),

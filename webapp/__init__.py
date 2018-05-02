@@ -61,7 +61,8 @@ def setup_templates(app):
             'format_datetime': filters.format_datetime,
         },
         context_processors=(
-           helpers.flash_context_processor,
+            helpers.flash_context_processor,
+            helpers.user_context_processor,
         )
     )
 
