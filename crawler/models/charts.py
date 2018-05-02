@@ -49,6 +49,20 @@ async def get_profit_last_month(conn):
     ]
 
 
+async def get_bids_statuses_last_month(conn):
+    days = 30
+    now = datetime.now()
+    starting_point = now - timedelta(days=days)
+    starting_day = get_midnight(starting_point)
+    bids = await get_closed_bids_for_period(conn, starting_day=starting_day)
+    data = defaultdict(int)
+
+    for bid in bids:
+        data[bid.status] += 1
+
+    return [{'label': key, 'value': value} for key, value in data.items()]
+
+
 async def get_closed_bids_for_period(
     conn,
     *,

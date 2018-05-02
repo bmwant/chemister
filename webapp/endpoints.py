@@ -8,7 +8,10 @@ from crawler.models.bid import (
     get_bid_by_id,
     set_bid_status,
 )
-from crawler.models.charts import get_profit_last_month
+from crawler.models.charts import (
+    get_profit_last_month,
+    get_bids_statuses_last_month,
+)
 from webapp.helpers import login_required, flash
 
 
@@ -114,5 +117,17 @@ async def get_daily_profit_month(request):
 
     async with engine.acquire() as conn:
         data = await get_profit_last_month(conn)
+
+    return web.json_response(data=data)
+
+
+async def get_bid_statuses_month(request):
+    app = request.app
+    router = app.router
+    logger = app['logger']
+    engine = app['db']
+
+    async with engine.acquire() as conn:
+        data = await get_bids_statuses_last_month(conn)
 
     return web.json_response(data=data)
