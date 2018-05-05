@@ -1,10 +1,9 @@
-.siimple-table--hover
-.siimple-table-body
-.siimple-table-row:hover
-.siimple-table-cell {
-  background-color: #18d2ba !important;
+tr.inactive {
+  color: #9aa0ac;
+  background-color: rgba(0, 0, 0, 0.1);
+  text-decoration: line-through;
 }
 
-.siimple-navbar {
-  margin-bottom: 16px;
+tr.inactive a {
+  color: #9aa0ac;
 }
