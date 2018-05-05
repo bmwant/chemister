@@ -1,4 +1,5 @@
 import settings
+from crawler.models.bid import get_statuses, ACTIVE_STATUSES
 
 
 def checkbox(value):
@@ -15,3 +16,8 @@ def format_datetime(datetime_obj):
     return datetime_obj.strftime('{} {}'.format(
         settings.DEFAULT_TIME_FORMAT, settings.DEFAULT_DATE_FORMAT
     ))
+
+
+def active_class(bid):
+    is_active = bid.status in get_statuses(*ACTIVE_STATUSES)
+    return 'active' if is_active else 'inactive'

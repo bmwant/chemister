@@ -65,6 +65,7 @@ def setup_templates(app):
             'checkbox': filters.checkbox,
             'format_time': filters.format_time,
             'format_datetime': filters.format_datetime,
+            'active_class': filters.active_class,
         },
         context_processors=(
             helpers.flash_context_processor,

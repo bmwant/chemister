@@ -1,4 +1,4 @@
-{% import "helpers/_get_status.html" as get_status %}
+{% import "helpers/_get_status.html" as status_macro %}
 {% macro render_bids_table(header, bids) -%}
 <div class="card">
   <div class="card-header">
@@ -21,7 +21,7 @@
       </thead>
       <tbody>
       {% for bid in bids %}
-      <tr>
+      <tr class="{{ bid | active_class }}">
         <td><span class="text-muted">{{ bid.id }}</span></td>
         <td>{{ bid.amount }}</td>
         <td>{{ bid.currency }}</td>
@@ -29,7 +29,7 @@
         <td><a href="tel:{{ bid.phone }}">{{ bid.phone }}</a></td>
         <td>{{ bid.created | format_time }}</td>
         <td>
-          {{ get_status.status(bid) }}
+          {{ status_macro.status(bid) }}
         </td>
         <td>
           <a href="/resource/{{ bid.resource_id }}">resource #{{ bid.resource_id }}</a>
