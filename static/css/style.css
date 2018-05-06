@@ -7,3 +7,7 @@ tr.inactive {
 tr.inactive a {
   color: #9aa0ac;
 }
+
+.expand-button {
+  display: none;
+}

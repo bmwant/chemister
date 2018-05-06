@@ -90,7 +90,7 @@
   </div>
 
   <!--In bids section-->
-  <div class="col-12">
+  <div class="col-12 bids-section">
     <div class="row">
       <div class="col-sm-6 col-lg-3">
         <div class="card p-3">
@@ -105,20 +105,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-3">
-        <form class="input-icon my-3 my-lg-0">
-          <input type="search" class="form-control header-search" placeholder="Filter by phone number&hellip;" tabindex="1">
-          <div class="input-icon-addon">
-            <i class="fe fe-search"></i>
-          </div>
-        </form>
-      </div>
-      <div class="col-lg-3">
-        <form>
-          <button type="button" class="btn btn-outline-secondary"><i class="fe fe-minimize-2"></i>Collapse</button>
-          <button type="button" class="btn btn-outline-secondary"><i class="fe fe-maximize-2 mr-2"></i>Show</button>
-        </form>
-      </div>
+      {% include "components/bids_form.html" %}
 
       <div class="col-12">
         {{ table.render_bids_table("In bids", in_bids) }}
@@ -127,7 +114,7 @@
   </div>
 
   <!--Out bids section-->
-  <div class="col-12">
+  <div class="col-12 bids-section">
     <div class="row">
       <div class="col-sm-6 col-lg-3">
         <div class="card p-3">
@@ -142,18 +129,36 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-3">
-        <form class="input-icon my-3 my-lg-0">
-          <input type="search" class="form-control header-search" placeholder="Filter by phone number&hellip;" tabindex="1">
-          <div class="input-icon-addon">
-            <i class="fe fe-search"></i>
-          </div>
-        </form>
-      </div>
+      {% include "components/bids_form.html" %}
+
       <div class="col-12">
         {{ table.render_bids_table("Out bids", out_bids) }}
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+require(['jquery'], function($) {
+  $(function () {
+    $('.collapse-button').click(function () {
+      var section = $(this).closest('.bids-section');
+      var table = section.find('.table-responsive');
+      table.hide();
+      $(this).hide();
+      section.find('.expand-button').show();
+    });
+
+    $('.expand-button').click(function () {
+      var section = $(this).closest('.bids-section');
+      var table = section.find('.table-responsive');
+      table.show();
+      $(this).hide();
+      section.find('.collapse-button').show();
+    });
+  });
+});
+</script>
 {% endblock %}
