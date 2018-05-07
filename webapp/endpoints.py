@@ -8,6 +8,7 @@ from crawler.models.bid import (
     get_bid_by_id,
     set_bid_status,
 )
+from crawler.models.event import add_event, EventType
 from crawler.models.charts import (
     get_profit_last_month,
     get_bids_statuses_last_month,
@@ -37,17 +38,27 @@ async def set_bid_called(request):
     router = app.router
     logger = app['logger']
     engine = app['db']
+    user = app['user']
 
     bid_id = request.match_info.get('bid_id')
     logger.info('Marking bid #%s as called' % bid_id)
 
     async with engine.acquire() as conn:
-        result = await set_bid_status(
+        # todo: get or 404
+        bid = await get_bid_by_id(conn, bid_id)
+        await set_bid_status(
             conn,
             bid_id=bid_id,
             bid_status=BidStatus.CALLED,
         )
+        await add_event(
+            conn,
+            event_type=EventType.CALLED,
+            description='Called %s' % bid.phone,
+            user_id=user.id,
+        )
 
+    flash(request, 'Called %s for bid [#%s]' % (bid.phone, bid_id))
     return web.HTTPFound(router['index'].url_for())
 
 

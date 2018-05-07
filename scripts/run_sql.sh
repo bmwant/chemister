@@ -41,4 +41,8 @@ else
   -f "${DIR}/sql/004_insert_test_data.sql" -v ON_ERROR_STOP=1
 fi
 
+_info "running database migrations"
+psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
+-f "${DIR}/sql/005_add_events_table.sql" -v ON_ERROR_STOP=1
+
 _note "done!"

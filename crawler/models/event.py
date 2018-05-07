@@ -35,14 +35,14 @@ async def add_event(
     conn,
     *,
     event_type: EventType=EventType.DEFAULT,
-    description: str='',
     event_count: int=1,
+    description: str='',
     user_id: int=0,  # system
 ):
     query = event.insert().values(
         event_type=event_type.value,
-        description=description,
         event_count=event_count,
+        description=description,
         user_id=user_id,
     )
     result = await conn.execute(query)
