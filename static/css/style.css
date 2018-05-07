@@ -11,3 +11,12 @@ tr.inactive a {
 .expand-button {
   display: none;
 }
+
+
+#daily-profit-chart {
+  height: 15rem;
+}
+
+#notifications-sent-chart {
+  height: 15rem;
+}

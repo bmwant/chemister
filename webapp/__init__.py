@@ -46,6 +46,8 @@ def setup_routes(app):
                        endpoints.get_daily_profit_month)
     app.router.add_get('/charts/get_statuses_month',
                        endpoints.get_bid_statuses_month)
+    app.router.add_get('/charts/get_notifications_month',
+                       endpoints.get_notifications_month)
 
 
 def setup_static_routes(app):
