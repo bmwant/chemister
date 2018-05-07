@@ -26,11 +26,8 @@ async def get_user_by_id(conn, user_id):
     return await result.fetchone()
 
 
-async def get_user(conn, email, password):
-    query = user.select().where(sa.and_(
-        user.c.email == email,
-        user.c.password == password,
-    ))
+async def get_user(conn, email):
+    query = user.select().where(user.c.email == email)
 
     result = await conn.execute(query)
     return await result.fetchone()

@@ -1,3 +1,5 @@
+import hashlib
+import binascii
 from functools import partial
 
 from aiohttp import web
@@ -78,3 +80,18 @@ async def flash_context_processor(request):
 
 def setup_flash(app):
     app.middlewares.append(flash_middleware)
+
+
+def create_password(raw_password):
+    dk = hashlib.pbkdf2_hmac(
+        'sha256',
+        raw_password.encode(),
+        b'salt',
+        100000,  # number of iterations
+    )
+    # return hexadecimal string representation of a password hash
+    return binascii.hexlify(dk).decode()
+
+
+def check_password(raw_password, hashed_password):
+    return create_password(raw_password) == hashed_password

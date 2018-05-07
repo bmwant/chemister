@@ -13,7 +13,7 @@ from crawler.models.user import get_user
 from crawler.models.stats import collect_statistics
 from crawler.models.configs import get_config_history
 from webapp.utils import refresh_data
-from webapp.helpers import login_required, flash
+from webapp.helpers import login_required, flash, check_password
 
 
 @login_required
@@ -24,7 +24,6 @@ async def index(request):
     engine = app['db']
     logger.info('Accessing index page')
 
-    flash(request, 'Index page')
     async with engine.acquire() as conn:
         in_bids = await get_daily_bids(conn, bid_type=BidType.IN)
         out_bids = await get_daily_bids(conn, bid_type=BidType.OUT)
@@ -158,15 +157,19 @@ async def do_login(request):
     password = form['password']
 
     async with engine.acquire() as conn:
-        # todo: passwords
-        user = await get_user(conn, email, password)
+        user = await get_user(conn, email)
 
     if user is None:
-        # todo: flash login something
+        flash(request, 'No user with such email: %s' % email)
         logger.warning('Cannot find user %s', email)
         return web.HTTPFound(router['login'].url_for())
 
-    # todo: flash login successful
+    if not check_password(password, user.password):
+        flash(request, 'Incorrect password')
+        logger.warning('Wrong password for user %s', email)
+        return web.HTTPFound(router['login'].url_for())
+
+    flash(request, 'Successfully logged in')
     session = await get_session(request)
     session['user_id'] = user.id
     return web.HTTPFound(router['index'].url_for())
@@ -182,5 +185,5 @@ async def logout(request):
     session = await get_session(request)
     del session['user_id']
     logger.info('Sign out user %s', user.email)
-    # todo: flash
+    flash(request, 'Logged out')
     return web.HTTPFound(router['login'].url_for())
