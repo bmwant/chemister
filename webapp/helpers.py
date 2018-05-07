@@ -74,3 +74,7 @@ async def flash_context_processor(request):
     return {
         'get_flash': partial(pop_flash, request),
     }
+
+
+def setup_flash(app):
+    app.middlewares.append(flash_middleware)

@@ -12,8 +12,8 @@ from crawler.models.phone import get_phones
 from crawler.models.user import get_user
 from crawler.models.stats import collect_statistics
 from crawler.models.configs import get_config_history
-from webapp.utils import refresh_data, load_resources, get_cached_value
-from webapp.helpers import login_required
+from webapp.utils import refresh_data
+from webapp.helpers import login_required, flash
 
 
 @login_required
@@ -24,6 +24,7 @@ async def index(request):
     engine = app['db']
     logger.info('Accessing index page')
 
+    flash(request, 'Index page')
     async with engine.acquire() as conn:
         in_bids = await get_daily_bids(conn, bid_type=BidType.IN)
         out_bids = await get_daily_bids(conn, bid_type=BidType.OUT)

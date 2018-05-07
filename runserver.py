@@ -15,6 +15,7 @@ from webapp import (
     init_pg,
     close_pg,
 )
+from webapp.helpers import setup_flash
 
 
 def run():
@@ -27,6 +28,7 @@ def run():
     app.on_shutdown.append(close_pg)
 
     setup_session(app)
+    setup_flash(app)
     setup_routes(app)
     setup_static_routes(app)
     setup_templates(app)
