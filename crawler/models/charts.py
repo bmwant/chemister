@@ -10,13 +10,24 @@ from crawler.models.bid import (
     BidType,
     BidStatus,
 )
+from crawler.models.event import (
+    event,
+    EventType,
+)
+
+
+DAYS_IN_MONTH = 30
+
+
+def _get_starting_day(days_passed=DAYS_IN_MONTH):
+    now = datetime.now()
+    starting_point = now - timedelta(days=DAYS_IN_MONTH)
+    starting_day = get_midnight(starting_point)
+    return starting_day
 
 
 async def get_profit_last_month(conn):
-    days = 30
-    now = datetime.now()
-    starting_point = now - timedelta(days=days)
-    starting_day = get_midnight(starting_point)
+    starting_day = _get_starting_day()
     bids = await get_closed_bids_for_period(conn, starting_day=starting_day)
     data = defaultdict(int)
 
@@ -50,10 +61,7 @@ async def get_profit_last_month(conn):
 
 
 async def get_bids_statuses_last_month(conn):
-    days = 30
-    now = datetime.now()
-    starting_point = now - timedelta(days=days)
-    starting_day = get_midnight(starting_point)
+    starting_day = _get_starting_day()
     bids = await get_closed_bids_for_period(conn, starting_day=starting_day)
     data = defaultdict(int)
 
@@ -83,3 +91,27 @@ async def get_closed_bids_for_period(
 
     result = await conn.execute(query)
     return await result.fetchall()
+
+
+async def get_notifications_last_month(conn):
+    starting_day = _get_starting_day()
+
+    query_notified = event.select().where(sa.and_(
+        event.c.created > starting_day,
+        event.c.event_type == EventType.NOTIFIED.value,
+    ))
+
+    query_called = event.select().where(sa.and_(
+        event.c.created > starting_day,
+        event.c.event_type == EventType.CALLED.value,
+    ))
+
+    result_notified = await conn.execute(query_notified)
+    result_called = await conn.execute(query_called)
+
+    events_notified = await result_notified.fetchall()
+    events_called = await result_called.fetchall()
+
+    print(events_called)
+    print(events_notified)
+    return []

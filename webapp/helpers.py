@@ -1,5 +1,6 @@
 import hashlib
 import binascii
+import secrets
 from functools import partial
 
 from aiohttp import web
@@ -83,6 +84,7 @@ def setup_flash(app):
 
 
 def create_password(raw_password):
+    # todo: give me salt
     dk = hashlib.pbkdf2_hmac(
         'sha256',
         raw_password.encode(),
@@ -93,5 +95,6 @@ def create_password(raw_password):
     return binascii.hexlify(dk).decode()
 
 
-def check_password(raw_password, hashed_password):
-    return create_password(raw_password) == hashed_password
+def check_password(raw_password, hashed_password_base):
+    hashed_password_target = create_password(raw_password)
+    return secrets.compare_digest(hashed_password_target, hashed_password_base)

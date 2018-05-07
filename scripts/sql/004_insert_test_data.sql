@@ -26,7 +26,7 @@ VALUES (15, 26.15, 115, 'USD', '+380987771115', TRUE, 'out', 1);
 
 
 INSERT INTO "user"(id, "name", email, password)
-VALUES (2, 'test', 'test@gmail.com', 'test');
+VALUES (2, 'test', 'test@gmail.com', '591390304a1217a65e5206f943740eaaa8b528e96a5c8bc3a40884d36922ebe0');
 
 
 ALTER SEQUENCE resource_id_seq RESTART WITH 2;
