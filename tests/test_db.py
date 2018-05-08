@@ -33,7 +33,7 @@ async def test_insert_new_config(pg_engine, user):
 async def test_insert_new_resource(pg_engine):
     resource = {
         'name': 'i ua',
-        'url': 'http://www.i.ua/',
+        'link': 'http://www.i.ua/',
     }
     async with pg_engine.acquire() as conn:
         result = await insert_new_resource(conn, resource)

@@ -7,6 +7,7 @@ def test_config_loading():
         'MAX_BID_AMOUNT': '2000',
         'DRY_RUN': 'on',
         'CLOSED_BIDS_FACTOR': '1',
+        'TIME_DAY_STARTS': '06:00',
         'TIME_DAY_ENDS': '20:00',
         'REFRESH_PERIOD_MINUTES': '5',
     }

@@ -1,8 +1,10 @@
 import asyncio
-import pytest
-import settings
 
+import attr
+import pytest
 from aiopg.sa import create_engine
+
+import settings
 
 
 TESTS_DIR = settings.PROJECT_ROOT / 'tests'
@@ -47,7 +49,17 @@ def pg_engine(loop):
 
 @pytest.fixture
 def user():
-    return None
+    User = attr.make_class(
+        'User',
+        ['id', 'name', 'email', 'password', 'permissions']
+    )
+    return User(
+        id=1,
+        name='user',
+        email='user@gmail.com',
+        password='password',
+        permissions='',
+    )
 
 
 @pytest.mark.tryfirst
