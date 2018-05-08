@@ -1,6 +1,12 @@
-CREATE TYPE event_type AS ENUM (
-  'notified', 'called', 'default'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'event_type') THEN
+    CREATE TYPE event_type AS ENUM(
+      'notified', 'called', 'default'
+    );
+  END IF;
+END
+$$;
 
 
 CREATE TABLE IF NOT EXISTS "event"(

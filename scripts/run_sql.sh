@@ -3,17 +3,8 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${DIR}/common.sh"
+source "${DIR}/_db_env.sh"
 
-
-# Fallback to local values when not defined
-HOST=${PG_HOST:="local-postgres"}
-DBNAME=${PG_DATABASE:="chemister"}
-USER=${PG_USER:="che"}
-PASSWORD=${PG_PASSWORD:="guevara"}
-POSTGRES_USER_PASS=${POSTGRES_USER_PASS:="postgres"}
-if [ -z ${TEST+x} ]; then
- TEST=true
-fi
 
 # PGPASSWORD should be exported to the environment
 export PGPASSWORD="${POSTGRES_USER_PASS}"
@@ -26,23 +17,19 @@ psql -U postgres -h "${HOST}" \
 # Update password to correspond with the new user
 export PGPASSWORD="${PASSWORD}"
 _info "running additional sql"
-psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
--f "${DIR}/sql/002_create_tables.sql" -v ON_ERROR_STOP=1
+run_sql "002_create_tables.sql"
 
 _info "inserting base data"
-psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
--f "${DIR}/sql/003_insert_base_data.sql" -v ON_ERROR_STOP=1
+run_sql "003_insert_base_data.sql"
 
 if [ -z "${TEST}" ]; then
   _info "production env, do nothing"
 else
   _info "inserting test data"
-  psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
-  -f "${DIR}/sql/004_insert_test_data.sql" -v ON_ERROR_STOP=1
+  run_sql "004_insert_test_data.sql"
 fi
 
-_info "running database migrations"
-psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
--f "${DIR}/sql/005_add_events_table.sql" -v ON_ERROR_STOP=1
+_warn "running migrations"
+source "${DIR}/migrate.sh"
 
 _note "done!"

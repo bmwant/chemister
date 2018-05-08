@@ -19,3 +19,9 @@ function _warn {
   echo $1
   echo -e "========================\033[0m"
 }
+
+function run_sql {
+  FILENAME="${DIR}/sql/$1"
+  psql -U "${USER}" -h "${HOST}" -d "${DBNAME}" \
+       -f "${FILENAME}" -v ON_ERROR_STOP=1
+}
