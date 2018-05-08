@@ -1,23 +1,26 @@
 {% import "helpers/_get_status.html" as status_macro %}
-{% macro render_bids_table(header, bids) -%}
+{% macro render_bids_table(header, bids, info) -%}
 <div class="card">
   <div class="card-header">
     <h3 class="card-title">{{ header }}</h3>
+    <small class="text-muted">{{ info.active }} active</small>
+    Rate({{ info.rate.min }}/{{ info.rate.avg }}/{{ info.rate.max }})
+    Amount(min/avg/max)
   </div>
   <div class="table-responsive">
     <table class="table card-table table-vcenter text-nowrap">
       <thead>
-      <tr>
-        <th class="w-1">#</th>
-        <th>Amount</th>
-        <th>Currency</th>
-        <th>Rate</th>
-        <th>Phone No.</th>
-        <th>Created</th>
-        <th>Status</th>
-        <th>Source</th>
-        <th></th>
-      </tr>
+        <tr>
+          <th class="w-1">#</th>
+          <th>Amount</th>
+          <th>Currency</th>
+          <th>Rate</th>
+          <th>Phone No.</th>
+          <th>Created</th>
+          <th>Status</th>
+          <th>Source</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
       {% for bid in bids %}

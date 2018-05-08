@@ -108,7 +108,7 @@
       {% include "components/bids_form.html" %}
 
       <div class="col-12">
-        {{ table.render_bids_table("In bids", in_bids) }}
+        {{ table.render_bids_table("In bids", in_bids, in_info) }}
       </div>
     </div>
   </div>
@@ -132,7 +132,7 @@
       {% include "components/bids_form.html" %}
 
       <div class="col-12">
-        {{ table.render_bids_table("Out bids", out_bids) }}
+        {{ table.render_bids_table("Out bids", out_bids, out_info) }}
       </div>
     </div>
   </div>

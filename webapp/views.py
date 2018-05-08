@@ -33,6 +33,32 @@ async def index(request):
         'in_bids': in_bids,
         'out_bids': out_bids,
         'stats': stats,
+        'in_info': {
+            'active': 15,
+            'rate': {
+                'min': 26.3,
+                'avg': 26.3,
+                'max': 26.4,
+            },
+            'amount': {
+                'min': 100,
+                'avg': 1500,
+                'max': 7000,
+            },
+        },
+        'out_info': {
+            'active': 10,
+            'rate': {
+                'min': 26.1,
+                'avg': 26.2,
+                'max': 26.3,
+            },
+            'amount': {
+                'min': 110,
+                'avg': 1100,
+                'max': 400,
+            },
+        }
     }
 
 
