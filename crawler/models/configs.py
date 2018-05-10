@@ -3,7 +3,7 @@ import datetime
 import attr
 import sqlalchemy as sa
 
-from . import metadata
+from . import metadata, check_result
 from .user import user
 
 
@@ -57,3 +57,9 @@ async def insert_new_config(
 async def get_config_history(conn):
     result = await conn.execute(config.select())
     return await result.fetchall()
+
+
+async def remove_config(conn, config_id):
+    query = config.delete(config.c.id == config_id)
+    result = await conn.execute(query)
+    return await check_result(result)

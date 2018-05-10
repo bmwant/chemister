@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row">
   <div class="col-12">
-    <form action="/save_config" method="post" class="card">
+    <form action="/config/save" method="post" class="card">
       <div class="card-body">
         <div class="row">
           <div class="col-md-6 col-lg-4">
@@ -97,10 +97,10 @@
                 <tbody>
                   {% for item in history %}
                   <tr>
-                    <td>Misha Behersky</td>
+                    <td>{{ item.user_id }}</td>
                     <td>{{ item.value }}</td>
                     <td class="text-nowrap">{{ item.created | format_datetime }}</td>
-                    <td class="w-1"><a href="#" class="icon"><i class="fe fe-trash"></i></a></td>
+                    <td class="w-1"><a href="/config/delete/{{ item.id }}" class="icon delete-config"><i class="fe fe-trash"></i></a></td>
                   </tr>
                   {% endfor %}
                 </tbody>

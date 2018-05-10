@@ -1,7 +1,6 @@
 from aiohttp import web
 
-from crawler.forms.config import config_trafaret
-from crawler.models.configs import insert_new_config
+
 from crawler.models.phone import add_new_phone_to_blacklist
 from crawler.models.bid import (
     BidStatus,
@@ -9,29 +8,8 @@ from crawler.models.bid import (
     set_bid_status,
 )
 from crawler.models.event import add_event, EventType
-from crawler.models.charts import (
-    get_profit_last_month,
-    get_bids_statuses_last_month,
-    get_notifications_last_month,
-)
+
 from webapp.helpers import login_required, flash
-
-
-@login_required
-async def save_config(request):
-    app = request.app
-    logger = app['logger']
-    engine = app['db']
-    user = app['user']
-
-    data = await request.post()
-    value = config_trafaret.check(data)
-    logger.info('Saving new config initiated by user %s' % user.email)
-    async with engine.acquire() as conn:
-        await insert_new_config(conn, new_config=value, user_id=user.id)
-
-    flash(request, 'New config was saved. Using it from this point')
-    return web.HTTPFound('/settings')
 
 
 async def set_bid_called(request):
@@ -82,6 +60,7 @@ async def set_bid_rejected(request):
     return web.HTTPFound(router['index'].url_for())
 
 
+@login_required
 async def set_bid_closed(request):
     app = request.app
     router = app.router
@@ -119,39 +98,3 @@ async def ban_bid_phone(request):
         )
 
     return web.HTTPFound(router['phones'].url_for())
-
-
-async def get_daily_profit_month(request):
-    app = request.app
-    router = app.router
-    logger = app['logger']
-    engine = app['db']
-
-    async with engine.acquire() as conn:
-        data = await get_profit_last_month(conn)
-
-    return web.json_response(data=data)
-
-
-async def get_bid_statuses_month(request):
-    app = request.app
-    router = app.router
-    logger = app['logger']
-    engine = app['db']
-
-    async with engine.acquire() as conn:
-        data = await get_bids_statuses_last_month(conn)
-
-    return web.json_response(data=data)
-
-
-async def get_notifications_month(request):
-    app = request.app
-    router = app.router
-    logger = app['logger']
-    engine = app['db']
-
-    async with engine.acquire() as conn:
-        data = await get_notifications_last_month(conn)
-
-    return web.json_response(data=data)

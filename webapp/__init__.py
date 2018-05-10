@@ -28,7 +28,8 @@ def setup_routes(app):
     app.router.add_post('/do_login', views.do_login)
     app.router.add_get('/logout', views.logout)
 
-    app.router.add_post('/save_config', endpoints.save_config)
+    app.router.add_post('/config/save', endpoints.save_config)
+    app.router.add_get('/config/delete/{config_id}', endpoints.delete_config)
 
     # bid
     # todo: make post and ajax
