@@ -95,7 +95,7 @@ class Scheduler(LoggableMixin):
         if not is_working:
             self.logger.debug('s %s, e %s', work_starts, work_ends)
             self.logger.debug(
-                'Standby period [%s-%s]: %s' %
+                'Standby period [%s-%s]: %s',
                 self.config.TIME_DAY_STARTS, self.config.TIME_DAY_ENDS,
                 time_now
             )
