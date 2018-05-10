@@ -42,15 +42,11 @@ class BaseGrabber(ABC):
 
     def _save_exception(self, fut):
         self._exception = fut.exception()
-        # if exc is not None:
-        #     import pdb; pdb.set_trace()
-        #     print(exc, 'lol')
 
     def __await__(self):
-        # fut = asyncio.ensure_future(self.update().__await__())
         fut = asyncio.ensure_future(self.update())
         fut.add_done_callback(self._save_exception)
-        return fut
+        return fut.__await__()
 
     async def close(self):
         self.logger.debug('Closing fetcher connections...')

@@ -9,7 +9,7 @@ from utils import get_midnight, get_logger
 from crawler.helpers import load_config
 from crawler.db import Engine
 from . import metadata
-from .resource import resource
+from .resource import resource, Resource, get_resource_by_name
 
 
 logger = get_logger(__name__)
@@ -87,24 +87,20 @@ async def get_bid_by_signature(conn, bid_item):
 async def insert_new_bid(
     conn,
     new_bid: dict,
-    bid_type: BidType=None,
-    resource=None,
+    resource: Resource,
 ):
     config = await load_config(conn)
 
-    if bid_type is None:
-        bid_type_value = new_bid['bid_type']
-    else:
-        bid_type_value = bid_type.value
+    resource_item = await get_resource_by_name(conn, resource.name)
 
     query = bid.insert().values(
         rate=new_bid['rate'],
         amount=new_bid['amount'],
         currency=new_bid['currency'],
         phone=new_bid['phone'],
-        bid_type=bid_type_value,
+        bid_type=new_bid['bid_type'],
         dry_run=config.DRY_RUN,
-        resource_id=1,
+        resource_id=resource_item.id,
     )
     await conn.execute(query)
 

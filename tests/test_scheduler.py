@@ -71,7 +71,11 @@ async def test_run_task_exceptions(resource, caplog):
 
     scheduler.add_tasks([bad_task])
 
-    await scheduler.run_tasks()
+    import logging
+    with caplog.at_level(logging.INFO):
+        await scheduler.run_tasks()
 
+    print('asdf')
     for record in caplog.records:
         print(record)
+    print('asdf')

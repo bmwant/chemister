@@ -1,4 +1,7 @@
+from unittest import mock
+
 import pytest
+
 from crawler.models.configs import insert_new_config
 from crawler.models.bid import (
     insert_new_bid,
@@ -42,24 +45,32 @@ async def test_insert_new_resource(pg_engine):
     assert isinstance(result[0], int)
 
 
+async def _get_resource_by_name(*args):
+    return mock.Mock(id=1)
+
+
 @pytest.mark.run_loop
-async def test_insert_new_bids(pg_engine):
+async def test_insert_new_bids(pg_engine, resource):
     in_bid = {
         'rate': 26,
         'amount': 100,
         'currency': 'USD',
         'phone': '+380987776655',
+        'bid_type': BidType.IN.value,
     }
     out_bid = {
         'rate': 26.1,
         'amount': 100,
         'currency': 'USD',
         'phone': '+380987774433',
+        'bid_type': BidType.OUT.value,
     }
 
-    async with pg_engine.acquire() as conn:
-        await insert_new_bid(conn, in_bid, BidType.IN)
-        await insert_new_bid(conn, out_bid, BidType.OUT)
+    with mock.patch('crawler.models.bid.get_resource_by_name',
+                    _get_resource_by_name):
+        async with pg_engine.acquire() as conn:
+            await insert_new_bid(conn, in_bid, resource=resource)
+            await insert_new_bid(conn, out_bid, resource=resource)
 
 
 @pytest.mark.run_loop
@@ -69,14 +80,14 @@ async def test_get_bid_by_signature(pg_engine):
         'amount': 100,
         'currency': 'USD',
         'phone': '+380971112233',
-        'bid_type': 'out',
+        'bid_type': BidType.OUT.value,
     }
     the_bid = {
         'rate': 26.1,
         'amount': 100,
         'currency': 'USD',
         'phone': '+380987774433',
-        'bid_type': 'out',
+        'bid_type': BidType.OUT.value,
     }
 
     async with pg_engine.acquire() as conn:
@@ -85,7 +96,6 @@ async def test_get_bid_by_signature(pg_engine):
 
         result = await get_bid_by_signature(conn, the_bid)
         assert result is not None
-        print(result)
 
 
 @pytest.mark.run_loop
