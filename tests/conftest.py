@@ -5,6 +5,7 @@ import pytest
 from aiopg.sa import create_engine
 
 import settings
+from crawler.models.resource import Resource
 
 
 TESTS_DIR = settings.PROJECT_ROOT / 'tests'
@@ -59,6 +60,14 @@ def user():
         email='user@gmail.com',
         password='password',
         permissions='',
+    )
+
+
+@pytest.fixture
+def resource():
+    return Resource(
+        name='Test resource',
+        link='http://lemonparty.club/',
     )
 
 

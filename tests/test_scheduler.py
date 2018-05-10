@@ -6,6 +6,7 @@ import attr
 import pytest
 
 import settings
+from crawler.grabber import BaseGrabber
 from crawler.scheduler import Scheduler
 from crawler.scheduled_task import ScheduledTask
 
@@ -41,7 +42,7 @@ async def _get_config_mock():
     _config = _Config(
         TIME_DAY_STARTS=time_starts,
         TIME_DAY_ENDS=time_ends,
-        REFRESH_PERIOD_MINUTES=1,
+        REFRESH_PERIOD_MINUTES=0.1,
     )
     return _config
 
@@ -55,22 +56,19 @@ async def test_working_time():
         assert is_working is True
 
 
+class BadGrabber(BaseGrabber):
+    async def get_in_bids(self):
+        raise RuntimeError('Cannot get bids')
+
+    async def get_out_bids(self):
+        return []
+
+
 @pytest.mark.run_loop
-async def test_task_exceptions():
-
-    async def bad_task():
-        print('Running task with exception')
-        raise RuntimeError('error occurred')
-
-    async def normal_task():
-        print('Running normal task')
-
+async def test_run_task_exceptions(resource, caplog):
+    bad_task = BadGrabber(resource=resource)
     scheduler = Scheduler()
 
-    scheduler.add_tasks([
-        bad_task(),
-        normal_task(),
-    ])
+    scheduler.add_tasks([bad_task])
 
-    with mock.patch('crawler.scheduler.get_config', _get_config_mock):
-        await scheduler.run_forever()
+    await scheduler.run_tasks()

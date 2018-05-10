@@ -25,6 +25,12 @@ class BaseGrabber(ABC):
         self.cache = cache
         self.engine = engine
         self.logger = get_logger(self.__class__.__name__.lower())
+        self._exception = None
+
+    def __str__(self):
+        return 'Grabber[{}] for resource [{}]'.format(
+            self.__class__.__name__, self.name
+        )
 
     @property
     def name(self):
@@ -34,8 +40,17 @@ class BaseGrabber(ABC):
     def urls(self):
         return self.resource.urls
 
+    def _save_exception(self, fut):
+        self._exception = fut.exception()
+        # if exc is not None:
+        #     import pdb; pdb.set_trace()
+        #     print(exc, 'lol')
+
     def __await__(self):
-        return self.update().__await__()
+        # fut = asyncio.ensure_future(self.update().__await__())
+        fut = asyncio.ensure_future(self.update())
+        fut.add_done_callback(self._save_exception)
+        return fut
 
     async def close(self):
         self.logger.debug('Closing fetcher connections...')

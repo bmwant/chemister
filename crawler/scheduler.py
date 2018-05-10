@@ -2,6 +2,7 @@
 Schedule periodic tasks and ensure their execution within given period.
 """
 import asyncio
+import traceback
 from datetime import datetime
 from http import HTTPStatus
 
@@ -51,7 +52,12 @@ class Scheduler(LoggableMixin):
         """
         Run grabber tasks which are executed in parallel for each resource.
         """
-        await asyncio.gather(*self.tasks)
+        results = await asyncio.gather(*self.tasks, return_exceptions=True)
+        # todo: report in sentry
+        for task, res in zip(self.tasks, results):
+            if isinstance(res, Exception):
+                self.logger.critical('%s got exception:', task)
+                traceback.print_tb(task._exception.__traceback__)
 
     async def run_extra(self):
         """
