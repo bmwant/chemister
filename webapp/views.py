@@ -10,7 +10,7 @@ from crawler.models.bid import get_daily_bids, BidType
 from crawler.models.resource import get_resource_by_id
 from crawler.models.phone import get_phones
 from crawler.models.user import get_user
-from crawler.models.stats import collect_statistics
+from crawler.models.stats import collect_statistics, get_bids_info
 from crawler.models.configs import get_config_history
 from webapp.utils import refresh_data
 from webapp.helpers import login_required, flash, check_password
@@ -29,36 +29,14 @@ async def index(request):
         out_bids = await get_daily_bids(conn, bid_type=BidType.OUT)
         stats = await collect_statistics(conn)
 
+    in_info = get_bids_info(in_bids)
+    out_info = get_bids_info(out_bids)
     return {
         'in_bids': in_bids,
         'out_bids': out_bids,
         'stats': stats,
-        'in_info': {
-            'active': 15,
-            'rate': {
-                'min': 26.3,
-                'avg': 26.3,
-                'max': 26.4,
-            },
-            'amount': {
-                'min': 100,
-                'avg': 1500,
-                'max': 7000,
-            },
-        },
-        'out_info': {
-            'active': 10,
-            'rate': {
-                'min': 26.1,
-                'avg': 26.2,
-                'max': 26.3,
-            },
-            'amount': {
-                'min': 110,
-                'avg': 1100,
-                'max': 400,
-            },
-        }
+        'in_info': in_info,
+        'out_info': out_info,
     }
 
 

@@ -1,8 +1,13 @@
+import operator
+import statistics
+
 from crawler.helpers import load_config
 from crawler.models.bid import (
     get_daily_bids,
     BidType,
     BidStatus,
+    get_statuses,
+    ACTIVE_STATUSES,
     GONE_STATUSES,
 )
 from crawler.models.fund import get_current_fund_amount, Currency
@@ -64,4 +69,33 @@ async def collect_statistics(conn):
         'dropped_bids': dropped_bids_count,
         'closed_bids': closed_bids_count,
         'fund': fund,
+    }
+
+
+def _f(func, data):
+    if not data:
+        return 0
+    return func(data)
+
+
+def get_bids_info(bids):
+    rates = list(map(operator.attrgetter('rate'), bids))
+    amounts = list(map(operator.attrgetter('amount'), bids))
+    statuses = list(map(operator.attrgetter('status'), bids))
+
+    active = _f(len,
+                [*filter(lambda s: s in get_statuses(*ACTIVE_STATUSES),
+                         statuses)])
+    return {
+        'active': active,
+        'rate': {
+            'min': _f(min, rates),
+            'avg': _f(statistics.mean, rates),
+            'max': _f(max, rates),
+        },
+        'amount': {
+            'min': _f(min, amounts),
+            'avg': _f(statistics.mean, amounts),
+            'max': _f(max, amounts),
+        },
     }
