@@ -35,8 +35,9 @@ FLASH_SESSION_KEY = 'flash'
 FLASH_REQUEST_KEY = 'flash'
 
 # DEVELOPING
+DEBUG = False
 DEV_BID_RESOURCE = PROJECT_ROOT / 'resources' / 'bids.yml'
-
+SESSION_SECRET_KEY = 'P-mbeuEe5XtZL7lBJQfsm5EtOxWB3CWH3G4lmf4ELcM='
 
 # Override values from config_local.py
 try:

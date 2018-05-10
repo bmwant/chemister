@@ -51,12 +51,13 @@ def setup_routes(app):
 
 
 def setup_static_routes(app):
-    app.router.add_static('/static/',
-                          path=settings.PROJECT_ROOT / 'static',
-                          name='static')
-    app.router.add_static('/node_modules/',
-                          path=settings.PROJECT_ROOT / 'node_modules',
-                          name='node_modules')
+    if settings.DEBUG:
+        app.router.add_static('/static/',
+                              path=settings.PROJECT_ROOT / 'static',
+                              name='static')
+        app.router.add_static('/node_modules/',
+                              path=settings.PROJECT_ROOT / 'node_modules',
+                              name='node_modules')
 
 
 def setup_templates(app):
@@ -77,8 +78,11 @@ def setup_templates(app):
 
 
 def setup_session(app):
-    fernet_key = fernet.Fernet.generate_key()
-    secret_key = base64.urlsafe_b64decode(fernet_key)
+    if settings.DEBUG:
+        secret_key = settings.SESSION_SECRET_KEY
+    else:
+        fernet_key = fernet.Fernet.generate_key()
+        secret_key = base64.urlsafe_b64decode(fernet_key)
     aiohttp_session.setup(app, EncryptedCookieStorage(secret_key))
 
 

@@ -21,6 +21,7 @@ class Scheduler(LoggableMixin):
         # List of tasks to be executed on daily basis
         self.daily_tasks = daily_tasks or []
         self.default_interval = interval
+        self.config = None
 
     def add_tasks(self, tasks: list):
         self.tasks.extend(tasks)
@@ -28,21 +29,23 @@ class Scheduler(LoggableMixin):
     def add_daily_tasks(self, tasks: list):
         self.daily_tasks.extend(tasks)
 
+    async def update_config(self):
+        self.config = await get_config()
+
     async def run_forever(self):
         # todo: add exceptions handling within child processes
         while True:
-            is_working = await self.working_time
-            if is_working:
+            await self.update_config()
+
+            if self.working_time:
                 await self.run_tasks()
                 await self.run_extra()
 
-            # todo: call soon without blocking
-            await self.run_daily_tasks()
-            await self.send_healthcheck()
-            interval = await self._get_update_interval()
+            asyncio.ensure_future(self.run_daily_tasks())
+            asyncio.ensure_future(self.send_healthcheck())
             self.logger.info('Waiting %s seconds to make next update...' %
-                             interval)
-            await asyncio.sleep(interval)
+                             self.update_interval)
+            await asyncio.sleep(self.update_interval)
 
     async def run_tasks(self):
         """
@@ -77,24 +80,24 @@ class Scheduler(LoggableMixin):
                     text = await resp.text()
                     self.logger.error('Request failed %s', text)
 
-    async def _get_update_interval(self):
-        config = await get_config()
-        interval = config.REFRESH_PERIOD_MINUTES or self.default_interval
+    @property
+    def update_interval(self):
+        interval = self.config.REFRESH_PERIOD_MINUTES or self.default_interval
         # value in minutes
         return interval * 60
 
     @property
-    async def working_time(self):
-        config = await get_config()
-        work_starts = make_datetime(config.TIME_DAY_STARTS)
-        work_ends = make_datetime(config.TIME_DAY_ENDS)
+    def working_time(self):
+        work_starts = make_datetime(self.config.TIME_DAY_STARTS)
+        work_ends = make_datetime(self.config.TIME_DAY_ENDS)
         time_now = datetime.now()
         is_working = work_starts <= time_now <= work_ends
         if not is_working:
             self.logger.debug('s %s, e %s', work_starts, work_ends)
             self.logger.debug(
                 'Standby period [%s-%s]: %s' %
-                config.TIME_DAY_STARTS, config.TIME_DAY_ENDS, time_now
+                self.config.TIME_DAY_STARTS, self.config.TIME_DAY_ENDS,
+                time_now
             )
         return is_working
 
