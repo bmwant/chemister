@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 
+from crawler.forms.config import config_trafaret
 from crawler.models.configs import insert_new_config
 from crawler.models.bid import (
     insert_new_bid,
@@ -23,13 +24,15 @@ async def test_insert_new_config(pg_engine, user):
     config = {
         'DRY_RUN': True,
         'CLOSED_BIDS_FACTOR': 1,
-        'MIN_BID_AMOUNT': 10,
-        'MAX_BID_AMOUNT': 100,
+        'MIN_BID_AMOUNT': 10.0,
+        'MAX_BID_AMOUNT': 100.0,
+        'TIME_DAY_STARTS': '06:00',
         'TIME_DAY_ENDS': '20:00',
         'REFRESH_PERIOD_MINUTES': 5,
     }
+    new_config = config_trafaret.check(config)
     async with pg_engine.acquire() as conn:
-        await insert_new_config(conn, new_config=config, user_id=user.id)
+        await insert_new_config(conn, new_config=new_config, user_id=user.id)
 
 
 @pytest.mark.run_loop

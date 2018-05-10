@@ -9,7 +9,7 @@ SINGLE_DATA = """
   link: "https://example.com/"
   urls:
     - currency: "USD"
-      in_bids: "https://example.com/usd/in
+      in_bids: "https://example.com/usd/in"
       out_bids: "https://example.com/usd/out"
   parser: "the_name_parser"
   fetcher:
@@ -27,7 +27,7 @@ DEFAULT_DATA = """
   link: "https://example.com/default1"
   urls:
     - currency: "USD"
-      in_bids: "https://example.com/default1/in
+      in_bids: "https://example.com/default1/in"
       out_bids: "https://example.com/default1/out"
   proxy:
     use: false
@@ -35,7 +35,7 @@ DEFAULT_DATA = """
   link: "https://example.com/default2"
   urls:
     - currency: "USD"
-      in_bids: "https://example.com/default2/in
+      in_bids: "https://example.com/default2/in"
       out_bids: "https://example.com/default2/out"
   parser: "the_name_parser"
   fetcher:

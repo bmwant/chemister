@@ -28,8 +28,6 @@ async def test_daily_tasks():
 
 
 async def _get_config_mock():
-    config_invoked = True
-
     _Config = attr.make_class(
         'Config',
         ['TIME_DAY_STARTS', 'TIME_DAY_ENDS', 'REFRESH_PERIOD_MINUTES'],
@@ -52,8 +50,8 @@ async def test_working_time():
     scheduler = Scheduler()
 
     with mock.patch('crawler.scheduler.get_config', _get_config_mock):
-        is_working = await scheduler.working_time
-        assert is_working is True
+        await scheduler.update_config()
+        assert scheduler.working_time is True
 
 
 class BadGrabber(BaseGrabber):
