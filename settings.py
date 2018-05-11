@@ -25,7 +25,8 @@ HEALTHCHECK_ENDPOINT = None
 
 DEFAULT_DATE_FORMAT = '%d/%m/%y'
 DEFAULT_TIME_FORMAT = '%H:%M'
-
+DEFAULT_DATETIME_FORMAT = '{} {}'.format(DEFAULT_TIME_FORMAT,
+                                         DEFAULT_DATE_FORMAT)
 
 SYSTEM_USER_ID = 0
 

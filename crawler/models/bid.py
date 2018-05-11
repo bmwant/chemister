@@ -84,6 +84,21 @@ async def get_bid_by_signature(conn, bid_item):
     return await result.fetchone()
 
 
+async def get_bids_for_period(
+    conn,
+    *,
+    start_date,
+    end_date,
+):
+    query = bid.select().where(sa.and_(
+        bid.c.created >= start_date,
+        bid.c.created <= end_date,
+    ))
+
+    result = await conn.execute(query)
+    return await result.fetchall()
+
+
 async def insert_new_bid(
     conn,
     new_bid: dict,

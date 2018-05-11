@@ -39,6 +39,9 @@ def setup_routes(app):
                        endpoints.set_bid_rejected)
     app.router.add_get('/bid/ban_phone/{bid_id}', endpoints.ban_bid_phone)
 
+    # export
+    app.router.add_post('/export/csv', endpoints.export_to_csv)
+
     # resource
     app.router.add_get('/resource/{resource_id}', views.resource)
 

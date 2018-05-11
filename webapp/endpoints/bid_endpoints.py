@@ -1,14 +1,21 @@
-from aiohttp import web
 
+import datetime
+import csv
+import operator
+import tempfile
 
+from aiohttp import web, hdrs
+
+import settings
 from crawler.models.phone import add_new_phone_to_blacklist
 from crawler.models.bid import (
+    bid,
     BidStatus,
     get_bid_by_id,
     set_bid_status,
+    get_bids_for_period,
 )
 from crawler.models.event import add_event, EventType
-
 from webapp.helpers import login_required, flash
 
 
@@ -80,6 +87,7 @@ async def set_bid_closed(request):
     return web.HTTPFound(router['index'].url_for())
 
 
+@login_required
 async def ban_bid_phone(request):
     app = request.app
     router = app.router
@@ -98,3 +106,42 @@ async def ban_bid_phone(request):
         )
 
     return web.HTTPFound(router['phones'].url_for())
+
+
+def _dump_field(field):
+    if isinstance(field, bool):
+        return int(field)
+    elif isinstance(field, datetime.datetime):
+        return field.strftime(settings.DEFAULT_DATETIME_FORMAT)
+    else:
+        return field
+
+
+@login_required
+async def export_to_csv(request):
+    app = request.app
+    router = app.router
+    logger = app['logger']
+    engine = app['db']
+
+    form = await request.post()
+    logger.debug('%s %s', form['day_start'], form['day_end'])
+    async with engine.acquire() as conn:
+        bids = await get_bids_for_period(
+            conn,
+            start_date=form['day_start'],
+            end_date=form['day_end'],
+        )
+
+    with tempfile.NamedTemporaryFile('w', delete=False) as f:
+        writer = csv.writer(f)
+        header = [*map(operator.attrgetter('name'), bid.columns)]
+        writer.writerow(header)
+        for b in bids:
+            writer.writerow([_dump_field(getattr(b, prop)) for prop in header])
+
+    filename = 'exported_bids.csv'
+    # todo: unique filename based on current date and input params
+    return web.FileResponse(path=f.name, headers={
+        hdrs.CONTENT_DISPOSITION: 'inline; filename="{}"'.format(filename)
+    })
