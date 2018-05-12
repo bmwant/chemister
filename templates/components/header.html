@@ -70,3 +70,13 @@
     </div>
   </div>
 </div>
+<script>
+require(['jquery'], function($) {
+  $(document).ready(function () {
+    var href = window.location.pathname;
+    $('a.nav-link').removeClass('active');
+    var activeLink = $('a[href="' + href + '"]');
+    activeLink.addClass('active');
+  });
+});
+</script>
