@@ -14,10 +14,11 @@ from crawler.models.bid import (
     BidStatus,
     ACTIVE_STATUSES,
 )
+from crawler.models.resource import Resource
 
 
 class BaseGrabber(ABC):
-    def __init__(self, resource, *,
+    def __init__(self, resource: Resource, *,
                  fetcher=None, parser=None, cache=None, engine=None):
         self.resource = resource
         self.fetcher = fetcher
@@ -111,11 +112,11 @@ class BaseGrabber(ABC):
                 await mark_bids_as(conn, inactive_bids, BidStatus.INACTIVE)
 
     async def insert_new_bids(self, bids):
-        resource = None
         insert_tasks = []
 
         async def insert_new_bid_task(*args, **kwargs):
             async with self.engine.acquire() as conn:
+                self.logger.debug('Inserting new bid...')
                 return await insert_new_bid(conn, *args, **kwargs)
 
         for bid in bids:
@@ -124,6 +125,6 @@ class BaseGrabber(ABC):
 
             if not already_stored:
                 insert_tasks.append(
-                    insert_new_bid_task(bid, resource=resource))
+                    insert_new_bid_task(bid, resource=self.resource))
 
         await asyncio.gather(*insert_tasks)

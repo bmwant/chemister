@@ -107,6 +107,8 @@ async def insert_new_bid(
     config = await load_config(conn)
 
     resource_item = await get_resource_by_name(conn, resource.name)
+    if resource_item is None:
+        raise ValueError('Cannot load such a [%s]' % resource)
 
     query = bid.insert().values(
         rate=new_bid['rate'],

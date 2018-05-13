@@ -1,5 +1,6 @@
 import operator
 
+import settings
 from crawler.grabber import BaseGrabber
 from crawler.filters import Container, Filter
 from crawler.helpers import load_config
@@ -33,6 +34,9 @@ class IUaGrabber(BaseGrabber):
         return await self.filter_data(data)
 
     async def filter_data(self, data):
+        if not settings.APPLY_FILTER:
+            return data
+
         async with self.engine.acquire() as conn:
             config = await load_config(conn)
 

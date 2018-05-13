@@ -50,6 +50,9 @@ class Resource(object):
     grabber: str = attr.ib(default='dummy')
     parser: str = attr.ib(default='dummy')
 
+    def __str__(self):
+        return '{}({})'.format(self.name, self.link)
+
 
 resource = sa.Table(
     'resource', metadata,
