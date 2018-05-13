@@ -25,6 +25,7 @@ trafaret = "*"
 aiohttp-session = "*"
 ansible = "*"
 cryptography = "*"
+dateparser = "*"
 
 
 [dev-packages]

@@ -1,9 +1,9 @@
-
 import datetime
 import csv
 import operator
 import tempfile
 
+import dateparser
 from aiohttp import web, hdrs
 
 import settings
@@ -125,12 +125,15 @@ async def export_to_csv(request):
     engine = app['db']
 
     form = await request.post()
-    logger.debug('%s %s', form['day_start'], form['day_end'])
+    start_date = dateparser.parse(form['day_start'])
+    datetime_day_end = dateparser.parse(form['day_end'])
+    end_date = datetime_day_end + datetime.timedelta(days=1)
+    logger.debug('Exporting bids for period %s - %s', start_date, end_date)
     async with engine.acquire() as conn:
         bids = await get_bids_for_period(
             conn,
-            start_date=form['day_start'],
-            end_date=form['day_end'],
+            start_date=start_date,
+            end_date=end_date,
         )
 
     with tempfile.NamedTemporaryFile('w', delete=False) as f:
@@ -140,8 +143,10 @@ async def export_to_csv(request):
         for b in bids:
             writer.writerow([_dump_field(getattr(b, prop)) for prop in header])
 
-    filename = 'exported_bids.csv'
-    # todo: unique filename based on current date and input params
+    start_date_str = start_date.strftime('%d-%m-%y')
+    end_date_str = datetime_day_end.strftime('%d-%m-%y')
+    filename = 'exported_bids_{}_{}.csv'.format(start_date_str, end_date_str)
+
     return web.FileResponse(path=f.name, headers={
         hdrs.CONTENT_DISPOSITION: 'inline; filename="{}"'.format(filename)
     })
