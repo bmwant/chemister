@@ -86,3 +86,6 @@ run-postgres:
 
 rm-postgres:
 	@docker rm local-postgres
+
+update:
+	@cd deploy && ansible-playbook update.yml

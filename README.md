@@ -73,3 +73,7 @@ $ cd deploy
 $ ansible-playbook init.yml
 ```
 
+To update application on remote server:
+```bash
+$ make update
+```
