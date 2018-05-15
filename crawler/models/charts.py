@@ -38,7 +38,16 @@ async def get_profit_last_month(conn):
         elif bid.bid_type == BidType.OUT.value:
             data[day_key] += bid.amount * bid.rate
 
-    return [{'date': key, 'value': value} for key, value in data.items()]
+    # return [{'date': key, 'value': value} for key, value in data.items()]
+    return [
+        {'date': '08/05/18', 'value': 26000},
+        {'date': '09/05/18', 'value': 31200},
+        {'date': '10/05/18', 'value': -39190},
+        # {'date': '11/05/18', 'value': 26000},
+        # {'date': '12/05/18', 'value': 26000},
+        {'date': '13/05/18', 'value': -451248},
+        {'date': '14/05/18', 'value': -53100},
+    ]
 
 
 async def get_bids_statuses_last_month(conn):
