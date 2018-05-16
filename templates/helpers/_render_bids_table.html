@@ -4,8 +4,8 @@
   <div class="card-header">
     <h3 class="card-title">{{ header }}</h3>
     <small class="text-muted">{{ info.active }} active</small>
-    Rate({{ info.rate.min }}/{{ info.rate.avg }}/{{ info.rate.max }})
-    Amount({{ info.amount.min }}/{{ info.amount.avg }}/{{ info.amount.max }})
+    Rate({{ info.rate.min | round(2) }}/{{ info.rate.avg | round(2) }}/{{ info.rate.max | round(2) }})
+    Amount({{ info.amount.min | int }}/{{ info.amount.avg | int }}/{{ info.amount.max | int }})
   </div>
   <div class="table-responsive">
     <table class="table card-table table-vcenter text-nowrap">
