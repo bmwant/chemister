@@ -141,6 +141,16 @@ async def control_panel(request):
     logger.info('Accessing admin page')
 
 
+@login_required
+@aiohttp_jinja2.template('operations.html')
+async def operations(request):
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+
+    logger.info('Accessing operations page')
+
+
 @aiohttp_jinja2.template('login.html')
 async def login(request):
     app = request.app
