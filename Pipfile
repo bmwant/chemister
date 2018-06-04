@@ -27,6 +27,15 @@ ansible = "*"
 cryptography = "*"
 dateparser = "*"
 "psycopg2-binary" = "*"
+numpy = "*"
+pandas = "*"
+seaborn = "*"
+matplotlib = "*"
+jupyter = "*"
+scipy = "*"
+pyflux = "*"
+pandas-datareader = "*"
+statsmodels = "*"
 
 
 [dev-packages]
