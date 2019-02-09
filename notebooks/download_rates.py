@@ -74,7 +74,7 @@ def process_day(data):
 
 
 def write_data(data, year):
-    header = ['date', 'buy', 'sale', 'buy_nb', 'sale_nb']
+    header = ['date', 'buy', 'sale', 'nb']
     filename_tpl = 'data/uah_to_{currency}_{year}.csv'
     for currency in CURRENCIES:
         filename = filename_tpl.format(currency=currency.lower(), year=year)
@@ -143,7 +143,7 @@ def main_wrapper():
 if __name__ == '__main__':
     """
     2015 - Finished in 60.70 minutes
-    2016 - 
+    2016 - Finished in 60.87 minutes
     2017 - 
     """
     main_wrapper()
