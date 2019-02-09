@@ -17,6 +17,8 @@ MAX_WORKERS = 4
 MIN_SLEEP = 10
 MAX_SLEEP = 60
 
+HEADER = ['date', 'buy', 'sale', 'nb']
+DATE_FMT = '%d.%m.%Y'
 CURRENCIES = (
     'USD',
     'EUR',
@@ -112,18 +114,28 @@ def download_url(url):
     return r.json()
 
 
-def write_data(data, year):
-    header = ['date', 'buy', 'sale', 'nb']
+def append_rows(*, filename, rows, fieldnames):
+    with open(filename, 'a') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        for row in rows:
+            writer.writerow(row)
+
+
+def write_data(data, year, append=False):
     filename_tpl = 'data/uah_to_{currency}_{year}.csv'
     for currency in CURRENCIES:
         filename = filename_tpl.format(currency=currency.lower(), year=year)
-        print('Writing result to a file', filename)
-        with open(filename, 'w') as f:
-            writer = csv.DictWriter(f, fieldnames=header)
-            writer.writeheader()
-            for item in data:
-                row = {'date': item['date'], **item[currency]}
-                writer.writerow(row)
+        print('\nWriting result to a file', filename)
+        if not append:
+            with open(filename, 'w') as f:
+                writer = csv.DictWriter(f, fieldnames=HEADER)
+                writer.writeheader()
+        rows = [{'date': item['date'], **item[currency]} for item in data]
+        append_rows(
+            filename=filename,
+            rows=rows,
+            fieldnames=HEADER,
+        )
 
 
 def generate_urls(start_date, end_date):
@@ -131,7 +143,7 @@ def generate_urls(start_date, end_date):
     urls = []
     date_iter = start_date
     while date_iter <= end_date:
-        url = url_template.format(date=date_iter.strftime('%d.%m.%Y'))
+        url = url_template.format(date=date_iter.strftime(DATE_FMT))
         urls.append(url)
         date_iter += timedelta(days=1)
     return urls
@@ -142,8 +154,8 @@ def main(year, start_day, start_month, end_day, end_month):
     end_date_str = '{:02d}.{:02d}.{}'.format(end_day, end_month, year)
 
     print('Range of dates selected [{} - {}]'.format(start_date_str, end_date_str))
-    start_date = datetime.strptime(start_date_str, '%d.%m.%Y')
-    end_date = datetime.strptime(end_date_str, '%d.%m.%Y')
+    start_date = datetime.strptime(start_date_str, DATE_FMT)
+    end_date = datetime.strptime(end_date_str, DATE_FMT)
 
     urls = generate_urls(start_date, end_date)
     d = Downloader(urls)
