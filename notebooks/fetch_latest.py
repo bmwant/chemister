@@ -6,7 +6,7 @@ from download_rates import generate_urls, write_data, Downloader, DATE_FMT
 
 
 def main():
-    current_date = datetime.now()
+    current_date = datetime.now() - timedelta(days=1)
     current_year = current_date.year
     filename = 'data/uah_to_usd_{}.csv'.format(current_year)
     df = pd.read_csv(filename)
@@ -23,8 +23,8 @@ def main():
         return
     d = Downloader(urls)
     new_results = d.download()
-    write_data(new_results, append=True)
     d.info()
+    write_data(new_results, current_year, append=True)
 
 
 if __name__ == '__main__':
