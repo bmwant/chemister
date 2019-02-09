@@ -37,7 +37,6 @@ def retry(fn):
             except RetryError:
                 delay = random.randint(MIN_SLEEP, MAX_SLEEP)
                 time.sleep(delay)
-        import pdb; pdb.set_trace()
         raise RuntimeError(
             'Cannot successfully execute {} with {} retries'.format(fn.__name__, r)
         )
@@ -66,8 +65,7 @@ def process_day(data):
         if currency not in CURRENCIES:
             continue
         result[currency] = {
-            'buy_nb': item['purchaseRateNB'],
-            'sale_nb': item['saleRateNB'],
+            'nb': item['saleRateNB'],
             'buy': item['purchaseRate'],
             'sale': item['saleRate'],
         }
@@ -91,9 +89,11 @@ def write_data(data, year):
 
 def main(year):
     url_template = 'https://api.privatbank.ua/p24api/exchange_rates?json&date={date}'
-    start_date = datetime.strptime('01.12.2014', '%d.%m.%Y')
-    end_date = datetime.strptime('31.12.2014', '%d.%m.%Y')
-    # end_date = datetime.now()
+    start_date_str = '01.01.{}'.format(year)
+    end_date_str = '31.12.{}'.format(year)
+    start_date = datetime.strptime(start_date_str, '%d.%m.%Y')
+    end_date = datetime.strptime(end_date_str, '%d.%m.%Y')
+
     urls = []
     errors = []
     current_date = start_date
