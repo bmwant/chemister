@@ -137,10 +137,11 @@ def generate_urls(start_date, end_date):
     return urls
 
 
-def main(year):
-    start_date_str = '01.01.{}'.format(year)
-    end_date_str = '31.12.{}'.format(year)
+def main(year, start_day, start_month, end_day, end_month):
+    start_date_str = '{:02d}.{:02d}.{}'.format(start_day, start_month, year)
+    end_date_str = '{:02d}.{:02d}.{}'.format(end_day, end_month, year)
 
+    print('Range of dates selected [{} - {}]'.format(start_date_str, end_date_str))
     start_date = datetime.strptime(start_date_str, '%d.%m.%Y')
     end_date = datetime.strptime(end_date_str, '%d.%m.%Y')
 
@@ -159,19 +160,55 @@ def main_wrapper():
         type=int,
         help='year you want to fetch data for'
     )
+    parser.add_argument(
+        '--month-start',
+        default=1,
+        required=False,
+        type=int,
+        help='month number for the starting date',
+    )
+    parser.add_argument(
+        '--day-start',
+        default=1,
+        required=False,
+        type=int,
+        help='day of month for the starting date',
+    )
+    parser.add_argument(
+        '--month-end',
+        default=12,
+        required=False,
+        type=int,
+        help='month number for the end date',
+    )
+    parser.add_argument(
+        '--day-end',
+        default=31,
+        required=False,
+        type=int,
+        help='day of month for the end date',
+    )
     args = parser.parse_args()
 
     t1 = timeit.default_timer()
-    main(args.year)
+    main(
+        year=args.year,
+        start_day=args.day_start,
+        start_month=args.month_start,
+        end_day=args.day_end,
+        end_month=args.month_end,
+    )
     t2 = timeit.default_timer()
     print('\nFinished in {:.2f} minutes'.format((t2-t1) / 60.))
 
 
 if __name__ == '__main__':
     """
+    2014 - Finished in 5.02 minutes
     2015 - Finished in 60.70 minutes
     2016 - Finished in 60.87 minutes
     2017 - Finished in 60.71 minutes
-    2018 - 
+    2018 - Finished in 60.70 minutes
+    2019 - 
     """
     main_wrapper()
