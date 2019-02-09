@@ -23,7 +23,62 @@ CURRENCIES = (
     'RUB',
 )
 
-_missing = []  # info messages about missing data
+
+class Downloader(object):
+    def __init__(self, urls, *, max_workers=MAX_WORKERS):
+        self.urls = urls
+        self._missing = []
+        self._errors = []
+        self._max_workers = max_workers
+
+    def download(self):
+        results = []
+        with ThreadPoolExecutor(max_workers=self._max_workers) as executor:
+            future_to_url = {
+                executor.submit(download_url, url): url
+                for url in self.urls
+            }
+            for future in concurrent.futures.as_completed(future_to_url):
+                url = future_to_url[future]
+                try:
+                    results.append(self.process_item(future.result()))
+                    sys.stdout.write(
+                        '\r{}/{} requests completed...'.format(len(results), len(self.urls)))
+                    sys.stdout.flush()
+                except Exception as e:
+                    self._errors.append('{}: {}'.format(url, e))
+
+        return results
+
+    def process_item(self, item):
+        date = item['date']
+        result = {
+            'date': date
+        }
+        rates = item['exchangeRate']
+        for item in rates:
+            currency = item.get('currency')  # currency key might be missing in data
+            if currency not in CURRENCIES:
+                continue
+            # Required, throw KeyError if not present
+            result[currency] = {
+                'nb': item['saleRateNB'],
+                'buy': item['purchaseRate'],
+                'sale': item['saleRate'],
+            }
+
+        # Check missing data
+        for currency in CURRENCIES:
+            if currency not in result:
+                self._missing.append('Missing {} for {}'.format(currency, date))
+        return result
+
+    def info(self):
+        print('\nDone fetching data for {} urls'.format(len(self.urls)))
+        print('\nMissing data', len(self._missing))
+        print('\n'.join(self._missing))
+        print('\nErrors', len(self._errors))
+        print('\n'.join(self._errors))
 
 
 class RetryError(RuntimeError):
@@ -57,30 +112,6 @@ def download_url(url):
     return r.json()
 
 
-def process_day(data):
-    date = data['date']
-    result = {
-        'date': date
-    }
-    rates = data['exchangeRate']
-    for item in rates:
-        currency = item.get('currency')  # currency key might be missing in data
-        if currency not in CURRENCIES:
-            continue
-        # Required, throw KeyError if not present
-        result[currency] = {
-            'nb': item['saleRateNB'],
-            'buy': item['purchaseRate'],
-            'sale': item['saleRate'],
-        }
-
-    # Check missing data
-    for currency in CURRENCIES:
-        if currency not in result:
-            _missing.append('Missing {} for {}'.format(currency, date))
-    return result
-
-
 def write_data(data, year):
     header = ['date', 'buy', 'sale', 'nb']
     filename_tpl = 'data/uah_to_{currency}_{year}.csv'
@@ -95,44 +126,29 @@ def write_data(data, year):
                 writer.writerow(row)
 
 
-def main(year):
+def generate_urls(start_date, end_date):
     url_template = 'https://api.privatbank.ua/p24api/exchange_rates?json&date={date}'
+    urls = []
+    date_iter = start_date
+    while date_iter <= end_date:
+        url = url_template.format(date=date_iter.strftime('%d.%m.%Y'))
+        urls.append(url)
+        date_iter += timedelta(days=1)
+    return urls
+
+
+def main(year):
     start_date_str = '01.01.{}'.format(year)
     end_date_str = '31.12.{}'.format(year)
 
     start_date = datetime.strptime(start_date_str, '%d.%m.%Y')
     end_date = datetime.strptime(end_date_str, '%d.%m.%Y')
 
-    urls = []
-    errors = []
-    current_date = start_date
-    while current_date <= end_date:
-        url = url_template.format(date=current_date.strftime('%d.%m.%Y'))
-        urls.append(url)
-        current_date += timedelta(days=1)
-
-    result = []
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        future_to_url = {
-            executor.submit(download_url, url): url
-            for url in urls
-        }
-        for future in concurrent.futures.as_completed(future_to_url):
-            url = future_to_url[future]
-            try:
-                data = future.result()
-                result.append(process_day(data))
-                sys.stdout.write('\r{}/{} requests completed...'.format(len(result), len(urls)))
-                sys.stdout.flush()
-            except Exception as e:
-                errors.append('{}: {}'.format(url, e))
-
-    print('\nDone fetching data from API')
-    write_data(result, year=year)
-    print('\nMissing data', len(_missing))
-    print('\n'.join(_missing))
-    print('\nErrors', len(errors))
-    print('\n'.join(errors))
+    urls = generate_urls(start_date, end_date)
+    d = Downloader(urls)
+    results = d.download()
+    write_data(results, year=year)
+    d.info()
 
 
 def main_wrapper():
@@ -156,5 +172,6 @@ if __name__ == '__main__':
     2015 - Finished in 60.70 minutes
     2016 - Finished in 60.87 minutes
     2017 - Finished in 60.71 minutes
+    2018 - 
     """
     main_wrapper()
