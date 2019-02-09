@@ -23,6 +23,8 @@ CURRENCIES = (
     'RUB',
 )
 
+_missing = []  # info messages about missing data
+
 
 class RetryError(RuntimeError):
     pass
@@ -56,20 +58,26 @@ def download_url(url):
 
 
 def process_day(data):
+    date = data['date']
     result = {
-        'date': data['date']
+        'date': date
     }
     rates = data['exchangeRate']
     for item in rates:
-        currency = item['currency']
+        currency = item.get('currency')  # currency key might be missing in data
         if currency not in CURRENCIES:
             continue
+        # Required, throw KeyError if not present
         result[currency] = {
             'nb': item['saleRateNB'],
             'buy': item['purchaseRate'],
             'sale': item['saleRate'],
         }
 
+    # Check missing data
+    for currency in CURRENCIES:
+        if currency not in result:
+            _missing.append('Missing {} for {}'.format(currency, date))
     return result
 
 
@@ -91,6 +99,7 @@ def main(year):
     url_template = 'https://api.privatbank.ua/p24api/exchange_rates?json&date={date}'
     start_date_str = '01.01.{}'.format(year)
     end_date_str = '31.12.{}'.format(year)
+
     start_date = datetime.strptime(start_date_str, '%d.%m.%Y')
     end_date = datetime.strptime(end_date_str, '%d.%m.%Y')
 
@@ -120,7 +129,9 @@ def main(year):
 
     print('\nDone fetching data from API')
     write_data(result, year=year)
-    print('\nErrors ', len(errors))
+    print('\nMissing data', len(_missing))
+    print('\n'.join(_missing))
+    print('\nErrors', len(errors))
     print('\n'.join(errors))
 
 
@@ -144,6 +155,6 @@ if __name__ == '__main__':
     """
     2015 - Finished in 60.70 minutes
     2016 - Finished in 60.87 minutes
-    2017 - 
+    2017 - Finished in 60.71 minutes
     """
     main_wrapper()
