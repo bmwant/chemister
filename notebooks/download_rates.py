@@ -160,6 +160,7 @@ def main(year, start_day, start_month, end_day, end_month):
     urls = generate_urls(start_date, end_date)
     d = Downloader(urls)
     results = d.download()
+    # set `append=True` when fixing errors during download
     write_data(results, year=year)
     d.info()
 
