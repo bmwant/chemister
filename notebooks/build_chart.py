@@ -35,6 +35,10 @@ def build_chart(df, currency):
     plt.show()
 
 
+def parse_args():
+    pass
+
+
 def main():
     register_matplotlib_converters()
     year = 2015
