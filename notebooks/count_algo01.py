@@ -11,6 +11,7 @@ def count_for_shift(df, year, shift=1):
     fail = 0
     skipped = 0
     i = 0  # total iterations
+    total_diff = 0  # gross sale/buy diff
     sd = datetime.strptime('01.01.{}'.format(year), DATE_FMT)
     ed = datetime.strptime('31.12.{}'.format(year), DATE_FMT)
     current_date = sd
@@ -24,6 +25,7 @@ def count_for_shift(df, year, shift=1):
             # we buy currency, bank sale currency
             rate_buy = df.loc[df['date'] == date_buy.strftime(DATE_FMT)]['sale'].item()
             if rate_sale > rate_buy:
+                total_diff += rate_sale - rate_buy
                 success += 1
             else:
                 fail += 1
@@ -38,11 +40,12 @@ def count_for_shift(df, year, shift=1):
     print('\tFail {}'.format(fail))
     print('\tSkipped: {}'.format(skipped))
     print('\tTotal: {}'.format(i))
+    print('\tTotal diff: {:.2f}'.format(total_diff))
     return data
 
 
 def main():
-    year = 2017
+    year = 2018
     currency = 'usd'
     filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
     df = pd.read_csv(filename)
@@ -52,7 +55,7 @@ def main():
     #     shift = s + 1
     #     count_for_shift(df, year, shift)
     
-    shifts = [5, 10, 15, 20]
+    shifts = [6, 12, 18]
     for shift in shifts:
         data = count_for_shift(df, year, shift)
         shifted_df = pd.DataFrame(
