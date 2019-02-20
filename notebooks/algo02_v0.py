@@ -16,10 +16,11 @@ class Transaction(object):
     def sale(self, rate_sale):
         amount = self.amount * rate_sale
         profit = amount - self.price  # what we gain
-        print('Selling {amount:.2f} at {rate:.2f}; '
+        print('Selling {amount:.2f}({rate_buy:.2f}) at {rate_sale:.2f}; '
               'total: {total:.2f}; profit: {profit:.2f}'.format(
             amount=self.amount,
-            rate=rate_sale,
+            rate_buy=self.rate_buy,
+            rate_sale=rate_sale,
             total=amount,
             profit=profit,
         ))
@@ -84,7 +85,13 @@ class ShiftTrader(object):
             ):
                 print('Selling expired {}'.format(t))
                 self.amount += t.sale(rate_sale)
-    
+
+    def close(self, rate_sale_closing):
+        """Sell all hanging transaction for the rate specified"""
+        print('Closing trading for {} transactions'.format(len(self.hanging)))
+        for t in self.hanging:
+            self.amount += t.sale(rate_sale_closing)
+
     @property
     def daily_amount(self):
         return 100
@@ -128,9 +135,12 @@ def main():
         i += 1
         current_date += timedelta(days=1)
 
-    # close period to calculate raw profit in uah
+    print('\nReport:\n')
     print('Total transactions: {}'.format(len(trader.transactions)))
     print('Hanging transactions: {}'.format(len(trader.hanging)))
+    # close period at the last day no matter which rate in order to calculate raw profit
+    trader.close(rate_buy)
+    print('Initial invested amount: {}'.format(starting_amount_uah))
     print('Amount we have in the end: {:.2f}'.format(trader.amount))
     print('Raw profit: {:.2f}'.format(trader.amount - starting_amount_uah))
     print('Profit, %: {:.2f}'.format(trader.amount / starting_amount_uah * 100)) 
