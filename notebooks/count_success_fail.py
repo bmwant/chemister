@@ -1,3 +1,5 @@
+import argparse
+import statistics
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -34,8 +36,9 @@ def count_periods(df, year, shift=1):
     ed = datetime.strptime('31.12.{}'.format(year), DATE_FMT)
     current_date = sd
     data = []
-    inc = 0
-    dec = 0
+    inc = []
+    dec = []
+    stats = {}
     while current_date <= ed:
         date_buy = current_date - timedelta(days=shift)
         # we sale currency, bank buy currency
@@ -49,10 +52,11 @@ def count_periods(df, year, shift=1):
                     strike += 1
                 else:
                     flag = True
-                    data.append(-strike)
+                    if strike:
+                        data.append(-strike)
+                        dec.append(strike) 
                     print('+ start at {}'.format(current_date))
                     # print('- {}'.format(strike))
-                    dec += strike 
                     strike = 1
                 success += 1
             else:
@@ -62,7 +66,7 @@ def count_periods(df, year, shift=1):
                     flag = False
                     print('+ end at {}'.format(current_date))
                     # print('+ {}'.format(strike))
-                    inc += strike
+                    inc.append(strike)
                     data.append(strike)
                     strike = 1
                 fail += 1
@@ -72,25 +76,50 @@ def count_periods(df, year, shift=1):
         current_date += timedelta(days=1)
     
     if flag is True:
-        inc += strike
+        inc.append(strike)
         data.append(strike)
     else: 
-        dec += strike
+        dec.append(strike)
         data.append(-strike)
 
     print('Stats for shift {}'.format(shift))
-    print('Total inc/dec: {}/{}'.format(inc, dec))
+    print('Total inc/dec: {}/{}'.format(sum(inc), sum(dec)))
     print('\tSuccess {}'.format(success))
     print('\tFail {}'.format(fail))
     print('\tSkipped: {}'.format(skipped))
     print('\tTotal periods: {}'.format(len(data)))
-    print('\tLongest +strike: {}'.format(max(data)))
-    print('\tLongest -strike: {}'.format(min(data)))
+    print('\tShortest/longest +strike: {}/{}'.format(min(inc), max(inc)))
+    print('\tShortest/longest -strike: {}/{}'.format(min(dec), max(dec)))
+    print('\tMean +strike: {:.2f}'.format(statistics.mean(inc)))
+    print('\tMedian +strike: {:.2f}'.format(statistics.median(inc)))
+    try:
+        print('\tMode +strike: {}'.format(statistics.mode(inc)))
+    except statistics.StatisticsError:
+        print('\tNo mode for +strike')
+    print('\tMean -strike: {:.2f}'.format(statistics.mean(dec)))
+    print('\tMedian -strike: {:.2f}'.format(statistics.median(dec)))
+    try:
+        print('\tMode -strike: {}'.format(statistics.mode(dec)))
+    except statistics.StatisticsError:
+        print('\tNo mode for -strike')
+
     return data
 
 
-def main():
-    year = 2018
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--year',
+        required=True,
+        type=int,
+        help='which year you want to analyze',
+    )
+    args = parser.parse_args()
+    return args
+
+
+def main(year):
+    print('Showing stats for {} year'.format(year))
     currency = 'usd'
     filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
     df = pd.read_csv(filename)
@@ -108,4 +137,5 @@ def main():
         build_chart(data, currency, title)
 
 if __name__ == '__main__':
-    main()
+    args = parse_args()
+    main(year=args.year)
