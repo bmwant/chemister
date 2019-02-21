@@ -79,24 +79,25 @@ async def get_bids_for_period(
     return await result.fetchall()
 
 
-async def insert_new_bid(
+async def insert_new_transaction(
     conn,
-    new_bid: dict,
-    resource: Resource,
+    transaction,
 ):
-    config = await load_config(conn)
+    # config = await load_config(conn)
 
-    resource_item = await get_resource_by_name(conn, resource.name)
-    if resource_item is None:
-        raise ValueError('Cannot load such a [%s]' % resource)
-
-    query = bid.insert().values(
-        rate=new_bid['rate'],
-        amount=new_bid['amount'],
-        currency=new_bid['currency'],
-        phone=new_bid['phone'],
-        bid_type=new_bid['bid_type'],
-        dry_run=config.DRY_RUN,
-        resource_id=resource_item.id,
+    query = transaction.insert().values(
+        amount=transaction.amount,
+        currency='USD',
+        rate_buy=transaction.rate_buy,
+        rate_sale=transaction.rate_sale,
+        user_id=1,
     )
     await conn.execute(query)
+
+
+async def close_transaction(
+    conn,
+    *,
+    transaction_id,
+):
+    pass

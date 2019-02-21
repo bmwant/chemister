@@ -13,13 +13,12 @@ def cli():
     pass
 
 
-async def schedule_grabbing(scheduler):
+async def schedule_trading(scheduler):
     factory = Factory()
     await factory.init()
-    tasks = await factory.create()
-    daily_tasks = await factory.create_daily()
-    scheduler.add_tasks(tasks)
-    scheduler.add_daily_tasks(daily_tasks)
+    trade_tasks = await factory.create_daily()
+    # scheduler.add_tasks(tasks)
+    scheduler.add_daily_tasks(trade_tasks)
     try:
         await scheduler.run_forever()
     finally:
@@ -28,14 +27,14 @@ async def schedule_grabbing(scheduler):
 
 
 @cli.command()
-def monicha():
+def trade():
     logger = get_logger()
     loop = asyncio.get_event_loop()
     scheduler = Scheduler()
     try:
-        loop.run_until_complete(schedule_grabbing(scheduler))
+        loop.run_until_complete(schedule_trading(scheduler))
     except KeyboardInterrupt:
-        logger.debug('Monitoring interrupted...')
+        logger.debug('Trading interrupted...')
     finally:
         # cleanup once again?
         pass

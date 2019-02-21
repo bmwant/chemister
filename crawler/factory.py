@@ -122,6 +122,9 @@ class Factory(object):
             grabbers.append(grabber)
         return grabbers
 
+    async def create_traders(self):
+        return []
+
     async def create_daily(self):
         return [
             ScheduledTask(
