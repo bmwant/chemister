@@ -23,8 +23,7 @@ class ProxyConfig(object):
 @attr.s
 class URLConfig(object):
     currency: str = attr.ib(default=None)
-    in_bids: str = attr.ib(default=None)
-    out_bids: str = attr.ib(default=None)
+    url: str = attr.ib(default=None)
 
 
 config = sa.Table(

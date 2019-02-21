@@ -1,12 +1,10 @@
 ---
 
-- name: i ua
-  link: "https://finance.i.ua/market/kiev/?"
+- name: privatbank
+  link: "https://privatbank.ua/"
   urls:
     - currency: "USD"
-      in_bids: "https://finance.i.ua/market/kiev/usd/?type=2"
-      out_bids: "https://finance.i.ua/market/kiev/usd/?type=1"
-  grabber: "i_ua"
-  parser: "i_ua"
+      url: "https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11"
+  grabber: "privatbank"
   fetcher:
     instance: "simple"

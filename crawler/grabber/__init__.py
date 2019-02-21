@@ -57,59 +57,17 @@ class BaseGrabber(ABC):
         await self.engine.wait_closed()
 
     async def update(self):
-        in_bids = await self.get_in_bids()
-        out_bids = await self.get_out_bids()
-        data = {
-            'in_bids': in_bids,
-            'out_bids': out_bids,
-        }
+        data = await self.get_rates()
+
         if self.cache is not None:
             await self.cache.set(self.name, data)
-
-        in_bids_data = map(lambda b: self._set_bid_type(b, BidType.IN),
-                           in_bids)
-        out_bids_data = map(lambda b: self._set_bid_type(b, BidType.OUT),
-                            out_bids)
-
-        fetched_bids = [*in_bids_data, *out_bids_data]
-        if fetched_bids:
-            await self.mark_inactive_bids(fetched_bids)
-
-            await self.insert_new_bids(fetched_bids)
-            return data
+        print(data)
+        # todo: insert rates here for history
+        return data
 
     @abstractmethod
-    async def get_in_bids(self):
-        return []
-
-    @abstractmethod
-    async def get_out_bids(self):
-        return []
-
-    @staticmethod
-    def _set_bid_type(bid: dict, bid_type: BidType):
-        bid['bid_type'] = bid_type.value
-        return bid
-
-    @staticmethod
-    def _not_in(bid, fetched_bids: list):
-        bid_signature = {
-            'rate': bid.rate,
-            'amount': bid.amount,
-            'phone': bid.phone,
-            'currency': bid.currency,
-            'bid_type': bid.bid_type,
-        }
-        return bid_signature not in fetched_bids
-
-    async def mark_inactive_bids(self, fetched_bids):
-        async with self.engine.acquire() as conn:
-            daily_bids = await get_daily_bids(conn, statuses=ACTIVE_STATUSES)
-            inactive_bids = [b.id for b in daily_bids
-                             if self._not_in(b, fetched_bids)]
-            if inactive_bids:
-                self.logger.warning('Marking bids as inactive %s', inactive_bids)
-                await mark_bids_as(conn, inactive_bids, BidStatus.INACTIVE)
+    async def get_rates(self):
+        return {}
 
     async def insert_new_bids(self, bids):
         insert_tasks = []

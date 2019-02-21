@@ -27,7 +27,7 @@ class SimpleFetcher(BaseFetcher):
         if self._session is not None:
             await self._session.close()
 
-    async def request(self, url=None):
+    async def request(self, url=None, is_json=False):
         if url is None:
             url = self.base_url
         self.logger.info(f'Requesting {url}')
@@ -37,5 +37,7 @@ class SimpleFetcher(BaseFetcher):
             if resp.status != HTTPStatus.OK:
                 self.logger.debug(f'{url} respond {resp.status}')
                 raise RuntimeError(f'Incorrect response: {resp.status}')
-
-            return await resp.text()
+            if is_json:
+                return await resp.json()
+            else:
+                return await resp.text()
