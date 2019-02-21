@@ -30,6 +30,15 @@ $ docker run -it -v $(pwd):/opt --rm --link local-postgres:postgres postgres \
 /opt/scripts/run_sql.sh
 ```
 
+### Run Postgresql on host machine
+
+```bash
+$ brew install postgresql
+$ export PG_HOST=localhost
+$ export POSTGRES_USER=`whoami`
+$ ./scripts/run_sql.sh
+```
+
 ### Installation
 ```bash
 $ git clone https://github.com/bmwant/chemister.git

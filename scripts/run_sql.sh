@@ -9,10 +9,8 @@ source "${DIR}/_db_env.sh"
 # PGPASSWORD should be exported to the environment
 export PGPASSWORD="${POSTGRES_USER_PASS}"
 _info "running base sql"
-psql -U postgres -h "${HOST}" \
--f "${DIR}/sql/000_drop_everything.sql" -v ON_ERROR_STOP=1
-psql -U postgres -h "${HOST}" \
--f "${DIR}/sql/001_init_database.sql" -v ON_ERROR_STOP=1
+psql -U "${POSTGRES_USER}" -h "${HOST}" -f "${DIR}/sql/000_drop_everything.sql" -v ON_ERROR_STOP=1
+psql -U "${POSTGRES_USER}" -h "${HOST}" -f "${DIR}/sql/001_init_database.sql" -v ON_ERROR_STOP=1
 
 # Update password to correspond with the new user
 export PGPASSWORD="${PASSWORD}"
