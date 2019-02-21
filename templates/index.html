@@ -112,8 +112,8 @@
                     <i class="fe fe-chevrons-down"></i>
                   </span>
             <div>
-              <h4 class="m-0"><a href="javascript:void(0)">In</a></h4>
-              <small class="text-muted">{{ in_bids | length }} bids</small>
+              <h4 class="m-0"><a href="javascript:void(0)">Transactions</a></h4>
+              <small class="text-muted">{{ transactions | length }} total</small>
             </div>
           </div>
         </div>
@@ -121,31 +121,7 @@
       {% include "components/bids_form.html" %}
 
       <div class="col-12">
-        {{ table.render_bids_table("In bids", in_bids, in_info) }}
-      </div>
-    </div>
-  </div>
-
-  <!--Out bids section-->
-  <div class="col-12 bids-section">
-    <div class="row">
-      <div class="col-sm-6 col-lg-3">
-        <div class="card p-3">
-          <div class="d-flex align-items-center">
-                    <span class="stamp stamp-md bg-green mr-3">
-                      <i class="fe fe-chevrons-up"></i>
-                    </span>
-            <div>
-              <h4 class="m-0"><a href="javascript:void(0)">Out</a></h4>
-              <small class="text-muted">{{ out_bids | length }} bids</small>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% include "components/bids_form.html" %}
-
-      <div class="col-12">
-        {{ table.render_bids_table("Out bids", out_bids, out_info) }}
+        {{ table.render_transactions("Transactions", transactions) }}
       </div>
     </div>
   </div>

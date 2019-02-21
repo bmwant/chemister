@@ -7,6 +7,7 @@ from aiohttp_session import get_session
 
 from crawler.helpers import load_config
 from crawler.models.bid import get_daily_bids, BidType
+from crawler.models.transaction import get_transactions
 from crawler.models.resource import get_resource_by_id
 from crawler.models.phone import get_phones
 from crawler.models.user import get_user
@@ -25,18 +26,12 @@ async def index(request):
     logger.info('Accessing index page')
 
     async with engine.acquire() as conn:
-        in_bids = await get_daily_bids(conn, bid_type=BidType.IN)
-        out_bids = await get_daily_bids(conn, bid_type=BidType.OUT)
+        transactions = await get_transactions(conn)
         stats = await collect_statistics(conn)
 
-    in_info = get_bids_info(in_bids)
-    out_info = get_bids_info(out_bids)
     return {
-        'in_bids': in_bids,
-        'out_bids': out_bids,
+        'transactions': transactions,
         'stats': stats,
-        'in_info': in_info,
-        'out_info': out_info,
     }
 
 

@@ -24,6 +24,15 @@ VALUES (14, 26.14, 114, 'USD', '+380987771114', TRUE, 'out', 1);
 INSERT INTO bid(id, rate, amount, currency, phone, dry_run, bid_type, resource_id)
 VALUES (15, 26.15, 115, 'USD', '+380987771115', TRUE, 'out', 1);
 
+-- insert transactions
+INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, user_id)
+VALUES(1, 100, 'USD', 26.14, 26.22, 1);
+INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, user_id)
+VALUES(2, 200, 'USD', 26.14, 26.22, 1);
+INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, user_id)
+VALUES(3, 300, 'USD', 26.24, 26.32, 1);
+INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, user_id)
+VALUES(4, 150, 'USD', 26.24, 26.32, 1);
 
 INSERT INTO "user"(id, "name", email, password)
 VALUES (2, 'test', 'test@gmail.com', '591390304a1217a65e5206f943740eaaa8b528e96a5c8bc3a40884d36922ebe0');

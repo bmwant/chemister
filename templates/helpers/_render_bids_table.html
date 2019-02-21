@@ -1,4 +1,67 @@
 {% import "helpers/_get_status.html" as status_macro %}
+{% macro render_transactions(header, transactions) -%}
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">{{ header }}</h3>
+    <small class="text-muted">N active</small>
+    Rate
+    Amount
+  </div>
+  <div class="table-responsive">
+    <table class="table card-table table-vcenter text-nowrap">
+      <thead>
+        <tr>
+          <th class="w-1">#</th>
+          <th>Amount</th>
+          <th>Currency</th>
+          <th>Rate buy</th>
+          <th>Rate sale</th>
+          <th>Rate close</th>
+          <th>Opened</th>
+          <th>Closed</th>
+          <th>Status</th>
+          <th>User</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for t in transactions %}
+      <tr class="">
+        <td><span class="text-muted">{{ t.id }}</span></td>
+        <td>{{ t.amount }}</td>
+        <td>{{ t.currency }}</td>
+        <td>{{ t.rate_buy }}</td>
+        <td>{{ t.rate_sale}}</td>
+        <td>{{ t.rate_close if t.rate_close is not none}}</td>
+        <td>{{ t.date_opened | format_datetime }}</td>
+        <td>{{ t.date_closed | format_datetime }}</td>
+        <td>
+          Opened
+        </td>
+        <td>
+          <a href="/resource/">user</a>
+        </td>
+        <td class="text-right">
+          <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
+            <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(-181px, -156px, 0px); top: 0px; left: 0px; will-change: transform;">
+              <a href="/bid/set_closed/{{ t.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-dollar-sign"></i> Close</a>
+              <div class="dropdown-divider"></div>
+              <a href="/bid/ban_phone/{{ t.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-phone-off"></i> Blacklist phone</a>
+              <a href="/bid/set_called/{{ t.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-phone-outgoing"></i> Set phoned</a>
+              <div class="dropdown-divider"></div>
+              <a href="/bid/set_rejected/{{ t.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-slash"></i> Reject</a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{%- endmacro %}
+
 {% macro render_bids_table(header, bids, info) -%}
 <div class="card">
   <div class="card-header">

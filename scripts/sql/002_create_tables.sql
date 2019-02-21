@@ -63,6 +63,22 @@ CREATE TABLE IF NOT EXISTS "user"(
 );
 
 
+CREATE TABLE IF NOT EXISTS transaction(
+  id            SERIAL          NOT NULL,
+  amount        NUMERIC         NOT NULL,
+  currency      currency        NOT NULL,
+  rate_buy      NUMERIC         NOT NULL,
+  rate_sale     NUMERIC         NOT NULL,
+  rate_close    NUMERIC,
+  date_opened   TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
+  date_closed   TIMESTAMP,
+  user_id       INT             NOT NULL,
+
+  FOREIGN KEY (user_id) REFERENCES "user" (id),
+  PRIMARY KEY (id)
+);
+
+
 CREATE TABLE IF NOT EXISTS fund(
   id            SERIAL          NOT NULL,
   created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
