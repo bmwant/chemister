@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -9,22 +10,24 @@ class Transaction(object):
     def __init__(self, amount, rate_buy, rate_sale, date):
         self.amount = amount  # amount of currency we bought
         self.rate_buy = rate_buy  # rate when trading
-        self.rate_sale = rate_sale  # selling rate when trading to calculate future profit
+        # selling rate when trading to calculate future profit
+        self.rate_sale = rate_sale  
         self.date = date
         self._sold = False
 
-    def sale(self, rate_sale):
+    def sale(self, rate_sale, dry_run=False):
         amount = self.amount * rate_sale
-        profit = amount - self.price  # what we gain
-        print('Selling {amount:.2f}({rate_buy:.2f}) at {rate_sale:.2f}; '
-              'total: {total:.2f}; profit: {profit:.2f}'.format(
-            amount=self.amount,
-            rate_buy=self.rate_buy,
-            rate_sale=rate_sale,
-            total=amount,
-            profit=profit,
-        ))
-        self._sold = True
+        if not dry_run:
+            profit = amount - self.price  # what we gain
+            print('Selling {amount:.2f}({rate_buy:.2f}) at {rate_sale:.2f}; '
+                  'total: {total:.2f}; profit: {profit:.2f}'.format(
+                amount=self.amount,
+                rate_buy=self.rate_buy,
+                rate_sale=rate_sale,
+                total=amount,
+                profit=profit,
+            ))
+            self._sold = True
         return amount
     
     @property
@@ -43,12 +46,12 @@ class Transaction(object):
         )
 
 
-
 class ShiftTrader(object):
     def __init__(self, starting_amount, shift):
         self.transactions = []  # history of all transactions
         self.amount = starting_amount  # operation money we use to buy currency
         self.shift = shift  # days we wait between buying/selling
+        self._min_debt = 0
 
     def trade(self, daily_data):
         date = daily_data['date']
@@ -56,7 +59,10 @@ class ShiftTrader(object):
         rate_sale = daily_data['buy']
         rate_buy = daily_data['sale']
         for t in self.transactions:
-            if t.date + timedelta(days=self.shift) == date and rate_sale > t.rate_buy:
+            if (
+                    t.date + timedelta(days=self.shift) == date and
+                    rate_sale > t.rate_buy
+            ):
                 self.amount += t.sale(rate_sale)
 
         # handle expired transactions
@@ -69,8 +75,11 @@ class ShiftTrader(object):
             amount=self.daily_amount,
             date=date,
         )
-        if t.price > self.amount:
-            raise ValueError('Cannot buy {:.2f}$. Available: {:.2f}UAH'.format(self.daily_amount, self.amount))
+        debt = self.amount - t.price
+        # if debt < 0:
+        #    raise ValueError(
+        #       'Cannot buy {:.2f}$. Available: {:.2f}UAH'.format(self.daily_amount, self.amount))
+        self._min_debt = min(debt, self._min_debt)
 
         self.amount -= t.price
         self.transactions.append(t)
@@ -95,14 +104,36 @@ class ShiftTrader(object):
     @property
     def daily_amount(self):
         return 100
-    
+
+    def get_potential(self, rate_sale):
+        return self.amount + sum([t.sale(rate_sale, dry_run=True) 
+                                  for t in self.hanging])
+
     @property
     def hanging(self):
         return list(filter(lambda t: not t.sold, self.transactions))
 
 
-def main():
-    year = 2017
+def parse_args():
+    parser = argparse.ArgumentParser(description='TradeAlgo#02v0')
+    parser.add_argument(
+        '--year',
+        required=True,
+        type=int,
+        help='which year you want to analyze',
+    )
+    parser.add_argument(
+        '--amount',
+        required=False,
+        default=10000,
+        type=int,
+        help='amount of money you want to initially invest',
+    )
+    args = parser.parse_args()
+    return args
+
+
+def main(year, starting_amount_uah):
     currency = 'usd'
     filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
     df = pd.read_csv(filename)
@@ -111,7 +142,6 @@ def main():
     ed = datetime.strptime('31.12.{}'.format(year), DATE_FMT)
 
     shift = 6  # delay in days between buying and selling
-    starting_amount_uah = 35000  # initial value of money we have
     trader = ShiftTrader(
         starting_amount=starting_amount_uah,
         shift=shift,
@@ -121,6 +151,13 @@ def main():
     transactions = 0
     skipped = 0
     current_date = sd  # starting date
+    k1_return = None
+    k1_return_soft = None
+    k5_return = None
+    k5_return_soft = None
+    p10_return = None
+    p10_return_soft = None
+    exit_period = None
     while current_date <= ed:  # until end date
         rate_sale = df.loc[df['date'] == current_date.strftime(DATE_FMT)]['sale'].item()
         rate_buy = df.loc[df['date'] == current_date.strftime(DATE_FMT)]['buy'].item()
@@ -130,22 +167,76 @@ def main():
             'buy': rate_sale,  # we buy currency, bank sale currency
             'sale': rate_buy,  # we sale currency, bank buy currency
         }
+        potential = trader.get_potential(rate_buy) 
+        print('Potential = {:.2f}'.format(potential))
         trader.trade(daily_data)
+        days_passed = current_date - sd  # how many days passed since start
+        if exit_period is None and potential > starting_amount_uah:
+            exit_period = days_passed
+        if k1_return is None and trader.amount >= starting_amount_uah + 1000:
+            k1_return = days_passed
+        if k1_return_soft is None and potential >= starting_amount_uah + 1000:
+            k1_return_soft = days_passed
+        if k5_return is None and trader.amount >= starting_amount_uah + 5000:
+            k5_return = days_passed
+        if k5_return_soft is None and potential >= starting_amount_uah + 5000:
+            k5_return_soft = days_passed
+        if p10_return is None and trader.amount >= 1.1 * starting_amount_uah:
+            p10_return = days_passed
+        if p10_return_soft is None and potential >= 1.1 * starting_amount_uah:
+            p10_return_soft = days_passed
 
         i += 1
         current_date += timedelta(days=1)
 
-    print('\nReport:\n')
+    print('\nReport for {}:\n'.format(year))
+    if trader._min_debt < 0:
+        print('Insufficient investments, consider adding {:.2f}'.format(trader._min_debt))
+        raise RuntimeError('Relaunch with higher initial amount')
+    if k1_return is not None:
+        print('1K profit period: {} days'.format(k1_return.days))
+    else:
+        print('1K HARD is unreachable within given period')
+    if k1_return_soft is not None:
+        print('1K gain soft period: {} days'.format(k1_return_soft.days))
+    else:
+        print('1K SOFT is unreachable within given period')
+
+    if k5_return is not None:
+        print('5K profit period: {} days'.format(k5_return.days))
+    else:
+        print('5K HARD is unreachable within given period')
+    if k5_return_soft is not None:
+        print('5K gain soft period: {} days'.format(k5_return_soft.days))
+    else:
+        print('5K SOFT is unreachable within given period')
+
+    if p10_return is not None:
+        print('10% profit period: {} days'.format(p10_return.days))
+    else:
+        print('10% HARD is unreachable within given period')
+    if p10_return_soft is not None:
+        print('10% gain soft period: {} days'.format(p10_return_soft.days))
+    else:
+        print('10% SOFT is unreachable within given period')
+    
+    if exit_period is not None:
+        print('Exit period: {} days\n'.format(exit_period.days))
+    else:
+        print('Cannot exit within given period\n')
+
     print('Total transactions: {}'.format(len(trader.transactions)))
     print('Hanging transactions: {}'.format(len(trader.hanging)))
-    # close period at the last day no matter which rate in order to calculate raw profit
+    # close period at the last day no matter which rate 
+    # in order to calculate raw profit
     trader.close(rate_buy)
     print('Initial invested amount: {}'.format(starting_amount_uah))
     print('Amount we have in the end: {:.2f}'.format(trader.amount))
     print('Raw profit: {:.2f}'.format(trader.amount - starting_amount_uah))
-    print('Profit, %: {:.2f}'.format(trader.amount / starting_amount_uah * 100)) 
+    print('Profit, %: {:.2f}'.format(
+        trader.amount / starting_amount_uah * 100)) 
 
 
 if __name__ == '__main__':
-    main()
-
+    args = parse_args()
+    main(year=args.year, starting_amount_uah=args.amount)
