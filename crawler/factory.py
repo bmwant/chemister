@@ -15,6 +15,9 @@ from crawler.cache import Cache
 from crawler.db import get_engine
 from crawler.models import bid
 
+# what?
+from trader.shift_trader import ShiftTrader_v0
+
 
 class Factory(object):
     def __init__(self, resources=None):
@@ -105,7 +108,7 @@ class Factory(object):
             engine=engine,
         )
 
-    async def create(self):
+    async def create_grabbers(self):
         grabbers = []
         # Each grabber is responsible for closing resources within itself
         for res in self.resources:
@@ -123,12 +126,18 @@ class Factory(object):
         return grabbers
 
     async def create_traders(self):
-        return []
-
-    async def create_daily(self):
+        # Create multiple traders for different algorithms
+        trader = ShiftTrader_v0(
+            starting_amount=10000,
+            shift=6,
+        )
+        await trader.init()
         return [
             ScheduledTask(
-                task=bid.mark_daily_bids_as_unused,
-                scheduled_time='23:59',
-            ),
+                task=trader.daily,
+                scheduled_time='09:00',
+            )
         ]
+
+    async def create_daily(self):
+        return []

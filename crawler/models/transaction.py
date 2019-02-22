@@ -5,11 +5,10 @@ from datetime import datetime, timedelta
 
 import sqlalchemy as sa
 
+import settings
 from utils import get_midnight, get_logger
 from crawler.helpers import load_config
-from crawler.db import Engine
 from . import metadata
-from .resource import resource, Resource, get_resource_by_name
 from .user import user
 
 
@@ -36,11 +35,44 @@ transaction = sa.Table(
 )
 
 
-async def get_bid_by_id(conn, bid_id):
-    query = bid.select().where(bid.c.id == bid_id)
+class NewTransaction(object):
+    def __init__(self, amount, rate_buy, rate_sale, date):
+        self.amount = amount  # amount of currency we bought
+        self.rate_buy = rate_buy  # rate when trading
+        # selling rate when trading to calculate future profit
+        self.rate_sale = rate_sale
+        self.date = date
+        self._sold = False
 
-    result = await conn.execute(query)
-    return await result.fetchone()
+    def sale(self, rate_sale, dry_run=False):
+        amount = self.amount * rate_sale
+        if not dry_run:
+            profit = amount - self.price  # what we gain
+            print('Selling {amount:.2f}({rate_buy:.2f}) at {rate_sale:.2f}; '
+                  'total: {total:.2f}; profit: {profit:.2f}'.format(
+                amount=self.amount,
+                rate_buy=self.rate_buy,
+                rate_sale=rate_sale,
+                total=amount,
+                profit=profit,
+            ))
+            self._sold = True
+        return amount
+
+    @property
+    def price(self):
+        return self.amount * self.rate_buy
+
+    @property
+    def sold(self):
+        return self._sold
+
+    def __str__(self):
+        return '{}: {:.2f} at {:.2f}'.format(
+            self.date.strftime(settings.DEFAULT_DATE_FORMAT),
+            self.amount,
+            self.rate_buy
+        )
 
 
 async def get_transactions(conn):
@@ -49,31 +81,12 @@ async def get_transactions(conn):
     return await result.fetchall()
 
 
-async def get_bid_by_signature(conn, bid_item):
+async def get_hanging_transactions(conn):
     whereclause = sa.and_(
-        bid.c.rate == bid_item['rate'],
-        bid.c.amount == bid_item['amount'],
-        bid.c.currency == bid_item['currency'],
-        bid.c.phone == bid_item['phone'],
-        bid.c.bid_type == bid_item['bid_type'],
-        bid.c.in_use == True,
+        transaction.c.date_closed == None,
+        transaction.c.rate_close == None,
     )
-
-    query = bid.select(whereclause)
-    result = await conn.execute(query)
-    return await result.fetchone()
-
-
-async def get_bids_for_period(
-    conn,
-    *,
-    start_date,
-    end_date,
-):
-    query = bid.select().where(sa.and_(
-        bid.c.created >= start_date,
-        bid.c.created <= end_date,
-    ))
+    query = transaction.select().where(whereclause)
 
     result = await conn.execute(query)
     return await result.fetchall()
@@ -81,18 +94,19 @@ async def get_bids_for_period(
 
 async def insert_new_transaction(
     conn,
-    transaction,
+    t: NewTransaction,
 ):
     # config = await load_config(conn)
 
     query = transaction.insert().values(
-        amount=transaction.amount,
+        amount=t.amount,
         currency='USD',
-        rate_buy=transaction.rate_buy,
-        rate_sale=transaction.rate_sale,
+        rate_buy=t.rate_buy,
+        rate_sale=t.rate_sale,
         user_id=1,
     )
-    await conn.execute(query)
+    result = await conn.execute(query)
+    return await result.fetchone()
 
 
 async def close_transaction(
