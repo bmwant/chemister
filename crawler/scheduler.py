@@ -10,8 +10,7 @@ import aiohttp
 
 import settings
 from utils import make_datetime, LoggableMixin
-from crawler.notifier import send_message
-from crawler.models.bid import _autoclose_bids
+from crawler.notifier import notify
 from crawler.helpers import get_config
 
 
@@ -64,7 +63,7 @@ class Scheduler(LoggableMixin):
         Run extra tasks which depend on data received from tasks.
         """
         self.logger.debug('Sending notifications to users...')
-        await send_message('sending notifications..')
+        await notify('sending notifications..')
 
     async def run_daily_tasks(self):
         for daily_task in self.daily_tasks:

@@ -1,11 +1,14 @@
 from http import HTTPStatus
-import settings
-from utils import get_logger
 import aiohttp
 
+import settings
+from utils import get_logger
 
-async def send_message(message):
-    logger = get_logger()
+
+logger = get_logger(__name__)
+
+
+async def notify(message):
     url = settings.ENDPOINT_TEMPLATE.format(bot_api_key=settings.TELEGRAM_BOT_TOKEN)
     params = {
         'chat_id': settings.CHAT_ID,

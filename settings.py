@@ -31,6 +31,10 @@ DEFAULT_DATETIME_FORMAT = '{} {}'.format(DEFAULT_TIME_FORMAT,
 
 SYSTEM_USER_ID = 0
 
+# NOTIFICATIONS
+ENDPOINT_TEMPLATE = 'https://api.telegram.org/bot{bot_api_key}/sendMessage'
+TELEGRAM_BOT_TOKEN = None  # required, override via env or settings_local.py
+CHAT_ID = None  # required, override via env or settings_local.py
 
 # AIOHTTP
 FLASH_SESSION_KEY = 'flash'
@@ -41,7 +45,7 @@ DEBUG = False
 DEV_BID_RESOURCE = PROJECT_ROOT / 'resources' / 'bids.yml'
 SESSION_SECRET_KEY = 'P-mbeuEe5XtZL7lBJQfsm5EtOxWB3CWH3G4lmf4ELcM='
 
-# Override values from config_local.py
+# Override values from settings_local.py
 try:
     import settings_local
     for key, value in settings_local.__dict__.items():
