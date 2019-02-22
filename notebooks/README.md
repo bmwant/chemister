@@ -24,6 +24,7 @@ Fetch latest missing rates for current year (continue previous partial download)
 
 ```bash
 $ python fetch_latest.py
+$ python normalize_data.py data/uah_to_usd_2019.csv
 ```
 
 ### Missing data
