@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
+from crawler.notifier import notify
 from crawler.models.transaction import NewTransaction
 from trader import BaseTrader
-from utils import get_midnight
+from utils import get_midnight, get_date_cache_key
 
 
 class ShiftTrader_v0(BaseTrader):
@@ -11,12 +12,16 @@ class ShiftTrader_v0(BaseTrader):
         self.shift = shift  # days we wait between buying/selling
         # todo: this should be fund table
         self.amount = starting_amount  # operation money we use to buy currency
-        self._min_debt = 0
+        # todo: init notifier
 
     async def daily(self):
         # fetch rate from cache
+        now = datetime.now()
+        key = get_date_cache_key(now)
+        data = await self.cache.get(key)
+        print(data)
         daily_data = {
-            'date': get_midnight(datetime.now()),
+            'date': get_midnight(now),
             'sale': 26.8,
             'buy': 26.7,
         }
@@ -52,9 +57,11 @@ class ShiftTrader_v0(BaseTrader):
 
         self.amount -= t.price
         await self.add_transaction(t)
-        print('Amount in the end of the day: {:.2f}'.format(self.amount))
+        self.logger.info('Amount in the end of the day: %.2f', self.amount)
         potential = await self.get_potential(rate_sale)
         self.logger.info('Potential is %.2f', potential)
+        # todo: self.notifier.notify_telegram(message)
+        notify(f'Current potential is {potential}')
 
     async def handle_expired(self, date, rate_sale):
         transactions = await self.hanging()

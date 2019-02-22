@@ -3,16 +3,12 @@ Grab information needed from a resource and store it.
 """
 import asyncio
 from abc import ABC, abstractmethod
+from datetime import datetime
 
-from utils import get_logger
+from utils import get_logger, get_date_cache_key
 from crawler.models.bid import (
     insert_new_bid,
-    mark_bids_as,
-    get_daily_bids,
     get_bid_by_signature,
-    BidType,
-    BidStatus,
-    ACTIVE_STATUSES,
 )
 from crawler.models.resource import Resource
 
@@ -60,8 +56,9 @@ class BaseGrabber(ABC):
         data = await self.get_rates()
 
         if self.cache is not None:
-            await self.cache.set(self.name, data)
-        print(data)
+            cache_key = get_date_cache_key(datetime.now())
+            await self.cache.set(cache_key, data)
+
         # todo: insert rates here for history
         return data
 

@@ -6,6 +6,7 @@ import coloredlogs
 
 FORMAT = '%(asctime)s [%(name)s] %(levelname)s:%(message)s'
 DATE_FORMAT = '%H:%M:%S %d-%m-%y'
+CACHE_KEY_DATE_FORMAT = '%d_%m_%y'
 FORMATTER = logging.Formatter(fmt=FORMAT, datefmt=DATE_FORMAT)
 
 
@@ -32,6 +33,10 @@ class LoggableMixin(object):
             self._logger = get_logger(self.__class__.__name__.lower())
 
         return self._logger
+
+
+def get_date_cache_key(datetime_obj):
+    return datetime_obj.strftime(CACHE_KEY_DATE_FORMAT)
 
 
 def get_midnight(datetime_value):
