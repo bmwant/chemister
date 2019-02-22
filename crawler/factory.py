@@ -127,6 +127,7 @@ class Factory(object):
 
     async def create_traders(self):
         # Create multiple traders for different algorithms
+        # todo: reuse cache from here
         trader = ShiftTrader_v0(
             starting_amount=10000,
             shift=6,

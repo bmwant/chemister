@@ -6,6 +6,12 @@ from trader import BaseTrader
 from utils import get_midnight, get_date_cache_key
 
 
+DOLLAR_ICON = '\U0001F4B5'
+BANK_ICON = '\U0001F3E6'
+TRADER_ICON = '\U0001F911'
+ARROW_ICON = '\U000027A1'
+
+
 class ShiftTrader_v0(BaseTrader):
     def __init__(self, starting_amount, shift):
         super().__init__()
@@ -19,19 +25,35 @@ class ShiftTrader_v0(BaseTrader):
         now = datetime.now()
         key = get_date_cache_key(now)
         data = await self.cache.get(key)
-        print(data)
+
+        # bank's perspective
+        sale = None
+        buy = None
+
+        for item in data:
+            if item['ccy'] == 'USD':
+                sale = float(item['sale'])
+                buy = float(item['buy'])
+                break
         daily_data = {
             'date': get_midnight(now),
-            'sale': 26.8,
-            'buy': 26.7,
+            'sale': sale,
+            'buy': buy,
         }
         await self.trade(daily_data=daily_data)
+
+    async def notify(self, message):
+        await notify(message)
 
     async def trade(self, daily_data):
         date = daily_data['date']
         # our perspective
         rate_sale = daily_data['buy']
         rate_buy = daily_data['sale']
+
+        self.logger.info('Trading on %.2f/%.2f', rate_sale, rate_buy)
+        await notify(f'{DOLLAR_ICON} {rate_sale}/{rate_buy}')
+
         transactions = await self.transactions()
         for t in transactions:
             open_date = get_midnight(t.date_opened)
@@ -39,7 +61,8 @@ class ShiftTrader_v0(BaseTrader):
                 open_date + timedelta(days=self.shift) == date and
                 rate_sale > t.rate_buy
             ):
-                await self.sale_transaction(t, rate_sale)
+                amount = await self.sale_transaction(t, rate_sale)
+                await notify(f'{ARROW_ICON}{BANK_ICON} {amount} ({rate_sale})')
 
         # handle expired transactions
         await self.handle_expired(date, rate_sale)
@@ -56,16 +79,21 @@ class ShiftTrader_v0(BaseTrader):
         #       'Cannot buy {:.2f}$. Available: {:.2f}UAH'.format(self.daily_amount, self.amount))
 
         self.amount -= t.price
+        await notify(f'{ARROW_ICON}{TRADER_ICON} {t.price} ({rate_buy})')
         await self.add_transaction(t)
         self.logger.info('Amount in the end of the day: %.2f', self.amount)
         potential = await self.get_potential(rate_sale)
         self.logger.info('Potential is %.2f', potential)
         # todo: self.notifier.notify_telegram(message)
-        notify(f'Current potential is {potential}')
+        await self.notify(f'Current potential is {potential}')
 
     async def handle_expired(self, date, rate_sale):
         transactions = await self.hanging()
-        self.logger.info('Handling expired transactions:')
+        if transactions:
+            self.logger.info('Handling expired transactions:')
+        else:
+            self.logger.info('No expired transactions.')
+
         for t in transactions:
             if (
                 t.date_opened + timedelta(days=self.shift) < date and

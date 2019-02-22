@@ -63,7 +63,6 @@ class Scheduler(LoggableMixin):
         Run extra tasks which depend on data received from tasks.
         """
         self.logger.debug('Sending notifications to users...')
-        await notify('sending notifications..')
 
     async def run_daily_tasks(self):
         for daily_task in self.daily_tasks:

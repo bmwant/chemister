@@ -16,9 +16,10 @@ def cli():
 async def schedule_trading(scheduler):
     factory = Factory()
     await factory.init()
-    trade_tasks = await factory.create_traders()
-    # scheduler.add_tasks(trade_tasks)
-    scheduler.add_daily_tasks(trade_tasks)
+    grabber_tasks = await factory.create_grabbers()
+    trader_tasks = await factory.create_traders()
+    scheduler.add_tasks(grabber_tasks)
+    scheduler.add_daily_tasks(trader_tasks)
     try:
         await scheduler.run_forever()
     finally:

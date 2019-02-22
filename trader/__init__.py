@@ -37,7 +37,7 @@ class BaseTrader(ABC, LoggableMixin):
         """
 
     @abstractmethod
-    def notify(self):
+    def notify(self, *args):
         """
         Send updates via preferred channel about trade results.
         """
