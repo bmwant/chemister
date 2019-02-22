@@ -7,13 +7,13 @@ from utils import get_midnight
 
 class ShiftTrader_v0(BaseTrader):
     def __init__(self, starting_amount, shift):
-        self.amount = starting_amount  # operation money we use to buy currency
-        self.shift = shift  # days we wait between buying/selling
-        self._min_debt = 0
         super().__init__()
+        self.shift = shift  # days we wait between buying/selling
+        # todo: this should be fund table
+        self.amount = starting_amount  # operation money we use to buy currency
+        self._min_debt = 0
 
     async def daily(self):
-        print('Doing daily routine here')
         # fetch rate from cache
         daily_data = {
             'date': get_midnight(datetime.now()),
@@ -28,15 +28,13 @@ class ShiftTrader_v0(BaseTrader):
         rate_sale = daily_data['buy']
         rate_buy = daily_data['sale']
         transactions = await self.transactions()
-        import pdb; pdb.set_trace()
         for t in transactions:
-            print(t)
-        for t in transactions:
+            open_date = get_midnight(t.date_opened)
             if (
-                t.date + timedelta(days=self.shift) == date and
+                open_date + timedelta(days=self.shift) == date and
                 rate_sale > t.rate_buy
             ):
-                self.amount += t.sale(rate_sale)
+                await self.sale_transaction(t, rate_sale)
 
         # handle expired transactions
         await self.handle_expired(date, rate_sale)
@@ -48,33 +46,31 @@ class ShiftTrader_v0(BaseTrader):
             amount=self.daily_amount,
             date=date,
         )
-        debt = self.amount - t.price
         # if debt < 0:
         #    raise ValueError(
         #       'Cannot buy {:.2f}$. Available: {:.2f}UAH'.format(self.daily_amount, self.amount))
-        self._min_debt = min(debt, self._min_debt)
 
         self.amount -= t.price
         await self.add_transaction(t)
         print('Amount in the end of the day: {:.2f}'.format(self.amount))
+        potential = await self.get_potential(rate_sale)
+        self.logger.info('Potential is %.2f', potential)
 
     async def handle_expired(self, date, rate_sale):
-        transactions = await self.transactions()
+        transactions = await self.hanging()
+        self.logger.info('Handling expired transactions:')
         for t in transactions:
             if (
-                t.date + timedelta(days=self.shift) < date and
-                rate_sale > t.rate_buy and
-                not t.sold
+                t.date_opened + timedelta(days=self.shift) < date and
+                rate_sale > t.rate_buy
             ):
-                print('Selling expired {}'.format(t))
-                self.amount += t.sale(rate_sale)
+                await self.sale_transaction(t, rate_close=rate_sale)
 
     async def close(self, rate_sale_closing):
         """Sell all hanging transaction for the rate specified"""
         hanging = await self.hanging()
         print('Closing trading for {} transactions'.format(len(hanging)))
-        for t in hanging:
-            self.amount += t.sale(rate_sale_closing)
+        # todo: close all
 
     @property
     def daily_amount(self):
@@ -82,5 +78,7 @@ class ShiftTrader_v0(BaseTrader):
 
     async def get_potential(self, rate_sale):
         hanging = await self.hanging()
-        return self.amount + sum([t.sale(rate_sale, dry_run=True)
-                                  for t in hanging])
+        return self.amount + sum([
+            await self.sale_transaction(t, rate_close=rate_sale, dry_run=True)
+            for t in hanging
+        ])

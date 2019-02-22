@@ -1,3 +1,6 @@
+"""
+https://aiopg.readthedocs.io/en/stable/sa.html
+"""
 from enum import Enum
 from typing import Iterable
 from operator import attrgetter
@@ -113,5 +116,10 @@ async def close_transaction(
     conn,
     *,
     transaction_id,
+    rate_close,
 ):
-    pass
+    date_closed = datetime.now()
+    query = transaction.update() \
+        .where(transaction.c.id == transaction_id) \
+        .values(rate_close=rate_close, date_closed=date_closed)
+    await conn.execute(query)
