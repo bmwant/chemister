@@ -25,14 +25,14 @@ INSERT INTO bid(id, rate, amount, currency, phone, dry_run, bid_type, resource_i
 VALUES (15, 26.15, 115, 'USD', '+380987771115', TRUE, 'out', 1);
 
 -- insert transactions
-INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, user_id)
-VALUES(1, 100, 'USD', 26.14, 26.22, 1);
-INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, user_id)
-VALUES(2, 200, 'USD', 26.14, 26.22, 1);
-INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, user_id)
-VALUES(3, 300, 'USD', 26.24, 26.32, 1);
-INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, user_id)
-VALUES(4, 150, 'USD', 26.24, 26.32, 1);
+INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, date_opened, user_id)
+VALUES(1, 100, 'USD', 26.14, 26.22, '2019-02-16 00:00:00', 1);
+INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, date_opened, user_id)
+VALUES(2, 200, 'USD', 26.14, 26.22, '2019-02-16 00:00:00', 1);
+INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, date_opened, user_id)
+VALUES(3, 300, 'USD', 26.24, 26.32, '2019-02-16 00:00:00', 1);
+INSERT INTO transaction(id, amount, currency, rate_buy, rate_sale, date_opened, user_id)
+VALUES(4, 150, 'USD', 26.24, 26.32, '2019-02-15 00:00:00', 1);
 
 INSERT INTO "user"(id, "name", email, password)
 VALUES (2, 'test', 'test@gmail.com', '591390304a1217a65e5206f943740eaaa8b528e96a5c8bc3a40884d36922ebe0');
@@ -41,3 +41,4 @@ VALUES (2, 'test', 'test@gmail.com', '591390304a1217a65e5206f943740eaaa8b528e96a
 ALTER SEQUENCE resource_id_seq RESTART WITH 2;
 ALTER SEQUENCE bid_id_seq RESTART WITH 20;
 ALTER SEQUENCE user_id_seq RESTART WITH 3;
+ALTER SEQUENCE transaction_id_seq RESTART WITH 5;
