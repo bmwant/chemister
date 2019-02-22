@@ -7,6 +7,12 @@ TEMPLATES_DIR = PROJECT_ROOT / 'templates'
 
 REDIS_URI = 'redis://localhost'
 
+# telegram bot configs
+CHAT_ID = '-334314788'
+TELEGRAM_BOT_TOKEN='651112640:AAHWTTsQNXtibJoM69VbFs5p07JGklOI7Nw'
+ENDPOINT_TEMPLATE = 'https://api.telegram.org/bot{bot_api_key}/sendMessage'
+#
+
 
 DATABASE_DSN = 'postgres://username:password@127.0.0.1:5432/database'
 TEST_DATABASE_DSN = 'postgres://username:password@127.0.0.1:5432/test_database'
