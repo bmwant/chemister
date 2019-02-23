@@ -11,7 +11,7 @@ class Transaction(object):
         self.amount = amount  # amount of currency we bought
         self.rate_buy = rate_buy  # rate when trading
         # selling rate when trading to calculate future profit
-        self.rate_sale = rate_sale  
+        self.rate_sale = rate_sale
         self.date = date
         self._sold = False
 
@@ -29,7 +29,7 @@ class Transaction(object):
             ))
             self._sold = True
         return amount
-    
+
     @property
     def price(self):
         return self.amount * self.rate_buy
@@ -88,7 +88,7 @@ class ShiftTrader(object):
     def handle_expired(self, date, rate_sale):
         for t in self.transactions:
             if (
-                    t.date + timedelta(days=self.shift) < date and 
+                    t.date + timedelta(days=self.shift) < date and
                     rate_sale > t.rate_buy and
                     not t.sold
             ):
@@ -106,7 +106,7 @@ class ShiftTrader(object):
         return 100
 
     def get_potential(self, rate_sale):
-        return self.amount + sum([t.sale(rate_sale, dry_run=True) 
+        return self.amount + sum([t.sale(rate_sale, dry_run=True)
                                   for t in self.hanging])
 
     @property
@@ -137,9 +137,15 @@ def main(year, starting_amount_uah):
     currency = 'usd'
     filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
     df = pd.read_csv(filename)
-    df['date'] = pd.to_datetime(df['date'], format=DATE_FMT) 
-    sd = datetime.strptime('01.01.{}'.format(year), DATE_FMT) 
-    ed = datetime.strptime('31.12.{}'.format(year), DATE_FMT)
+    df['date'] = pd.to_datetime(df['date'], format=DATE_FMT)
+    sd = datetime.strptime('01.01.{}'.format(year), DATE_FMT)
+    # ed = datetime.strptime('31.12.{}'.format(year), DATE_FMT)
+
+    last_date_value = df.iloc[[-1]]['date'].item()
+    pd_date = pd.to_datetime(last_date_value)
+    ed = pd_date.to_pydatetime()
+    print(sd.month, ed.month)
+    print('Trading at period: [{} - {}]'.format(sd, ed))
 
     shift = 6  # delay in days between buying and selling
     trader = ShiftTrader(
@@ -159,15 +165,15 @@ def main(year, starting_amount_uah):
     p10_return_soft = None
     exit_period = None
     while current_date <= ed:  # until end date
-        rate_sale = df.loc[df['date'] == current_date.strftime(DATE_FMT)]['sale'].item()
-        rate_buy = df.loc[df['date'] == current_date.strftime(DATE_FMT)]['buy'].item()
+        rate_sale = df.loc[df['date'] == current_date]['sale'].item()
+        rate_buy = df.loc[df['date'] == current_date]['buy'].item()
         print('\n==>{}: {:.2f}/{:.2f}'.format(current_date.strftime(DATE_FMT), rate_buy, rate_sale))
         daily_data = {
             'date': current_date,
             'buy': rate_sale,  # we buy currency, bank sale currency
             'sale': rate_buy,  # we sale currency, bank buy currency
         }
-        potential = trader.get_potential(rate_buy) 
+        potential = trader.get_potential(rate_buy)
         print('Potential = {:.2f}'.format(potential))
         trader.trade(daily_data)
         days_passed = current_date - sd  # how many days passed since start
@@ -219,7 +225,7 @@ def main(year, starting_amount_uah):
         print('10% gain soft period: {} days'.format(p10_return_soft.days))
     else:
         print('10% SOFT is unreachable within given period')
-    
+
     if exit_period is not None:
         print('Exit period: {} days\n'.format(exit_period.days))
     else:
@@ -227,14 +233,14 @@ def main(year, starting_amount_uah):
 
     print('Total transactions: {}'.format(len(trader.transactions)))
     print('Hanging transactions: {}'.format(len(trader.hanging)))
-    # close period at the last day no matter which rate 
+    # close period at the last day no matter which rate
     # in order to calculate raw profit
     trader.close(rate_buy)
     print('Initial invested amount: {}'.format(starting_amount_uah))
     print('Amount we have in the end: {:.2f}'.format(trader.amount))
     print('Raw profit: {:.2f}'.format(trader.amount - starting_amount_uah))
     print('Profit, %: {:.2f}'.format(
-        trader.amount / starting_amount_uah * 100)) 
+        trader.amount / starting_amount_uah * 100))
 
 
 if __name__ == '__main__':
