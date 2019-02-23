@@ -9,15 +9,17 @@ import matplotlib.pyplot as plt
 from download_rates import DATE_FMT
 
 
-def build_chart(data, currency, title='', show_profit=False):
+def build_chart(data, currency, title=''):
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.canvas.set_window_title('Success/fail periods chart')
     index = np.arange(len(data))
     success_data = [e if e > 0 else 0 for e in data]
     fail_data = [e if e < 0 else 0 for e in data]
-    plt.bar(index, success_data, color='g', zorder=3, label='success') 
-    plt.bar(index, fail_data, color='r', zorder=3, label='fail') 
-    plt.yticks(np.arange(min(data), max(data)))
+    plt.bar(index, success_data, color='g', zorder=3, label='success')
+    plt.bar(index, fail_data, color='r', zorder=3, label='fail')
+    plt.yticks(np.arange(min(data), max(data), step=30))
+
+    ax.hlines(y=0, xmin=-1, xmax=len(data), linewidth=1, color='k', zorder=4)
     ax.yaxis.grid(True, zorder=0)
     ax.legend()
     plt.title(title)
@@ -54,7 +56,7 @@ def count_periods(df, year, shift=1):
                     flag = True
                     if strike:
                         data.append(-strike)
-                        dec.append(strike) 
+                        dec.append(strike)
                     print('+ start at {}'.format(current_date))
                     # print('- {}'.format(strike))
                     strike = 1
@@ -72,13 +74,13 @@ def count_periods(df, year, shift=1):
                 fail += 1
         else:
             skipped += 1
-        i += 1 
+        i += 1
         current_date += timedelta(days=1)
-    
+
     if flag is True:
         inc.append(strike)
         data.append(strike)
-    else: 
+    else:
         dec.append(strike)
         data.append(-strike)
 
@@ -123,18 +125,19 @@ def main(year):
     currency = 'usd'
     filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
     df = pd.read_csv(filename)
-    df['date'] = pd.to_datetime(df['date'], format=DATE_FMT) 
-    
+    df['date'] = pd.to_datetime(df['date'], format=DATE_FMT)
+
     # for s in range(31):
     #     shift = s + 1
     #     count_for_shift(df, year, shift)
-    
+
     shifts = [8]
     for shift in shifts:
         data = count_periods(df, year, shift)
         title = 'Transactions for shift={}'.format(shift)
         # build_chart(shifted_df, currency, title, show_profit=True)
         build_chart(data, currency, title)
+
 
 if __name__ == '__main__':
     args = parse_args()
