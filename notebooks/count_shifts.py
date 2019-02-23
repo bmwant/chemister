@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -19,11 +20,11 @@ def count_for_shift(df, year, shift=1):
     while current_date <= ed:
         date_buy = current_date - timedelta(days=shift)
         # we sale currency, bank buy currency
-        rate_sale = df.loc[df['date'] == current_date.strftime(DATE_FMT)]['buy'].item()
+        rate_sale = df.loc[df['date'] == current_date]['buy'].item()
 
         if date_buy >= sd:
             # we buy currency, bank sale currency
-            rate_buy = df.loc[df['date'] == date_buy.strftime(DATE_FMT)]['sale'].item()
+            rate_buy = df.loc[df['date'] == date_buy]['sale'].item()
             if rate_sale > rate_buy:
                 total_diff += rate_sale - rate_buy
                 success += 1
@@ -44,8 +45,19 @@ def count_for_shift(df, year, shift=1):
     return data
 
 
-def main():
-    year = 2018
+def parse_args():
+    parser = argparse.ArgumentParser(description='Count shifts for a year')
+    parser.add_argument(
+        '--year',
+        required=True,
+        type=int,
+        help='which year you want to analyze',
+    )
+    args = parser.parse_args()
+    return args
+
+
+def main(year):
     currency = 'usd'
     filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
     df = pd.read_csv(filename)
@@ -55,7 +67,7 @@ def main():
     #     shift = s + 1
     #     count_for_shift(df, year, shift)
     
-    shifts = [6, 12, 18]
+    shifts = [8, 16, 28]
     for shift in shifts:
         data = count_for_shift(df, year, shift)
         shifted_df = pd.DataFrame(
@@ -66,4 +78,5 @@ def main():
         build_chart(shifted_df, currency, title, show_profit=True)
 
 if __name__ == '__main__':
-    main()
+    args = parse_args()
+    main(year=args.year)

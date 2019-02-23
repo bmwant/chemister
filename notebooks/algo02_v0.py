@@ -156,6 +156,10 @@ def main(year, starting_amount_uah):
     i = 0
     transactions = 0
     skipped = 0
+    success = 0
+    fail = 0
+    total_diff = 0
+
     current_date = sd  # starting date
     k1_return = None
     k1_return_soft = None
