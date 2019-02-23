@@ -202,6 +202,7 @@ def main(year, starting_amount_uah):
     print('\nReport for {}:\n'.format(year))
     if trader._min_debt < 0:
         print('Insufficient investments, consider adding {:.2f}'.format(trader._min_debt))
+        print('Start with at least {:.2f}'.format(starting_amount_uah - trader._min_debt))
         raise RuntimeError('Relaunch with higher initial amount')
     if k1_return is not None:
         print('1K profit period: {} days'.format(k1_return.days))

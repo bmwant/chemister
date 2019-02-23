@@ -33,5 +33,6 @@ scipy = "*"
 pandas-datareader = "*"
 statsmodels = "*"
 requests = "*"
+scikit-learn = "*"
 
 [dev-packages]
