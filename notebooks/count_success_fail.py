@@ -42,11 +42,11 @@ def count_periods(df, year, shift=1):
     while current_date <= ed:
         date_buy = current_date - timedelta(days=shift)
         # we sale currency, bank buy currency
-        rate_sale = df.loc[df['date'] == current_date.strftime(DATE_FMT)]['buy'].item()
+        rate_sale = df.loc[df['date'] == current_date]['buy'].item()
 
         if date_buy >= sd:
             # we buy currency, bank sale currency
-            rate_buy = df.loc[df['date'] == date_buy.strftime(DATE_FMT)]['sale'].item()
+            rate_buy = df.loc[df['date'] == date_buy]['sale'].item()
             if rate_sale > rate_buy:
                 if flag is True:
                     strike += 1
@@ -129,7 +129,7 @@ def main(year):
     #     shift = s + 1
     #     count_for_shift(df, year, shift)
     
-    shifts = [6]
+    shifts = [8]
     for shift in shifts:
         data = count_periods(df, year, shift)
         title = 'Transactions for shift={}'.format(shift)
