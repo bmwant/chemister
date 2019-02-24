@@ -7,12 +7,10 @@ import dateparser
 from aiohttp import web, hdrs
 
 import settings
-from crawler.models.bid import (
-    bid,
-    BidStatus,
-    get_bid_by_id,
-    set_bid_status,
-    get_bids_for_period,
+from crawler.models.transaction import (
+    transaction,
+    set_transaction_status,
+    TransactionStatus,
 )
 from crawler.models.event import add_event, EventType
 from webapp.helpers import login_required, flash
@@ -27,19 +25,18 @@ async def set_transaction_bought(request):
     user = app['user']
 
     t_id = request.match_info.get('t_id')
-    logger.info('Confirming transaction bought #%s as called' % t_id)
+    logger.info('Confirming transaction #%s bought' % t_id)
 
     async with engine.acquire() as conn:
         # todo: get or 404
-        bid = await get_bid_by_id(conn, bid_id)
-        await set_bid_status(
+        await set_transaction_status(
             conn,
-            bid_id=bid_id,
-            bid_status=BidStatus.CALLED,
+            t_id=t_id,
+            status=TransactionStatus.HANGING,
         )
         # todo: add event?
 
-    flash(request, 'Called %s for bid [#%s]' % (bid.phone, bid_id))
+    flash(request, 'Set bought for transaction [#%s]' % t_id)
     return web.HTTPFound(router['index'].url_for())
 
 
@@ -50,38 +47,20 @@ async def set_transaction_sold(request):
     logger = app['logger']
     engine = app['db']
 
-    bid_id = request.match_info.get('bid_id')
-    logger.info('Marking bid #%s as rejected' % bid_id)
+    t_id = request.match_info.get('t_id')
+    logger.info('Confirming transaction #%s sold' % t_id)
 
     async with engine.acquire() as conn:
-        result = await set_bid_status(
+        # todo: get or 404
+        await set_transaction_status(
             conn,
-            bid_id=bid_id,
-            bid_status=BidStatus.REJECTED,
+            t_id=t_id,
+            status=TransactionStatus.COMPLETED,
         )
+        # todo: add event?
 
+    flash(request, 'Set sold for transaction [#%s]' % t_id)
     return web.HTTPFound(router['index'].url_for())
-
-
-@login_required
-async def set_bid_closed(request):
-    app = request.app
-    router = app.router
-    logger = app['logger']
-    engine = app['db']
-
-    bid_id = request.match_info.get('bid_id')
-    logger.info('Marking bid #%s as closed' % bid_id)
-
-    async with engine.acquire() as conn:
-        result = await set_bid_status(
-            conn,
-            bid_id=bid_id,
-            bid_status=BidStatus.CLOSED,
-        )
-
-    return web.HTTPFound(router['index'].url_for())
-
 
 @login_required
 async def ban_bid_phone(request):

@@ -70,6 +70,7 @@ def setup_templates(app):
         filters={
             'checkbox': filters.checkbox,
             'format_time': filters.format_time,
+            'format_date': filters.format_date,
             'format_datetime': filters.format_datetime,
             'active_class': filters.active_class,
         },

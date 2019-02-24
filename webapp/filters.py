@@ -23,6 +23,12 @@ def format_datetime(datetime_obj):
     ))
 
 
+def format_date(datetime_obj):
+    if datetime_obj is None:
+        return '-'
+    return datetime_obj.strftime(settings.DEFAULT_DATE_FORMAT)
+
+
 def active_class(bid):
     is_active = bid.status in get_statuses(*ACTIVE_STATUSES)
     return 'active' if is_active else 'inactive'

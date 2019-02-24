@@ -59,7 +59,7 @@ class BaseTrader(ABC, LoggableMixin):
                 ))
                 await close_transaction(
                     conn,
-                    transaction_id=t.id,
+                    t_id=t.id,
                     rate_close=rate_close,
                 )
                 self.amount += amount

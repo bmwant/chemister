@@ -123,6 +123,7 @@ async def insert_new_transaction(
 
     query = transaction.insert().values(
         amount=t.amount,
+        bank='privatbank',
         currency='USD',
         rate_buy=t.rate_buy,
         rate_sale=t.rate_sale,
@@ -132,14 +133,31 @@ async def insert_new_transaction(
     return await result.fetchone()
 
 
+async def set_transaction_status(
+    conn,
+    *,
+    t_id: int,
+    status: TransactionStatus,
+):
+    query = transaction.update() \
+        .where(transaction.c.id == t_id) \
+        .values(status=status.value)
+
+    return (await conn.execute(query)).rowcount
+
+
 async def close_transaction(
     conn,
     *,
-    transaction_id,
+    t_id: int,
     rate_close,
 ):
     date_closed = datetime.now()
     query = transaction.update() \
-        .where(transaction.c.id == transaction_id) \
-        .values(rate_close=rate_close, date_closed=date_closed)
+        .where(transaction.c.id == t_id) \
+        .values(
+            rate_close=rate_close,
+            date_closed=date_closed,
+            status=TransactionStatus.WAIT_SALE,
+        )
     await conn.execute(query)
