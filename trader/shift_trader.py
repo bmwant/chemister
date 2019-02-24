@@ -1,15 +1,9 @@
 from datetime import datetime, timedelta
 
-from crawler.notifier import notify
+from crawler.notifier import notify, format_message
 from crawler.models.transaction import NewTransaction
 from trader import BaseTrader
 from utils import get_midnight, get_date_cache_key
-
-
-DOLLAR_ICON = '\U0001F4B5'
-BANK_ICON = '\U0001F3E6'
-TRADER_ICON = '\U0001F911'
-ARROW_ICON = '\U000027A1'
 
 
 class ShiftTrader_v0(BaseTrader):
@@ -62,7 +56,7 @@ class ShiftTrader_v0(BaseTrader):
                 rate_sale > t.rate_buy
             ):
                 amount = await self.sale_transaction(t, rate_sale)
-                await notify(f'{ARROW_ICON}{BANK_ICON} {amount} ({rate_sale})')
+                await notify(format_message('sale',amount,rate_sale,'pb'))
 
         # handle expired transactions
         await self.handle_expired(date, rate_sale)
@@ -79,7 +73,7 @@ class ShiftTrader_v0(BaseTrader):
         #       'Cannot buy {:.2f}$. Available: {:.2f}UAH'.format(self.daily_amount, self.amount))
 
         self.amount -= t.price
-        await notify(f'{ARROW_ICON}{TRADER_ICON} {t.price} ({rate_buy})')
+        await notify(format_message('buy',self.daily_amount,rate_buy,'pb'))
         await self.add_transaction(t)
         self.logger.info('Amount in the end of the day: %.2f', self.amount)
         potential = await self.get_potential(rate_sale)
