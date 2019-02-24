@@ -47,12 +47,10 @@ $ npm install
 $ pipenv shell
 $ python runserver.py
 ```
-or using CLI scripts
+
+Launch trader via CLI
 ```bash
-$ python cli.py monitor
-$ redis-cli
-> get [resource name]
-# e.g. > get "Sky Bet"
+$ python cli.py trade
 ```
 
 ### Test
