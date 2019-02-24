@@ -36,6 +36,13 @@ def format_message(transaction_type, amount, rate, bank):
 
 async def notify(message):
     url = settings.ENDPOINT_TEMPLATE.format(bot_api_key=settings.TELEGRAM_BOT_TOKEN)
+    if settings.TELEGRAM_BOT_TOKEN is None or settings.CHAT_ID is None:
+        logger.warning(
+            'Not sending notifications to telegram. '
+            'Make sure TELEGRAM_BOT_TOKEN and CHAT_ID are set.'
+        )
+        return
+
     params = {
         'chat_id': settings.CHAT_ID,
         'text': message,

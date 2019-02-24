@@ -73,7 +73,14 @@ $ psql -U che -d chemister -h 172.17.0.2
 
 ### Deployment
 Encrypt your credentials with ansible-vault running 
-`ansible-vault encrypt deploy/roles/role/vars/vault.yml`.
+```bash
+$ ansible-vault encrypt deploy/roles/role/vars/vault.yml
+```
+
+Update it later with new data
+```bash
+$ ansible-vault edit deploy/vars/vault.yml
+```
 
 ```bash
 $ cd deploy
@@ -83,4 +90,9 @@ $ ansible-playbook init.yml
 To update application on remote server:
 ```bash
 $ make update
+```
+
+```bash
+$ cd deploy
+$ ansible-playbook update.yml --extra-vars "recreate_db=true"
 ```
