@@ -158,6 +158,6 @@ async def close_transaction(
         .values(
             rate_close=rate_close,
             date_closed=date_closed,
-            status=TransactionStatus.WAIT_SALE,
+            status=TransactionStatus.WAIT_SALE.value,
         )
     await conn.execute(query)
