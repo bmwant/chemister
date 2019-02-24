@@ -9,26 +9,33 @@ from download_rates import DATE_FMT
 
 
 class Transaction(object):
-    def __init__(self, amount, rate_buy, rate_sale, date):
+    def __init__(self, amount, rate_buy, rate_sale, date, verbose=True):
         self.amount = amount  # amount of currency we bought
         self.rate_buy = rate_buy  # rate when trading
         # selling rate when trading to calculate future profit
         self.rate_sale = rate_sale
         self.date = date
         self._sold = False
+        self.verbose = verbose
+
+    def log(self, message):
+        if self.verbose:
+            print(message)
 
     def sale(self, rate_sale, dry_run=False):
         amount = self.amount * rate_sale
         if not dry_run:
             profit = amount - self.price  # what we gain
-            print('Selling {amount:.2f}({rate_buy:.2f}) at {rate_sale:.2f}; '
-                  'total: {total:.2f}; profit: {profit:.2f}'.format(
-                amount=self.amount,
-                rate_buy=self.rate_buy,
-                rate_sale=rate_sale,
-                total=amount,
-                profit=profit,
-            ))
+            self.log(
+                'Selling {amount:.2f}({rate_buy:.2f}) at {rate_sale:.2f}; '
+                'total: {total:.2f}; profit: {profit:.2f}'.format(
+                    amount=self.amount,
+                    rate_buy=self.rate_buy,
+                    rate_sale=rate_sale,
+                    total=amount,
+                    profit=profit,
+                )
+            )
             self._sold = True
         return amount
 
@@ -49,7 +56,7 @@ class Transaction(object):
 
 
 class ShiftTrader(object):
-    def __init__(self, starting_amount, shift):
+    def __init__(self, starting_amount, shift, verbose=True):
         self.transactions = []  # history of all transactions
         self.amount = starting_amount  # operation money we use to buy currency
         self.shift = shift  # days we wait between buying/selling
@@ -59,6 +66,11 @@ class ShiftTrader(object):
         self._strike_data = []
         self._strike = 0  # length of the period
         self._flag = False  # whether we incrementing same period
+        self.verbose = verbose
+
+    def log(self, message):
+        if self.verbose:
+            print(message)
 
     def trade(self, daily_data):
         date = daily_data['date']
@@ -101,6 +113,7 @@ class ShiftTrader(object):
             rate_sale=rate_sale,
             amount=self.daily_amount,
             date=date,
+            verbose=self.verbose,
         )
         debt = self.amount - t.price
         # if debt < 0:
@@ -110,7 +123,7 @@ class ShiftTrader(object):
 
         self.amount -= t.price
         self.transactions.append(t)
-        print('Amount in the end of the day: {:.2f}'.format(self.amount))
+        self.log('Amount in the end of the day: {:.2f}'.format(self.amount))
 
     def handle_expired(self, date, rate_sale):
         expired_sold = False  # any expired transaction was sold
@@ -120,14 +133,14 @@ class ShiftTrader(object):
                     rate_sale > t.rate_buy and
                     not t.sold
             ):
-                print('Selling expired {}'.format(t))
+                self.log('Selling expired {}'.format(t))
                 self.amount += t.sale(rate_sale)
                 expired_sold = True
         return expired_sold
 
     def close(self, rate_sale_closing):
         """Sell all hanging transaction for the rate specified"""
-        print('Closing trading for {} transactions'.format(len(self.hanging)))
+        self.log('Closing trading for {} transactions'.format(len(self.hanging)))
         for t in self.hanging:
             self.amount += t.sale(rate_sale_closing)
 
@@ -142,31 +155,6 @@ class ShiftTrader(object):
     @property
     def hanging(self):
         return list(filter(lambda t: not t.sold, self.transactions))
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description='TradeAlgo#02v0')
-    parser.add_argument(
-        '--year',
-        required=True,
-        type=int,
-        help='which year you want to analyze',
-    )
-    parser.add_argument(
-        '--shift',
-        required=True,
-        type=int,
-        help='minimal delay between buying and selling',
-    )
-    parser.add_argument(
-        '--amount',
-        required=False,
-        default=10000,
-        type=int,
-        help='amount of money you want to initially invest',
-    )
-    args = parser.parse_args()
-    return args
 
 
 def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
@@ -193,6 +181,7 @@ def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
     trader = ShiftTrader(
         starting_amount=starting_amount_uah,
         shift=shift,
+        verbose=verbose,
     )
 
     i = 0
@@ -208,14 +197,25 @@ def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
     while current_date <= ed:  # until end date
         rate_sale = df.loc[df['date'] == current_date]['sale'].item()
         rate_buy = df.loc[df['date'] == current_date]['buy'].item()
-        print('\n==>{}: {:.2f}/{:.2f}'.format(current_date.strftime(DATE_FMT), rate_buy, rate_sale))
+        if verbose:
+            print(
+                '\n==>{}: {:.2f}/{:.2f}'.format(
+                    current_date.strftime(DATE_FMT),
+                    rate_buy,
+                    rate_sale,
+                )
+            )
+
         daily_data = {
             'date': current_date,
             'buy': rate_sale,  # we buy currency, bank sale currency
             'sale': rate_buy,  # we sale currency, bank buy currency
         }
         potential = trader.get_potential(rate_buy)
-        print('Potential = {:.2f}'.format(potential))
+
+        if verbose:
+            print('Potential = {:.2f}'.format(potential))
+
         trader.trade(daily_data)
         days_passed = current_date - sd  # how many days passed since start
         if exit_period is None and potential > starting_amount_uah:
@@ -324,14 +324,40 @@ def build_shift_comparison_table(year, starting_amount):
         row = [
             year,
             shift,
-            end_amount,
-            end_amount-starting_amount,
-            end_amount / starting_amount * 100,
+            '{:.2f}'.format(end_amount),
+            '{:.2f}'.format(end_amount-starting_amount),
+            '{:.2f}'.format(end_amount / starting_amount * 100),
         ]
         data.append(row)
 
-    t = Table(header=header)
+    t = Table(header=header, data=data)
     t.print()
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='TradeAlgo#02v0')
+    parser.add_argument(
+        '--year',
+        required=True,
+        type=int,
+        help='which year you want to analyze',
+    )
+    parser.add_argument(
+        '--shift',
+        required=False,
+        default=0,
+        type=int,
+        help='minimal delay between buying and selling',
+    )
+    parser.add_argument(
+        '--amount',
+        required=False,
+        default=10000,
+        type=int,
+        help='amount of money you want to initially invest',
+    )
+    args = parser.parse_args()
+    return args
 
 
 if __name__ == '__main__':
