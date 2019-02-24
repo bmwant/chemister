@@ -186,14 +186,29 @@ def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
 
     i = 0
 
+    s = {  # stats
+        'year': year,
+        'shift': shift,
+        'k1_return': None,
+        'k1_return_soft': None,
+        'k5_return': None,
+        'k5_return_soft': None,
+        'p10_return': None,
+        'p10_return_soft': None,
+        'exit_period': None,
+        # strikes
+        'success': None,
+        'fail': None,
+        'strikes': None,
+        'starting_amount': starting_amount_uah,
+        'end_amount': None,
+        'debt': None,
+        # transactions
+        'transactions': None,  # atomic bank operations
+        'handing': None,  # transactions without profit
+    }
+
     current_date = sd  # starting date
-    k1_return = None
-    k1_return_soft = None
-    k5_return = None
-    k5_return_soft = None
-    p10_return = None
-    p10_return_soft = None
-    exit_period = None
     while current_date <= ed:  # until end date
         rate_sale = df.loc[df['date'] == current_date]['sale'].item()
         rate_buy = df.loc[df['date'] == current_date]['buy'].item()
@@ -218,115 +233,136 @@ def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
 
         trader.trade(daily_data)
         days_passed = current_date - sd  # how many days passed since start
-        if exit_period is None and potential > starting_amount_uah:
-            exit_period = days_passed
-        if k1_return is None and trader.amount >= starting_amount_uah + 1000:
-            k1_return = days_passed
-        if k1_return_soft is None and potential >= starting_amount_uah + 1000:
-            k1_return_soft = days_passed
-        if k5_return is None and trader.amount >= starting_amount_uah + 5000:
-            k5_return = days_passed
-        if k5_return_soft is None and potential >= starting_amount_uah + 5000:
-            k5_return_soft = days_passed
-        if p10_return is None and trader.amount >= 1.1 * starting_amount_uah:
-            p10_return = days_passed
-        if p10_return_soft is None and potential >= 1.1 * starting_amount_uah:
-            p10_return_soft = days_passed
+        if s['exit_period'] is None and potential > starting_amount_uah:
+            s['exit_period'] = days_passed
+        if s['k1_return'] is None and trader.amount >= starting_amount_uah + 1000:
+            s['k1_return'] = days_passed
+        if s['k1_return_soft'] is None and potential >= starting_amount_uah + 1000:
+            s['k1_return_soft'] = days_passed
+        if s['k5_return'] is None and trader.amount >= starting_amount_uah + 5000:
+            s['k5_return'] = days_passed
+        if s['k5_return_soft'] is None and potential >= starting_amount_uah + 5000:
+            s['k5_return_soft'] = days_passed
+        if s['p10_return'] is None and trader.amount >= 1.1 * starting_amount_uah:
+            s['p10_return'] = days_passed
+        if s['p10_return_soft'] is None and potential >= 1.1 * starting_amount_uah:
+            s['p10_return_soft'] = days_passed
 
         i += 1
         current_date += timedelta(days=1)
 
-    if not verbose:
-        trader.close(rate_buy)
-        return trader.amount
+    s['hanging'] = len(trader.hanging)
+    # close period at the last day no matter which rate
+    # in order to calculate raw profit
+    trader.close(rate_buy)
 
-    print('\n#### Report for {} year. Shift: {} ####\n'.format(year, shift))
-    if trader._min_debt < 0:
-        print('Insufficient investments, consider adding {:.2f}'.format(trader._min_debt))
-        print('Start with at least {:.2f}'.format(starting_amount_uah - trader._min_debt))
-        raise RuntimeError('Relaunch with higher initial amount')
-    if k1_return is not None:
-        print('1K profit period: {} days'.format(k1_return.days))
+    # sell every purchased transaction
+    s['transactions'] = 2 * len(trader.transactions)
+    s['strikes'] = trader._strike_data
+    s['success'] = trader._success
+    s['fail'] = trader._fail
+    s['debt'] = trader._min_debt
+    s['end_amount'] = trader.amount
+
+    if verbose:
+        print_stats(s)
+
+    return s  # return statistics for trading period
+
+
+def print_stats(stats):
+    starting_amount = stats['starting_amount']
+    debt = stats['debt']
+    print(
+        '\n#### Report for {year} year. '
+        'Shift: {shift} ####\n'.format(**stats)
+    )
+    print('Minimal investment needed: {:.2f} UAH'.format(starting_amount-debt))
+
+    print('\n#### Return/exit periods ####\n')
+    if stats['k1_return'] is not None:
+        print('1K profit period: {} days'.format(stats['k1_return'].days))
     else:
         print('1K HARD is unreachable within given period')
-    if k1_return_soft is not None:
-        print('1K gain soft period: {} days'.format(k1_return_soft.days))
+
+    if stats['k1_return_soft'] is not None:
+        print('1K gain soft period: {} days'.format(stats['k1_return_soft'].days))
     else:
         print('1K SOFT is unreachable within given period')
 
-    if k5_return is not None:
-        print('5K profit period: {} days'.format(k5_return.days))
+    if stats['k5_return'] is not None:
+        print('5K profit period: {} days'.format(stats['k5_return'].days))
     else:
         print('5K HARD is unreachable within given period')
-    if k5_return_soft is not None:
-        print('5K gain soft period: {} days'.format(k5_return_soft.days))
+
+    if stats['k5_return_soft'] is not None:
+        print('5K gain soft period: {} days'.format(stats['k5_return_soft'].days))
     else:
         print('5K SOFT is unreachable within given period')
 
-    if p10_return is not None:
-        print('10% profit period: {} days'.format(p10_return.days))
+    if stats['p10_return'] is not None:
+        print('10% profit period: {} days'.format(stats['p10_return'].days))
     else:
         print('10% HARD is unreachable within given period')
-    if p10_return_soft is not None:
-        print('10% gain soft period: {} days'.format(p10_return_soft.days))
+
+    if stats['p10_return_soft'] is not None:
+        print('10% gain soft period: {} days'.format(stats['p10_return_soft'].days))
     else:
         print('10% SOFT is unreachable within given period')
 
-    if exit_period is not None:
-        print('Exit period: {} days\n'.format(exit_period.days))
+    if stats['exit_period'] is not None:
+        print('Exit period: {} days\n'.format(stats['exit_period'].days))
     else:
         print('Cannot exit within given period\n')
 
     print('\n#### Strikes ####\n')
-    print('Periods: {}'.format(len(trader._strike_data)))
-    print('Success: {}'.format(len(trader._success)))
-    print('\tShortest: {}'.format(min(trader._success)))
-    print('\tLongest: {}'.format(max(trader._success)))
-    print('\tMean: {:.2f}'.format(statistics.mean(trader._success)))
-    print('Fail: {}'.format(len(trader._fail)))
-    print('\tShortest: {}'.format(min(trader._fail)))
-    print('\tLongest: {}'.format(max(trader._fail)))
-    print('\tMean: {:.2f}'.format(statistics.mean(trader._fail)))
+    print('Periods: {}'.format(len(stats['strikes'])))
+    print('Success: {}'.format(len(stats['success'])))
+    print('\tShortest: {}'.format(min(stats['success'])))
+    print('\tLongest: {}'.format(max(stats['success'])))
+    print('\tMean: {:.2f}'.format(statistics.mean(stats['success'])))
+    print('Fail: {}'.format(len(stats['fail'])))
+    print('\tShortest: {}'.format(min(stats['fail'])))
+    print('\tLongest: {}'.format(max(stats['fail'])))
+    print('\tMean: {:.2f}'.format(statistics.mean(stats['fail'])))
 
-    print('Total transactions: {}'.format(len(trader.transactions)))
-    print('Hanging transactions: {}'.format(len(trader.hanging)))
-    # close period at the last day no matter which rate
-    # in order to calculate raw profit
-    trader.close(rate_buy)
-    end_amount = trader.amount
-    print('Initial invested amount: {} UAH'.format(starting_amount_uah))
-    print('Amount we have in the end: {:.2f} UAH'.format(trader.amount))
-    print('Raw profit: {:.2f} UAH'.format(trader.amount - starting_amount_uah))
-    print('Profit, %: {:.2f}'.format(
-        trader.amount / starting_amount_uah * 100))
-    return end_amount
+    print('\n#### Transactions ####\n')
+    print('Total transactions: {}'.format(stats['transactions']))
+    print('Hanging transactions: {}'.format(stats['hanging']))
+
+    print('\n#### Profits ####\n')
+    end_amount = stats['end_amount']
+    print('Initial invested amount: {} UAH'.format(starting_amount))
+    print('Amount we have in the end: {:.2f} UAH'.format(end_amount))
+    print('Raw profit: {:.2f} UAH'.format(end_amount-starting_amount))
+    print('Profit, %: {:.2f}'.format(end_amount / starting_amount * 100))
 
 
-def build_shift_comparison_table(year, starting_amount):
+def build_shift_comparison_table(year):
     header = [
         'year',
         'shift',
-        'closing amount, uah',
+        'minimal investment',
         'raw profit, uah',
         'profit, %',
     ]
-
     data = []
     for s in range(0, 31):
         shift = s+1
 
-        end_amount = launch_trading(
+        stats = launch_trading(
             year=year,
             shift=shift,
-            starting_amount_uah=starting_amount,
+            starting_amount_uah=0,
             verbose=False,
         )
+        min_investment = -stats['debt']
         row = [
             year,
             shift,
-            '{:.2f}'.format(end_amount),
-            '{:.2f}'.format(end_amount-starting_amount),
-            '{:.2f}'.format(end_amount / starting_amount * 100),
+            '{:.2f}'.format(min_investment),
+            '{:.2f}'.format(stats['end_amount']),
+            '{:.2f}'.format(stats['end_amount'] / min_investment * 100),
         ]
         data.append(row)
 
@@ -345,7 +381,7 @@ def parse_args():
     parser.add_argument(
         '--shift',
         required=False,
-        default=0,
+        default=1,
         type=int,
         help='minimal delay between buying and selling',
     )
@@ -368,7 +404,4 @@ if __name__ == '__main__':
     #     starting_amount_uah=args.amount,
     # )
 
-    build_shift_comparison_table(
-        year=args.year,
-        starting_amount=args.amount,
-    )
+    build_shift_comparison_table(year=args.year)
