@@ -1,3 +1,4 @@
+from datetime import datetime
 from http import HTTPStatus
 
 import aiohttp
@@ -8,19 +9,29 @@ from utils import get_logger
 
 logger = get_logger(__name__)
 
+
 DOLLAR_ICON = '\U0001F4B5'
 BANK_ICON = '\U0001F3E6'
 TRADER_ICON = '\U0001F911'
 ARROW_ICON = '\U000027A1'
 
+
 def format_message(transaction_type, amount, rate, bank):
-    today = datetime.date.today()
-    icons = f'{ARROW_ICON}{BANK_ICON}' if transaction_type == 'sale' else f'{ARROW_ICON}{TRADER_ICON}'
+    today = datetime.now()
+    icons = f'{ARROW_ICON}{BANK_ICON}' \
+        if transaction_type == 'sale' \
+        else f'{ARROW_ICON}{TRADER_ICON}'
+    total = amount * rate
+    date = today.strftime(settings.DEFAULT_DATETIME_FORMAT)
     return (
-        f'{icons}\nDate: {today}\n'
+        f'{icons}\n'
+        f'Date: {date}\n'
         f'Type: {transaction_type}\n'
-        f'Amount: {amount}\n'
-        f'Rate: {rate}\nBank: {bank}')
+        f'Amount: {amount} $\n'
+        f'Total: {total} UAH\n'
+        f'Rate: {rate}\n'
+        f'Bank: {bank}\n'
+    )
 
 
 async def notify(message):
