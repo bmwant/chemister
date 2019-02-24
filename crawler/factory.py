@@ -129,7 +129,6 @@ class Factory(object):
         # todo: reuse cache from here
         trader = ShiftTrader_v0(
             starting_amount=10000,
-            shift=6,
         )
         await trader.init()
         return [

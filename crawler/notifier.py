@@ -28,8 +28,8 @@ def format_message(transaction_type, amount, rate, bank):
         f'Date: {date}\n'
         f'Type: {transaction_type}\n'
         f'Amount: {amount} $\n'
-        f'Total: {total} UAH\n'
         f'Rate: {rate}\n'
+        f'Total: {total} UAH\n'
         f'Bank: {bank}\n'
     )
 
