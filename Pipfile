@@ -34,5 +34,6 @@ pandas-datareader = "*"
 statsmodels = "*"
 requests = "*"
 scikit-learn = "*"
+terminaltables = "*"
 
 [dev-packages]

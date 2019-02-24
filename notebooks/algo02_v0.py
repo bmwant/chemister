@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
+from tables import Table
 from download_rates import DATE_FMT
 
 
@@ -168,7 +169,7 @@ def parse_args():
     return args
 
 
-def main(*, year, starting_amount_uah, shift):
+def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
     """
     :param year: year we want to launch our algorithm on
     :param starting_amount_uah: how much we initially invest
@@ -235,6 +236,10 @@ def main(*, year, starting_amount_uah, shift):
         i += 1
         current_date += timedelta(days=1)
 
+    if not verbose:
+        trader.close(rate_buy)
+        return trader.amount
+
     print('\n#### Report for {} year. Shift: {} ####\n'.format(year, shift))
     if trader._min_debt < 0:
         print('Insufficient investments, consider adding {:.2f}'.format(trader._min_debt))
@@ -288,17 +293,56 @@ def main(*, year, starting_amount_uah, shift):
     # close period at the last day no matter which rate
     # in order to calculate raw profit
     trader.close(rate_buy)
+    end_amount = trader.amount
     print('Initial invested amount: {} UAH'.format(starting_amount_uah))
     print('Amount we have in the end: {:.2f} UAH'.format(trader.amount))
     print('Raw profit: {:.2f} UAH'.format(trader.amount - starting_amount_uah))
     print('Profit, %: {:.2f}'.format(
         trader.amount / starting_amount_uah * 100))
+    return end_amount
+
+
+def build_shift_comparison_table(year, starting_amount):
+    header = [
+        'year',
+        'shift',
+        'closing amount, uah',
+        'raw profit, uah',
+        'profit, %',
+    ]
+
+    data = []
+    for s in range(0, 31):
+        shift = s+1
+
+        end_amount = launch_trading(
+            year=year,
+            shift=shift,
+            starting_amount_uah=starting_amount,
+            verbose=False,
+        )
+        row = [
+            year,
+            shift,
+            end_amount,
+            end_amount-starting_amount,
+            end_amount / starting_amount * 100,
+        ]
+        data.append(row)
+
+    t = Table(header=header)
+    t.print()
 
 
 if __name__ == '__main__':
     args = parse_args()
-    main(
+    # launch_trading(
+    #     year=args.year,
+    #     shift=args.shift,
+    #     starting_amount_uah=args.amount,
+    # )
+
+    build_shift_comparison_table(
         year=args.year,
-        shift=args.shift,
-        starting_amount_uah=args.amount,
+        starting_amount=args.amount,
     )
