@@ -1,16 +1,12 @@
-{% macro status(bid) -%}
-{% set status = bid.status %}
-{% if status == 'new' %}
+{% macro status(transaction) -%}
+{% set status = transaction.status %}
+{% if status == 'wait_buy' %}
   {% set icon_class = "bg-teal" %}
-{% elif status == 'notified' %}
+{% elif status == 'hanging' %}
   {% set icon_class = "bg-warning" %}
-{% elif status == 'called' %}
-  {% set icon_class = "bg-info" %}
-{% elif status == 'rejected' %}
-  {% set icon_class = "bg-danger" %}
-{% elif status == 'inactive' %}
-  {% set icon_class = "bg-secondary" %}
-{% elif status == 'closed' %}
+{% elif status == 'wait_sale' %}
+  {% set icon_class = "bg-pink" %}
+{% elif status == 'completed' %}
   {% set icon_class = "bg-success" %}
 {% endif %}
 <span class="status-icon {{ icon_class }}"></span> {{ status }}

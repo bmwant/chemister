@@ -13,7 +13,6 @@ from crawler.scheduled_task import ScheduledTask
 from crawler.proxy import Proxy
 from crawler.cache import Cache
 from crawler.db import get_engine
-from crawler.models import bid
 
 # what?
 from trader.shift_trader import ShiftTrader_v0

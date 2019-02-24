@@ -36,7 +36,7 @@
         <td>{{ t.date_opened | format_date }}</td>
         <td>{{ t.date_closed | format_datetime }}</td>
         <td>
-          {{ t.status }}
+          {{ status_macro.status(t) }}
         </td>
         <td>
           <a href="/resource/">user</a>
