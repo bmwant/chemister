@@ -1,12 +1,11 @@
 import operator
 import statistics
 
-from crawler.helpers import load_config
+from crawler.helpers import load_config, get_statuses
 from crawler.models.bid import (
     get_daily_bids,
     BidType,
     BidStatus,
-    get_statuses,
     ACTIVE_STATUSES,
     GONE_STATUSES,
 )
@@ -45,13 +44,6 @@ async def get_current_profit(conn):
 async def collect_statistics(conn):
     config = await load_config(conn)
 
-    dropped_bids_count = len(await get_daily_bids(conn,
-                                                  statuses=GONE_STATUSES))
-    closed_statuses = [BidStatus.CLOSED]
-    closed_bids_count = len(await get_daily_bids(conn,
-                                                 statuses=closed_statuses))
-    total_bids_count = len(await get_daily_bids(conn))
-
     total_profit = await get_daily_profit(conn)
     current_profit = await get_current_profit(conn)
     expected_profit = total_profit * config.CLOSED_BIDS_FACTOR
@@ -65,9 +57,6 @@ async def collect_statistics(conn):
         'total_profit': total_profit,
         'expected_profit': expected_profit,
         'current_profit': current_profit,
-        'total_bids': total_bids_count,
-        'dropped_bids': dropped_bids_count,
-        'closed_bids': closed_bids_count,
         'fund': fund,
     }
 

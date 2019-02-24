@@ -7,7 +7,6 @@ import dateparser
 from aiohttp import web, hdrs
 
 import settings
-from crawler.models.phone import add_new_phone_to_blacklist
 from crawler.models.bid import (
     bid,
     BidStatus,
@@ -19,15 +18,16 @@ from crawler.models.event import add_event, EventType
 from webapp.helpers import login_required, flash
 
 
-async def set_bid_called(request):
+@login_required
+async def set_transaction_bought(request):
     app = request.app
     router = app.router
     logger = app['logger']
     engine = app['db']
     user = app['user']
 
-    bid_id = request.match_info.get('bid_id')
-    logger.info('Marking bid #%s as called' % bid_id)
+    t_id = request.match_info.get('t_id')
+    logger.info('Confirming transaction bought #%s as called' % t_id)
 
     async with engine.acquire() as conn:
         # todo: get or 404
@@ -37,18 +37,14 @@ async def set_bid_called(request):
             bid_id=bid_id,
             bid_status=BidStatus.CALLED,
         )
-        await add_event(
-            conn,
-            event_type=EventType.CALLED,
-            description='Called %s' % bid.phone,
-            user_id=user.id,
-        )
+        # todo: add event?
 
     flash(request, 'Called %s for bid [#%s]' % (bid.phone, bid_id))
     return web.HTTPFound(router['index'].url_for())
 
 
-async def set_bid_rejected(request):
+@login_required
+async def set_transaction_sold(request):
     app = request.app
     router = app.router
     logger = app['logger']

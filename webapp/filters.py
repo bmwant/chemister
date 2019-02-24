@@ -1,5 +1,6 @@
 import settings
-from crawler.models.bid import get_statuses, ACTIVE_STATUSES
+from crawler.helpers import get_statuses
+from crawler.models.bid import ACTIVE_STATUSES
 
 
 def checkbox(value):

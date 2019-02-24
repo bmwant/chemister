@@ -1,5 +1,8 @@
+from operator import attrgetter
+
 import attr
 import yaml
+from sqlalchemy import desc
 
 import settings
 from utils import get_logger
@@ -8,10 +11,12 @@ from crawler.forms.config import config_trafaret
 from crawler.models.configs import config as config_model
 from crawler.models.resource import insert_new_resource, get_resource_by_name
 
-from sqlalchemy import desc
-
 
 logger = get_logger(__name__)
+
+
+def get_statuses(*args):
+    return [*map(attrgetter('value'), args)]
 
 
 async def load_config(conn):

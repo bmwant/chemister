@@ -36,7 +36,7 @@
         <td>{{ t.date_opened | format_datetime }}</td>
         <td>{{ t.date_closed | format_datetime }}</td>
         <td>
-          Opened
+          {{ t.status }}
         </td>
         <td>
           <a href="/resource/">user</a>
@@ -45,71 +45,13 @@
           <div class="dropdown">
             <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
             <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(-181px, -156px, 0px); top: 0px; left: 0px; will-change: transform;">
-              <a href="/bid/set_closed/{{ t.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-dollar-sign"></i> Close</a>
+              <a href="/transaction/buy/{{ t.id }}" class="dropdown-item">
+                <i class="dropdown-icon fe fe-chevrons-right"></i> Confirm bought</a>
+              <a href="/transaction/sale/{{ t.id }}" class="dropdown-item">
+                <i class="dropdown-icon fe fe-chevrons-left"></i> Confirm sold</a>
               <div class="dropdown-divider"></div>
-              <a href="/bid/ban_phone/{{ t.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-phone-off"></i> Blacklist phone</a>
-              <a href="/bid/set_called/{{ t.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-phone-outgoing"></i> Set phoned</a>
-              <div class="dropdown-divider"></div>
-              <a href="/bid/set_rejected/{{ t.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-slash"></i> Reject</a>
-            </div>
-          </div>
-        </td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{%- endmacro %}
-
-{% macro render_bids_table(header, bids, info) -%}
-<div class="card">
-  <div class="card-header">
-    <h3 class="card-title">{{ header }}</h3>
-    <small class="text-muted">{{ info.active }} active</small>
-    Rate({{ info.rate.min | round(2) }}/{{ info.rate.avg | round(2) }}/{{ info.rate.max | round(2) }})
-    Amount({{ info.amount.min | int }}/{{ info.amount.avg | int }}/{{ info.amount.max | int }})
-  </div>
-  <div class="table-responsive">
-    <table class="table card-table table-vcenter text-nowrap">
-      <thead>
-        <tr>
-          <th class="w-1">#</th>
-          <th>Amount</th>
-          <th>Currency</th>
-          <th>Rate</th>
-          <th>Phone No.</th>
-          <th>Created</th>
-          <th>Status</th>
-          <th>Source</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for bid in bids %}
-      <tr class="{{ bid | active_class }}">
-        <td><span class="text-muted">{{ bid.id }}</span></td>
-        <td>{{ bid.amount }}</td>
-        <td>{{ bid.currency }}</td>
-        <td>{{ bid.rate }}</td>
-        <td><a href="tel:{{ bid.phone }}">{{ bid.phone }}</a></td>
-        <td>{{ bid.created | format_time }}</td>
-        <td>
-          {{ status_macro.status(bid) }}
-        </td>
-        <td>
-          <a href="/resource/{{ bid.resource_id }}">resource #{{ bid.resource_id }}</a>
-        </td>
-        <td class="text-right">
-          <div class="dropdown">
-            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
-            <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(-181px, -156px, 0px); top: 0px; left: 0px; will-change: transform;">
-              <a href="/bid/set_closed/{{ bid.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-dollar-sign"></i> Close</a>
-              <div class="dropdown-divider"></div>
-              <a href="/bid/ban_phone/{{ bid.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-phone-off"></i> Blacklist phone</a>
-              <a href="/bid/set_called/{{ bid.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-phone-outgoing"></i> Set phoned</a>
-              <div class="dropdown-divider"></div>
-              <a href="/bid/set_rejected/{{ bid.id }}" class="dropdown-item"><i class="dropdown-icon fe fe-slash"></i> Reject</a>
+              <a href="#" class="dropdown-item">
+                <i class="dropdown-icon fe fe-x"></i> Delete</a>
             </div>
           </div>
         </td>

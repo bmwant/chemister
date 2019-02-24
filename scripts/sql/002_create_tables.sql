@@ -1,12 +1,8 @@
 SET SCHEMA 'public';
 
 
-CREATE TYPE bid_status AS ENUM (
-  'new', 'notified', 'called', 'rejected', 'inactive', 'closed'
-);
-
 CREATE TYPE transaction_status AS ENUM (
-  'wait_buy', 'hanging', 'wait_sale', 'closed'
+  'wait_buy', 'hanging', 'wait_sale', 'completed'
 );
 
 CREATE TYPE currency AS ENUM (
@@ -33,8 +29,6 @@ CREATE TABLE IF NOT EXISTS bid(
   created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
   dry_run       BOOLEAN         NOT NULL,
   in_use        BOOLEAN         NOT NULL    DEFAULT TRUE,
-  status        bid_status      NOT NULL    DEFAULT 'new',
-  bid_type      bid_type        NOT NULL,
   resource_id   INT             NOT NULL,
 
   FOREIGN KEY (resource_id) REFERENCES resource (id),
@@ -66,6 +60,7 @@ CREATE TABLE IF NOT EXISTS "user"(
 
 CREATE TABLE IF NOT EXISTS "transaction"(
   id            SERIAL              NOT NULL,
+  bank          VARCHAR             NOT NULL,
   amount        NUMERIC             NOT NULL,
   currency      currency            NOT NULL,
   rate_buy      NUMERIC             NOT NULL,

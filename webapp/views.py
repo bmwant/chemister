@@ -6,8 +6,11 @@ from aiohttp import web
 from aiohttp_session import get_session
 
 from crawler.helpers import load_config
-from crawler.models.bid import get_daily_bids, BidType
-from crawler.models.transaction import get_transactions
+from crawler.models.transaction import (
+    get_transactions,
+    TransactionStatus,
+    UNCONFIRMED_STATUSES,
+)
 from crawler.models.resource import get_resource_by_id
 from crawler.models.phone import get_phones
 from crawler.models.user import get_user
@@ -26,11 +29,29 @@ async def index(request):
     logger.info('Accessing index page')
 
     async with engine.acquire() as conn:
-        transactions = await get_transactions(conn)
-        stats = await collect_statistics(conn)
+        unconfirmed = await get_transactions(
+            conn,
+            statuses=UNCONFIRMED_STATUSES,
+        )
+        hanging = await get_transactions(
+            conn,
+            statuses=[TransactionStatus.HANGING],
+        )
+        completed = await get_transactions(
+            conn,
+            statuses=[TransactionStatus.COMPLETED],
+        )
+        stats = {
+            'total_profit': 0,
+            'expected_profit': 0,
+            'current_profit': 0,
+            'fund': {'USD': 0, 'UAH': 0},
+        }
 
     return {
-        'transactions': transactions,
+        'unconfirmed': unconfirmed,
+        'hanging': hanging,
+        'completed': completed,
         'stats': stats,
     }
 

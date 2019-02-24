@@ -2,12 +2,9 @@ from .config_endpoints import (
     save_config,
     delete_config,
 )
-from .bid_endpoints import (
-    set_bid_called,
-    set_bid_closed,
-    set_bid_rejected,
-    ban_bid_phone,
-    export_to_csv,
+from .transaction_endpoints import (
+    set_transaction_bought,
+    set_transaction_sold,
 )
 from .chart_endpoints import (
     get_daily_profit_month,

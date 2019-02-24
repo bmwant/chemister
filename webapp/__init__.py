@@ -31,16 +31,15 @@ def setup_routes(app):
     app.router.add_post('/config/save', endpoints.save_config)
     app.router.add_get('/config/delete/{config_id}', endpoints.delete_config)
 
-    # bid
+    # transaction
     # todo: make post and ajax
-    app.router.add_get('/bid/set_closed/{bid_id}', endpoints.set_bid_closed)
-    app.router.add_get('/bid/set_called/{bid_id}', endpoints.set_bid_called)
-    app.router.add_get('/bid/set_rejected/{bid_id}',
-                       endpoints.set_bid_rejected)
-    app.router.add_get('/bid/ban_phone/{bid_id}', endpoints.ban_bid_phone)
+    app.router.add_get(
+        '/transaction/buy/{t_id}', endpoints.set_transaction_bought)
+    app.router.add_get(
+        '/transaction/sale/{t_id}', endpoints.set_transaction_sold)
 
     # export
-    app.router.add_post('/export/csv', endpoints.export_to_csv)
+    # app.router.add_post('/export/csv', endpoints.export_to_csv)
 
     # resource
     app.router.add_get('/resource/{resource_id}', views.resource)

@@ -1,12 +1,11 @@
 from enum import Enum
 from typing import Iterable
-from operator import attrgetter
 from datetime import datetime, timedelta
 
 import sqlalchemy as sa
 
 from utils import get_midnight, get_logger
-from crawler.helpers import load_config
+from crawler.helpers import load_config, get_statuses
 from crawler.db import Engine
 from . import metadata
 from .resource import resource, Resource, get_resource_by_name
@@ -22,10 +21,6 @@ class BidStatus(Enum):
     REJECTED = 'rejected'
     INACTIVE = 'inactive'
     CLOSED = 'closed'
-
-
-def get_statuses(*args):
-    return [*map(attrgetter('value'), args)]
 
 
 ACTIVE_STATUSES = (BidStatus.NEW, BidStatus.NOTIFIED, BidStatus.CALLED)

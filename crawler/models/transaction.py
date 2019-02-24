@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 import settings
 from utils import get_midnight, get_logger
-from crawler.helpers import load_config
+from crawler.helpers import load_config, get_statuses
 from . import metadata
 from .user import user
 
@@ -18,9 +18,20 @@ from .user import user
 logger = get_logger(__name__)
 
 
+class TransactionStatus(Enum):
+    WAIT_BUY = 'wait_buy'
+    HANGING = 'hanging'
+    WAIT_SALE = 'wait_sale'
+    COMPLETED = 'completed'
+
+
+UNCONFIRMED_STATUSES = (TransactionStatus.WAIT_BUY, TransactionStatus.WAIT_SALE)
+
+
 transaction = sa.Table(
     'transaction', metadata,
     sa.Column('id', sa.Integer, nullable=False),
+    sa.Column('bank', sa.String, nullable=False),
     # Return as floats
     sa.Column('amount', sa.Numeric(asdecimal=False), nullable=False,),
     sa.Column('rate_buy', sa.Numeric(asdecimal=False), nullable=False,),
@@ -29,6 +40,7 @@ transaction = sa.Table(
     sa.Column('currency', sa.String, nullable=False),
     sa.Column('date_opened', sa.DateTime, nullable=False, default=datetime.now),
     sa.Column('date_closed', sa.DateTime, nullable=True),
+    sa.Column('status', sa.String, nullable=True),
     sa.Column('user_id', sa.Integer),
 
     sa.PrimaryKeyConstraint('id', name='transaction_id_pkey'),
@@ -78,8 +90,16 @@ class NewTransaction(object):
         )
 
 
-async def get_transactions(conn):
+async def get_transactions(
+    conn,
+    *,
+    statuses: Iterable[TransactionStatus]=None,
+):
     query = transaction.select()
+    if statuses is not None:
+        status_values = get_statuses(*statuses)
+        query = query.where(transaction.c.status.in_(status_values))
+
     result = await conn.execute(query)
     return await result.fetchall()
 
