@@ -8,3 +8,9 @@
   grabber: "privatbank"
   fetcher:
     instance: "simple"
+
+- name: monobank
+  link: "https://www.monobank.ua/"
+  grabber: "monobank"
+  fetcher:
+    instance: "dummy"

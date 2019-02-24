@@ -13,7 +13,7 @@ default_date = lambda: get_midnight(datetime.now())
 
 
 rate = sa.Table(
-    'phone', metadata,
+    'rate', metadata,
     sa.Column('id', sa.Integer, nullable=False),
     sa.Column('date', sa.DateTime, nullable=False, default=default_date),
     sa.Column('bank', sa.String, nullable=False),
