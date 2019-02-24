@@ -12,7 +12,7 @@ from crawler.models.transaction import (
     UNCONFIRMED_STATUSES,
 )
 from crawler.models.resource import get_resource_by_id
-from crawler.models.phone import get_phones
+from crawler.models.rate import get_rates
 from crawler.models.user import get_user
 from crawler.models.stats import collect_statistics, get_bids_info
 from crawler.models.configs import get_config_history
@@ -165,6 +165,21 @@ async def operations(request):
     engine = app['db']
 
     logger.info('Accessing operations page')
+
+
+@aiohttp_jinja2.template('rates.html')
+async def rates(request):
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+
+    async with engine.acquire() as conn:
+        rates = await get_rates(conn)
+
+    logger.info('Accessing rates archive page')
+    return {
+        'rates': rates,
+    }
 
 
 @aiohttp_jinja2.template('login.html')

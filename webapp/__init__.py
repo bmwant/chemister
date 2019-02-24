@@ -22,7 +22,7 @@ def setup_routes(app):
     app.router.add_get('/check', views.check_refresh_done)
     app.router.add_get('/settings', views.settings, name='settings')
     app.router.add_get('/statistics', views.statistics, name='statistics')
-    app.router.add_get('/phones', views.phones, name='phones')
+    app.router.add_get('/rates', views.rates, name='rates')
     app.router.add_get('/admin', views.control_panel, name='admin')
     app.router.add_get('/login', views.login, name='login')
     app.router.add_post('/do_login', views.do_login)

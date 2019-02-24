@@ -23,6 +23,11 @@ INSERT INTO "user"(id, "name", email, password)
 VALUES (2, 'test', 'test@gmail.com', '591390304a1217a65e5206f943740eaaa8b528e96a5c8bc3a40884d36922ebe0');
 
 
+-- insert rates
+INSERT INTO rate(id, bank, currency, rate_buy, rate_sale)
+VALUES (1, 'monobank', 'USD', 27.0, 27.1231);
+
+
 ALTER SEQUENCE resource_id_seq RESTART WITH 2;
 ALTER SEQUENCE bid_id_seq RESTART WITH 20;
 ALTER SEQUENCE user_id_seq RESTART WITH 3;

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Rates archive{% endblock %}
+{% block page_title %}Rates{% endblock %}
+
+{% block content %}
+<div class="row row-cards row-deck">
+  <div class="col-12">
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
+          <thead>
+          <tr>
+            <!--<th class="text-center w-1"><i class="icon-people"></i></th>-->
+            <th>Date</th>
+            <th>Bank</th>
+            <th>Buy</th>
+            <th>Sale</th>
+            <th class="text-center"><i class="icon-settings"></i></th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for rate in rates %}
+              <tr>
+                <td>{{ rate.date | format_date }}</td>
+                <td><span class="text-muted">{{ rate.bank }}</span></td>
+                <td>{{ rate.buy }}</td>
+                <td>{{ rate.sale }}</td>
+
+                <td class="text-center">
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

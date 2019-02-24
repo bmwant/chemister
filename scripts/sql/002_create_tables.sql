@@ -36,16 +36,6 @@ CREATE TABLE IF NOT EXISTS bid(
 );
 
 
-CREATE TABLE IF NOT EXISTS phone(
-  id            SERIAL          NOT NULL,
-  phone         VARCHAR         NOT NULL,
-  reason        VARCHAR         NOT NULL,
-  created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
-
-  PRIMARY KEY (id)
-);
-
-
 CREATE TABLE IF NOT EXISTS "user"(
   id            SERIAL          NOT NULL,
   name          VARCHAR         NOT NULL,
