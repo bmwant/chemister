@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS "transaction"(
 CREATE TABLE IF NOT EXISTS fund(
   id            SERIAL          NOT NULL,
   created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
+  bank          VARCHAR         NOT NULL    DEFAULT 'default',
   amount        NUMERIC         NOT NULL    DEFAULT 0,
   currency      currency        NOT NULL,
 --   value          JSON         NOT NULL,

@@ -16,6 +16,7 @@ fund = sa.Table(
     'fund', metadata,
     sa.Column('id', sa.Integer, nullable=False),
     sa.Column('currency', sa.String, nullable=False),
+    sa.Column('bank', sa.String, nullable=False, default='default'),
     sa.Column('amount',
               sa.Numeric(asdecimal=False), nullable=False, default=0),
     sa.Column('created', sa.DateTime, nullable=False, default=datetime.now),
@@ -34,9 +35,26 @@ class Currency(Enum):
     USD = 'USD'
 
 
-async def get_current_fund_amount(conn, currency: Currency):
-    query = fund.select()\
-        .where(fund.c.currency == currency.value)\
-        .order_by(desc(fund.c.created))
+async def get_bank_fund(
+    conn,
+    *,
+    bank: str,
+    currency: Currency,
+):
+    whereclause = sa.and_(
+        fund.c.bank == bank,
+        func.c.currency == currency
+    )
+    query = fund.select().where(whereclause)
     result = await conn.execute(query)
-    return (await result.fetchone()).amount
+    return await result.fetchall()
+
+
+async def get_fund(
+    conn, 
+    *,
+    currency: Currency
+):
+    query = fund.select().where(fund.c.currency == currency.value)
+    result = await conn.execute(query)
+    return await result.fetcall()
