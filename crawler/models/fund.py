@@ -43,7 +43,7 @@ async def get_bank_fund(
 ):
     whereclause = sa.and_(
         fund.c.bank == bank,
-        func.c.currency == currency
+        func.c.currency == currency.value,
     )
     query = fund.select().where(whereclause)
     result = await conn.execute(query)
@@ -57,4 +57,4 @@ async def get_fund(
 ):
     query = fund.select().where(fund.c.currency == currency.value)
     result = await conn.execute(query)
-    return await result.fetcall()
+    return await result.fetchall()

@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS fund(
   amount        NUMERIC         NOT NULL    DEFAULT 0,
   currency      currency        NOT NULL,
 --   value          JSON         NOT NULL,
-  user_id   INT             NOT NULL,
+  user_id       INT             NOT NULL,
 
   FOREIGN KEY (user_id) REFERENCES "user" (id),
   PRIMARY KEY (id)
@@ -106,3 +106,5 @@ CREATE TABLE IF NOT EXISTS config(
   FOREIGN KEY (user_id) REFERENCES "user" (id),
   PRIMARY KEY (id)
 );
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO che;
