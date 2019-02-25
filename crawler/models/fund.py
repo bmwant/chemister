@@ -52,6 +52,7 @@ async def insert_new_investment(
     user_id: int,
 ):
     return await insert_new_fund(
+        conn,
         amount=amount,
         currency=currency,
         bank=bank,
@@ -89,7 +90,7 @@ async def get_bank_fund(
 ):
     whereclause = sa.and_(
         fund.c.bank == bank,
-        func.c.currency == currency.value,
+        fund.c.currency == currency.value,
     )
     query = fund.select().where(whereclause)
     result = await conn.execute(query)
@@ -119,15 +120,15 @@ async def process_buy(
     *,
     t_id: int,
 ):
-    base_currency = Currency.UAH
+    base_currency = Currency.UAH  # todo: this is not the end
     t = await get_transaction_by_id(conn, t_id=t_id)
-    amount = t.amount * t.rate_buy
+    amount = t.amount * t.rate_sale
     fund_amount = await get_bank_fund(conn, bank=t.bank, currency=base_currency)
     if fund_amount >= amount:
         # decrease fund in base currency
         await insert_new_fund(
             conn,
-            amount=amount,
+            amount=-amount,
             currency=base_currency,
             bank=t.bank,
             fund_type=FundType.TRADE,
@@ -154,7 +155,7 @@ async def process_sale(
 ):
     t = await get_transaction_by_id(conn, t_id=t_id)
     base_currency = Currency.UAH  # todo: this is not the end
-    amount = t.amount * rate_close
+    amount = t.amount * t.rate_close
     # increase fund in base currency
     await insert_new_fund(
         conn,
