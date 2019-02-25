@@ -42,7 +42,7 @@ async def set_transaction_bought(request):
             )
             flash(request, 'Set bought for transaction [#%s]' % t_id)
         else:
-            flash(request, 
+            flash(request,
                   'Cannot buy transaction [#%s]. Insufficiend fund' % t_id)
         # todo: add event?
 
@@ -61,6 +61,7 @@ async def set_transaction_sold(request):
 
     async with engine.acquire() as conn:
         # todo: get or 404
+        sale_result = await process_sale(conn, t_id=t_id)
         await set_transaction_status(
             conn,
             t_id=t_id,

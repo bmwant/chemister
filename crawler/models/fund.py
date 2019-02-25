@@ -31,7 +31,7 @@ fund = sa.Table(
     sa.Column('amount',
               sa.Numeric(asdecimal=False), nullable=False, default=0),
     sa.Column('created', sa.DateTime, nullable=False, default=datetime.now),
-    sa.Column('fund_type', 
+    sa.Column('fund_type',
               sa.String, nullable=False, default=FundType.TRADE.value),
 
     sa.Column('user_id', sa.Integer),
@@ -97,7 +97,7 @@ async def get_bank_fund(
 
 
 async def get_fund(
-    conn, 
+    conn,
     *,
     currency: Currency
 ):
@@ -118,11 +118,11 @@ async def process_buy(
     conn,
     *,
     t_id: int,
-    base_currency: Currency,
 ):
+    base_currency = Currency.UAH
     t = await get_transaction_by_id(conn, t_id=t_id)
     amount = t.amount * t.rate_buy
-    fund_amount = await get_bank_fund(bank=t.bank, currency=base_currency)
+    fund_amount = await get_bank_fund(conn, bank=t.bank, currency=base_currency)
     if fund_amount >= amount:
         # decrease fund in base currency
         await insert_new_fund(
@@ -152,7 +152,7 @@ async def process_sale(
     *,
     t_id: int,
 ):
-    t = get_transaction_by_id(conn, t_id=t_id)
+    t = await get_transaction_by_id(conn, t_id=t_id)
     base_currency = Currency.UAH  # todo: this is not the end
     amount = t.amount * rate_close
     # increase fund in base currency

@@ -43,16 +43,18 @@ class BaseTrader(ABC, LoggableMixin):
         """
 
     async def sale_transaction(self, t, rate_close, dry_run=False):
-        amount = t.amount * rate_close
-        price = t.amount * t.rate_buy
+        amount = t.amount * rate_close  # resulting amount of transaction
+        price = t.amount * t.rate_sale  # initial price of transaction
         profit = amount - price
         if not dry_run:
             async with self.engine.acquire() as conn:
                 self.logger.info(
-                    'Selling {amount:.2f}({rate_buy:.2f}) at {rate_close:.2f}; '
-                    'total: {total:.2f}; profit: {profit:.2f}'.format(
+                    'Selling {amount:.2f} ({rate_sale:.2f}) '
+                    'at {rate_close:.2f}; '
+                    'total: {total:.2f}; '
+                    'profit: {profit:.2f}'.format(
                         amount=t.amount,
-                        rate_buy=t.rate_buy,
+                        rate_sale=t.rate_sale,
                         rate_close=rate_close,
                         total=amount,
                         profit=profit,
