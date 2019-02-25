@@ -17,28 +17,11 @@ def get_bare_value_for_bids(bids):
 
 
 async def get_daily_profit(conn):
-    in_bids = await get_daily_bids(conn, bid_type=BidType.IN)
-    out_bids = await get_daily_bids(conn, bid_type=BidType.OUT)
-    in_value = get_bare_value_for_bids(in_bids)  # we buy
-    out_value = get_bare_value_for_bids(out_bids)  # we sell
-    return out_value - in_value
+    return 500
 
 
 async def get_current_profit(conn):
-    closed_statuses = [BidStatus.CLOSED]
-    in_bids = await get_daily_bids(
-        conn,
-        bid_type=BidType.IN,
-        statuses=closed_statuses,
-    )
-    out_bids = await get_daily_bids(
-        conn,
-        bid_type=BidType.OUT,
-        statuses=closed_statuses,
-    )
-    in_value = get_bare_value_for_bids(in_bids)  # we buy all these bids
-    out_value = get_bare_value_for_bids(out_bids)  # we sell all these bids
-    return out_value - in_value
+    return 700
 
 
 async def collect_statistics(conn):

@@ -108,6 +108,7 @@ async def get_hanging_transactions(conn):
     whereclause = sa.and_(
         transaction.c.date_closed == None,
         transaction.c.rate_close == None,
+        transaction.c.status == TransactionStatus.HANGING.value,
     )
     query = transaction.select().where(whereclause)
 
