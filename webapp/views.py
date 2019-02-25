@@ -16,6 +16,7 @@ from crawler.models.rate import get_rates
 from crawler.models.user import get_user
 from crawler.models.stats import collect_statistics, get_bids_info
 from crawler.models.configs import get_config_history
+from crawler.models.fund import get_investments
 from webapp.utils import refresh_data
 from webapp.helpers import login_required, flash, check_password
 
@@ -132,6 +133,22 @@ async def resource(request):
         'resource': resource
     }
 
+
+@login_required
+@aiohttp_jinja2.template('investments.html')
+async def investments(request):
+    app = request.app
+    logger = app['logger']
+    engine = app['db']
+    
+    logger.info('Accessing investment page')
+
+    async with engine.acquire() as conn:
+        investments = await get_investments(conn)
+
+    return {
+        'investments': investments, 
+    }
 
 @login_required
 @aiohttp_jinja2.template('admin.html')

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Investments history{% endblock %}
+{% block page_title %}Investments{% endblock %}
+
+{% block content %}
+<div class="row row-cards row-deck">
+  <div class="col-8">
+    <form class="card" method="post" action="/investment/add">
+      <div class="card-body">
+        <h3 class="card-title">Add investment to fund</h3>
+        <div class="row">
+          <div class="col-sm-4 col-md-4">
+            <div class="form-group">
+              <label class="form-label">Amount</label>
+              <input type="number" name="amount" class="form-control" value=0 required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 col-md-6">
+            <div class="form-group">
+              <label class="form-label">Currency</label>
+              <input type="text" name="currency" class="form-control" placeholder="UAH" required>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-6">
+            <div class="form-group">
+              <label class="form-label">Bank name</label>
+              <input type="text" name="bank" class="form-control" placeholder="monobank" required>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer text-right">
+        <button type="submit" class="btn btn-primary">Add</button>
+      </div>
+    </form>
+  </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
+          <thead>
+          <tr>
+            <!--<th class="text-center w-1"><i class="icon-people"></i></th>-->
+            <th>#</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Currency</th>
+            <th>Bank</th>
+            <th>User</th>
+            <th class="text-center"><i class="icon-settings"></i></th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for item in investments %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td><span class="text-muted">{{ item.created | format_datetime }}</span></td>
+                <td>{{ item.amount }}</td>
+                <td>{{ item.currency }}</td>
+                <td>{{ item.bank }}</td>
+                <td>{{ item.user_id }}</td>
+
+                <td class="text-center">
+                  <div class="item-action dropdown">
+                    <a href="javascript:void(0)" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a href="javascript:void(0)" class="dropdown-item"><i class="dropdown-icon fe fe-tag"></i> Waaat?</a>
+                      <div class="dropdown-divider"></div>
+                      <a href="javascript:void(0)" class="dropdown-item"><i class="dropdown-icon fe fe-link"></i> Remove from blacklist</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

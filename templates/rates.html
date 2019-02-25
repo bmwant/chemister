@@ -6,26 +6,26 @@
 {% block content %}
 <div class="row row-cards row-deck">
   <div class="col-8">
-    <form class="card">
+    <form class="card" method="post" action="/rate/add">
       <div class="card-body">
         <h3 class="card-title">Add rate record</h3>
         <div class="row">
           <div class="col-sm-6 col-md-6">
             <div class="form-group">
               <label class="form-label">Rate buy</label>
-              <input type="number" class="form-control" value="1.23">
+              <input type="number" name="rate_buy" class="form-control" value="25.3412" step="0.0001" required>
             </div>
           </div>
           <div class="col-sm-6 col-md-6">
             <div class="form-group">
               <label class="form-label">Rate sale</label>
-              <input type="number" class="form-control" value="2.34">
+              <input type="number" name="rate_sale" class="form-control" value="26.6" step="0.0001" required>
             </div>
           </div>
           <div class="col-sm-6 col-md-6">
             <div class="form-group">
               <label class="form-label">Bank name</label>
-              <input type="text" class="form-control" placeholder="monobank">
+              <input type="text" name="bank" class="form-control" placeholder="monobank" required>
             </div>
           </div>
         </div>
