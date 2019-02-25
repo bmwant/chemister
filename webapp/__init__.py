@@ -77,6 +77,7 @@ def setup_templates(app):
         context_processors=(
             helpers.flash_context_processor,
             helpers.user_context_processor,
+            helpers.date_context_processor,
         )
     )
 

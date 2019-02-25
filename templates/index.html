@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "helpers/_render_bids_table.html" as table %}
+{% import "helpers/_render_bids_table.html" as table with context %}
 
 {% block title %}Dashboard{% endblock %}
 {% block page_title %}Dashboard{% endblock %}
@@ -30,7 +30,7 @@
               <i class="fe fe-chevron-up"></i>
             </div>
             <div class="h1 m-0">43</div>
-            <div class="text-muted mb-4">New Tickets</div>
+            <div class="text-muted mb-4">{{ now }}</div>
           </div>
         </div>
       </div>
