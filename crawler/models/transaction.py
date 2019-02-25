@@ -3,8 +3,7 @@ https://aiopg.readthedocs.io/en/stable/sa.html
 """
 from enum import Enum
 from typing import Iterable
-from operator import attrgetter
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import sqlalchemy as sa
 
@@ -108,6 +107,7 @@ async def get_hanging_transactions(conn):
     whereclause = sa.and_(
         transaction.c.date_closed == None,
         transaction.c.rate_close == None,
+        transaction.c.status == TransactionStatus.HANGING.value,
     )
     query = transaction.select().where(whereclause)
 
@@ -161,3 +161,12 @@ async def close_transaction(
             status=TransactionStatus.WAIT_SALE.value,
         )
     await conn.execute(query)
+
+
+async def remove_transaction(
+    conn,
+    *,
+    t_id,
+):
+    query = transaction.delete(transaction.c.id == t_id)
+    return (await conn.execute(query)).rowcount

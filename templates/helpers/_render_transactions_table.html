@@ -1,5 +1,5 @@
 {% import "helpers/_get_status.html" as status_macro %}
-{% macro render_transactions(header, transactions) -%}
+{% macro render_transactions(header, transactions, collapsed=False) -%}
 <div class="card">
   <div class="card-header">
     <h3 class="card-title">{{ header }}</h3>
@@ -7,11 +7,12 @@
     Rate
     Amount
   </div>
-  <div class="table-responsive">
+  <div class="table-responsive" data-collapsed="{{ 'true' if collapsed else 'false'}}">
     <table class="table card-table table-vcenter text-nowrap">
       <thead>
         <tr>
           <th class="w-1">#</th>
+          <th>Bank</th>
           <th>Amount</th>
           <th>Currency</th>
           <th>Rate buy</th>
@@ -21,26 +22,36 @@
           <th>Closed</th>
           <th>Status</th>
           <th>User</th>
+          {% if transactions and (transactions | first).status == 'hanging' %}
+          <th>Wait days</th>
+          {% elif transactions and (transactions | first).status == 'completed' %}
+          <th>Profit</th>
+          {% else %}
           <th></th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
       {% for t in transactions %}
       <tr class="">
         <td><span class="text-muted">{{ t.id }}</span></td>
+        <td><span class="text-muted">{{ t.bank }}</span></td>
         <td>{{ t.amount }}</td>
         <td>{{ t.currency }}</td>
         <td>{{ t.rate_buy }}</td>
-        <td>{{ t.rate_sale}}</td>
-        <td>{{ t.rate_close if t.rate_close is not none}}</td>
+        <td>{{ t.rate_sale }}</td>
+        <td>{{ t.rate_close if t.rate_close is not none }}</td>
         <td>{{ t.date_opened | format_date }}</td>
         <td>{{ t.date_closed | format_datetime }}</td>
+        <td>{{ status_macro.status(t) }}</td>
         <td>
-          {{ status_macro.status(t) }}
+          <a href="/user/{{ t.user_id }}">user</a>
         </td>
-        <td>
-          <a href="/resource/">user</a>
-        </td>
+        {% if t.status == 'hanging' %}
+        <td>{{ (now - t.date_opened).days }}</td>
+        {% elif t.status == 'completed' %}
+        <td>{{ ((t.rate_close - t.rate_buy) * t.amount) | round(2) }}</td>
+        {% else %}
         <td class="text-right">
           <div class="dropdown">
             <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
@@ -54,11 +65,14 @@
                 <i class="dropdown-icon fe fe-chevrons-left"></i> Confirm sold</a>
               {% endif %}
               <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item">
+              <a href="/transaction/delete/{{ t.id }}"
+                 class="dropdown-item"
+                 onclick="return confirm('Do you want to permanently remove this transaction?')">
                 <i class="dropdown-icon fe fe-x"></i> Delete</a>
             </div>
           </div>
         </td>
+        {% endif %}
       </tr>
       {% endfor %}
       </tbody>

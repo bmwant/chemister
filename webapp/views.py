@@ -101,20 +101,6 @@ async def settings(request):
 
 
 @login_required
-@aiohttp_jinja2.template('phones.html')
-async def phones(request):
-    app = request.app
-    logger = app['logger']
-    engine = app['db']
-    logger.info('Accessing phones page')
-
-    async with engine.acquire() as conn:
-        phones = await get_phones(conn)
-
-    return {'phones': phones}
-
-
-@login_required
 @aiohttp_jinja2.template('statistics.html')
 async def statistics(request):
     app = request.app

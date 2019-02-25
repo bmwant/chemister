@@ -1,6 +1,7 @@
 import hashlib
 import binascii
 import secrets
+from datetime import datetime
 from functools import partial
 
 from aiohttp import web
@@ -76,6 +77,12 @@ async def user_context_processor(request):
 async def flash_context_processor(request):
     return {
         'get_flash': partial(pop_flash, request),
+    }
+
+
+async def date_context_processor(request):
+    return {
+        'now': datetime.now(),
     }
 
 

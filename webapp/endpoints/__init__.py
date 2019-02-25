@@ -5,6 +5,7 @@ from .config_endpoints import (
 from .transaction_endpoints import (
     set_transaction_bought,
     set_transaction_sold,
+    delete_transaction,
 )
 from .chart_endpoints import (
     get_daily_profit_month,

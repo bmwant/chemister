@@ -8,7 +8,7 @@ from aiohttp import web, hdrs
 
 import settings
 from crawler.models.transaction import (
-    transaction,
+    remove_transaction,
     set_transaction_status,
     TransactionStatus,
 )
@@ -62,25 +62,21 @@ async def set_transaction_sold(request):
     flash(request, 'Set sold for transaction [#%s]' % t_id)
     return web.HTTPFound(router['index'].url_for())
 
+
 @login_required
-async def ban_bid_phone(request):
+async def delete_transaction(request):
     app = request.app
     router = app.router
     logger = app['logger']
     engine = app['db']
+    user = app['user']
 
-    bid_id = request.match_info.get('bid_id')
-
+    t_id = request.match_info.get('t_id')
     async with engine.acquire() as conn:
-        bid = await get_bid_by_id(conn, bid_id)
-        logger.info('Adding phone %s to blacklist' % bid.phone)
-        await add_new_phone_to_blacklist(
-            conn,
-            phone_number=bid.phone,
-            reason='Вони дебіли',
-        )
+        await remove_transaction(conn, t_id=t_id)
 
-    return web.HTTPFound(router['phones'].url_for())
+    flash(request, 'Transaction [#%s] was removed' % t_id)
+    return web.HTTPFound(router['index'].url_for())
 
 
 def _dump_field(field):

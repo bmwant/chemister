@@ -134,7 +134,7 @@ class Factory(object):
         return [
             ScheduledTask(
                 task=trader.daily,
-                scheduled_time='09:00',
+                scheduled_time='08:00',
             )
         ]
 
