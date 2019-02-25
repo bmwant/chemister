@@ -1,6 +1,7 @@
-from aiohttp import web, hdrs
+from aiohttp import web
 
 import settings
+from crawler.helpers import get_enum_by_value
 from crawler.models.fund import (
     insert_new_investment,
     Currency,
@@ -19,7 +20,7 @@ async def add_new_investment(request):
 
     form = await request.post()
     amount = float(form['amount'])
-    currency = form['currency']
+    currency = get_enum_by_value(Currency, value=form['currency'])
     bank = form['bank']
 
     logger.info('Adding new investment for user %s' % user.email)
@@ -28,12 +29,12 @@ async def add_new_investment(request):
         investment_id = await insert_new_investment(
             conn,
             amount=amount,
-            currency=Currency.UAH,
+            currency=currency,
             bank=bank,
             user_id=user.id,
         )
         # todo: add event?
 
-    flash(request, 'Investment of %.2f added for user %s' % (
-        amount, user.email))
+    flash(request, 'Investment [#%d] of %.2f added for user %s' % (
+        investment_id, amount, user.email))
     return web.HTTPFound(router['investments'].url_for())

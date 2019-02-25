@@ -4,6 +4,7 @@ from datetime import datetime
 import sqlalchemy as sa
 from sqlalchemy import desc
 
+from crawler.helpers import get_enum_by_value
 from utils import get_logger
 from . import metadata
 from .user import user
@@ -135,11 +136,11 @@ async def process_buy(
             user_id=t.user_id,
         )
         # increase fund in target currency
-        target_currency = ggg(t.currency)
+        target_currency = get_enum_by_value(Currency, value=t.currency)
         await insert_new_fund(
             conn,
             amount=t.amount,
-            currency=t.currency,
+            currency=target_currency,
             bank=t.bank,
             fund_type=FundType.TRADE,
             user_id=t.user_id,
@@ -166,7 +167,7 @@ async def process_sale(
         user_id=t.user_id,
     )
     # decrease fund in target currency
-    currency = ggg(t.currency)
+    currency = get_enum_by_value(Currency, value=t.currency)
     await insert_new_fund(
         conn,
         amount=-t.amount,
