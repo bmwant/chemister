@@ -37,12 +37,17 @@ def setup_routes(app):
         '/transaction/buy/{t_id}', endpoints.set_transaction_bought)
     app.router.add_get(
         '/transaction/sale/{t_id}', endpoints.set_transaction_sold)
+    app.router.add_get(
+        '/transaction/delete/{t_id}', endpoints.delete_transaction)
 
     # export
     # app.router.add_post('/export/csv', endpoints.export_to_csv)
 
     # resource
     app.router.add_get('/resource/{resource_id}', views.resource)
+
+    # user
+    # app.router.add_get
 
     # charts
     app.router.add_get('/charts/get_profit_month',

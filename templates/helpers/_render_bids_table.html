@@ -22,9 +22,9 @@
           <th>Closed</th>
           <th>Status</th>
           <th>User</th>
-          {% if (transactions | first).status == 'hanging' %}
+          {% if transactions and (transactions | first).status == 'hanging' %}
           <th>Wait days</th>
-          {% elif (transactions | first).status == 'completed' %}
+          {% elif transactions and (transactions | first).status == 'completed' %}
           <th>Profit</th>
           {% else %}
           <th></th>
@@ -65,7 +65,9 @@
                 <i class="dropdown-icon fe fe-chevrons-left"></i> Confirm sold</a>
               {% endif %}
               <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item">
+              <a href="/transaction/delete/{{ t.id }}"
+                 class="dropdown-item"
+                 onclick="return confirm('Do you want to permanently remove this transaction?')">
                 <i class="dropdown-icon fe fe-x"></i> Delete</a>
             </div>
           </div>
