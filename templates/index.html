@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "helpers/_render_bids_table.html" as table with context %}
+{% import "helpers/_render_transactions_table.html" as table with context %}
 
 {% block title %}Dashboard{% endblock %}
 {% block page_title %}Dashboard{% endblock %}
@@ -169,7 +169,7 @@
       {% include "components/bids_form.html" %}
 
       <div class="col-12">
-        {{ table.render_transactions("Completed", completed) }}
+        {{ table.render_transactions("Completed", completed, collapsed=True) }}
       </div>
     </div>
   </div>
@@ -180,6 +180,18 @@
 <script>
 require(['jquery'], function($) {
   $(function () {
+
+    $('.table-responsive').each(function(index, item) {
+      var table = $(item);
+      var collapsed = table.data('collapsed');
+      var section = $(this).closest('.bids-section');
+      if (collapsed) {
+        table.hide();
+        section.find('.collapse-button').hide();
+        section.find('.expand-button').show();
+      }
+    });
+
     $('.collapse-button').click(function () {
       var section = $(this).closest('.bids-section');
       var table = section.find('.table-responsive');

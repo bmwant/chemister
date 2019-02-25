@@ -1,5 +1,5 @@
 {% import "helpers/_get_status.html" as status_macro %}
-{% macro render_transactions(header, transactions) -%}
+{% macro render_transactions(header, transactions, collapsed=False) -%}
 <div class="card">
   <div class="card-header">
     <h3 class="card-title">{{ header }}</h3>
@@ -7,7 +7,7 @@
     Rate
     Amount
   </div>
-  <div class="table-responsive">
+  <div class="table-responsive" data-collapsed="{{ 'true' if collapsed else 'false'}}">
     <table class="table card-table table-vcenter text-nowrap">
       <thead>
         <tr>
