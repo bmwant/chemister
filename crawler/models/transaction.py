@@ -88,7 +88,16 @@ class NewTransaction(object):
             self.rate_buy
         )
 
+async def get_transaction_by_id(
+    conn,
+    *,
+    t_id: int,
+):
+    query = transaction.select().where(transaction.c.id == t_id)
+    result = await conn.execute(query)
+    return await result.fetchone()
 
+ 
 async def get_transactions(
     conn,
     *,
