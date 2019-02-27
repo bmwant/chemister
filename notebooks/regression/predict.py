@@ -66,11 +66,12 @@ def visualize(
     plt.figure(figsize=(16, 9))
 
     # Original for the whole range
-    plt.scatter(X_train, y_train,  color='black', s=1)
-    plt.scatter(X_test, y_test,  color='magenta', s=1)
+    plt.scatter(X_train, y_train,  color='black', s=1, label='Train data')
+    plt.scatter(X_test, y_test,  color='magenta', s=1, label='Test data')
 
     # Predicted for the whole range
-    plt.plot(X_test, y_pred, color='cyan', linewidth=2)
+    plt.plot(X_test, y_pred,
+             color='cyan', linewidth=2, label='Predicted values')
     plt.plot(X_train, y_learned, color='blue', linewidth=2)
 
     plt.xlabel('Day number')
