@@ -3,22 +3,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.svm import SVR
 
-import settings
 
-
-def load_data(year=2018):
-    filename = 'uah_to_usd_{year}.csv'.format(year=year)
-    filepath = settings.PROJECT_ROOT / 'notebooks/data' / filename
-    df = pd.read_csv(filepath)
-
-    # y = df['sale'].values.reshape(-1, 1)  # targets
-    y = df['sale'].values
-    X = np.arange(len(y)).reshape(-1, 1)
-    return X, y
+from notebooks.helpers import load_data
 
 
 def main():
-    X, y = load_data()
+    year = 2018
+    X, y = load_data(year=year)
     svr_lin = SVR(kernel='linear', gamma='scale', C=1.0, epsilon=0.2)
     svr_poly = SVR(kernel='poly', C=1e2, degree=2, gamma='scale')
     svr_rbf = SVR(kernel='rbf', C=1.0, gamma=0.1)
@@ -39,7 +30,7 @@ def main():
     plt.xlabel('Day number')
     plt.ylabel('Price')
     plt.legend()
-    plt.title('Rate for 2018')
+    plt.title('Rate for %d' % year)
     plt.show()
 
 

@@ -4,50 +4,52 @@ import pandas as pd
 from sklearn import datasets, linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 
-# Load the diabetes dataset
-diabetes = datasets.load_diabetes()
-
-filename = 'data/uah_to_usd_2018.csv'
-df = pd.read_csv(filename)
-
-# Use only one feature
-diabetes_X = np.arange(0, 365).reshape(-1, 1)
-targets = df['buy'].values.reshape(-1, 1)
-# print(diabetes.target, diabetes.target.shape)
-# import pdb; pdb.set_trace()
-# Split the data into training/testing sets
-diabetes_X_train = diabetes_X[:-20]
-diabetes_X_test = diabetes_X[-20:]
+from notebooks.helpers import load_data
 
 
-# Split the targets into training/testing sets
-diabetes_y_train = targets[:-20]
-diabetes_y_test = targets[-20:]
+def main():
+    year = 2018
+    X, y = load_data(year=year)
 
-# Create linear regression object
-regr = linear_model.LinearRegression()
+    days = 20
+    # Split the data into training/testing sets
+    X_train = X[:-days]
+    X_test = X[-days:]
 
-# Train the model using the training sets
-regr.fit(diabetes_X_train, diabetes_y_train)
+    y_train = y[:-days]
+    y_test = y[-days:]
 
-# Make predictions using the testing set
-diabetes_y_pred = regr.predict(diabetes_X_test)
+    # Create linear regression object
+    regr = linear_model.LinearRegression()
 
-# The coefficients
-print('Coefficients: \n', regr.coef_)
-# The mean squared error
-print("Mean squared error: %.2f"
-      % mean_squared_error(diabetes_y_test, diabetes_y_pred))
-# Explained variance score: 1 is perfect prediction
-print('Variance score: %.2f' % r2_score(diabetes_y_test, diabetes_y_pred))
+    # Train the model using the training sets
+    regr.fit(X_train, y_train)
 
-# Plot outputs
-plt.scatter(diabetes_X_test, diabetes_y_test,  color='black')
-plt.scatter(diabetes_X_train, diabetes_y_train,  color='black')
-plt.plot(diabetes_X_test, diabetes_y_pred, color='blue', linewidth=3)
-plt.plot(diabetes_X_train, diabetes_y_train, color='blue', linewidth=3)
+    # Make predictions using the testing set
+    y_pred = regr.predict(X_test)
 
-# plt.xticks(())
-# plt.yticks(())
+    # The coefficients
+    print('Coefficients: \n', regr.coef_)
+    # The mean squared error
+    print('Mean squared error: %.2f'
+          % mean_squared_error(y_test, y_pred))
+    # Explained variance score: 1 is perfect prediction
+    print('Variance score: %.2f' % r2_score(y_test, y_pred))
 
-plt.show()
+    # Plot outputs
+    plt.figure(figsize=(16, 9))
+    
+    plt.scatter(X_train, y_train,  color='black', s=1)
+    plt.scatter(X_test, y_test,  color='magenta', s=1)
+    plt.plot(X_test, y_pred, color='cyan', linewidth=2)
+    plt.plot(X_train, regr.predict(X_train), color='blue', linewidth=2)
+
+    plt.xlabel('Day number')
+    plt.ylabel('Price')
+    plt.legend()
+    plt.title('Predictions for %d days for %d' % (days, year))
+    plt.show()
+
+
+if __name__ == '__main__':
+    main()
