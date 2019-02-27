@@ -22,8 +22,8 @@ def main():
 
     # Create a bunch of different models
     models = [
-        # linear_model.LinearRegression(),
-        SVR(kernel='rbf', C=1.0, gamma=0.1),
+        linear_model.LinearRegression(),
+        # SVR(kernel='rbf', C=1.0, gamma=0.1),
     ]
 
     for model in models:
@@ -33,6 +33,16 @@ def main():
         y_pred = model.predict(X_test)
         # Get data for the train set to visualize
         y_learned = model.predict(X_train)
+        # For the linear estimator
+        if hasattr(model, 'coef_'):
+            # The coefficients
+            print('Coefficients: \n', model.coef_)
+        # The mean squared error
+        print('Mean squared error: %.2f'
+              % mean_squared_error(y_test, y_pred))
+        # Explained variance score: 1 is perfect prediction
+        print('Variance score: %.2f' % r2_score(y_test, y_pred))
+        # Display chart
         visualize(
             X_train=X_train,
             X_test=X_test,
@@ -43,14 +53,6 @@ def main():
             days=days,
             year=year,
         )
-
-    # # The coefficients
-    # print('Coefficients: \n', regr.coef_)
-    # # The mean squared error
-    # print('Mean squared error: %.2f'
-    #       % mean_squared_error(y_test, y_pred))
-    # # Explained variance score: 1 is perfect prediction
-    # print('Variance score: %.2f' % r2_score(y_test, y_pred))
 
 
 def visualize(
