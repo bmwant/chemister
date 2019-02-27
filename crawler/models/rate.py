@@ -43,6 +43,6 @@ async def insert_new_rate(
 
 
 async def get_rates(conn):
-    query = rate.select()
+    query = rate.select().order_by(sa.desc(rate.c.date))
     result = await conn.execute(query)
     return await result.fetchall()

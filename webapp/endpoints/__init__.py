@@ -12,3 +12,9 @@ from .chart_endpoints import (
     get_bid_statuses_month,
     get_notifications_month,
 )
+from .rate_endpoints import (
+    add_new_rate,
+)
+from .fund_endpoints import (
+    add_new_investment,
+)

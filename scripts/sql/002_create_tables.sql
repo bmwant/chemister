@@ -9,6 +9,10 @@ CREATE TYPE currency AS ENUM (
   'UAH', 'USD'
 );
 
+CREATE TYPE fund_type AS ENUM (
+  'trade', 'invest'
+);
+
 
 CREATE TABLE IF NOT EXISTS resource(
   id            SERIAL          NOT NULL,
@@ -69,10 +73,12 @@ CREATE TABLE IF NOT EXISTS "transaction"(
 CREATE TABLE IF NOT EXISTS fund(
   id            SERIAL          NOT NULL,
   created       TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(2),
+  bank          VARCHAR         NOT NULL    DEFAULT 'default',
   amount        NUMERIC         NOT NULL    DEFAULT 0,
   currency      currency        NOT NULL,
+  fund_type     fund_type       NOT NULL    DEFAULT 'trade',
 --   value          JSON         NOT NULL,
-  user_id   INT             NOT NULL,
+  user_id       INT             NOT NULL,
 
   FOREIGN KEY (user_id) REFERENCES "user" (id),
   PRIMARY KEY (id)
@@ -105,3 +111,6 @@ CREATE TABLE IF NOT EXISTS config(
   FOREIGN KEY (user_id) REFERENCES "user" (id),
   PRIMARY KEY (id)
 );
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO che;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO che;

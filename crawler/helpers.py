@@ -19,6 +19,12 @@ def get_statuses(*args):
     return [*map(attrgetter('value'), args)]
 
 
+def get_enum_by_value(Enum_, value):
+    for name, enum_prop  in Enum_.__members__.items():
+        if enum_prop.value == value:
+            return enum_prop
+
+
 async def load_config(conn):
     result = await conn.execute(
         config_model.select().order_by(desc(config_model.c.created)))

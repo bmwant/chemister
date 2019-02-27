@@ -9,7 +9,7 @@ from crawler.models.bid import (
     ACTIVE_STATUSES,
     GONE_STATUSES,
 )
-from crawler.models.fund import get_current_fund_amount, Currency
+from crawler.models.fund import get_fund, Currency
 
 
 def get_bare_value_for_bids(bids):
@@ -31,9 +31,17 @@ async def collect_statistics(conn):
     current_profit = await get_current_profit(conn)
     expected_profit = total_profit * config.CLOSED_BIDS_FACTOR
 
+    fund_uah = sum([
+        item.amount for item in await get_fund(conn, currency=Currency.UAH)
+    ])
+
+    fund_usd = sum([
+        item.amount for item in await get_fund(conn, currency=Currency.USD)
+    ])
+
     fund = {
-        Currency.UAH.value: await get_current_fund_amount(conn, Currency.UAH),
-        Currency.USD.value: await get_current_fund_amount(conn, Currency.USD),
+        Currency.UAH.value: fund_uah,
+        Currency.USD.value: fund_usd,
     }
 
     return {

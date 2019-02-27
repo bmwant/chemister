@@ -33,8 +33,11 @@ transaction = sa.Table(
     sa.Column('bank', sa.String, nullable=False),
     # Return as floats
     sa.Column('amount', sa.Numeric(asdecimal=False), nullable=False,),
+    # rate bank buying currency (smaller)
     sa.Column('rate_buy', sa.Numeric(asdecimal=False), nullable=False,),
+    # rate bank selling currency (bigger)
     sa.Column('rate_sale', sa.Numeric(asdecimal=False), nullable=False),
+    # rate bank buying currency sometime later (bigger than `rate_sale`)
     sa.Column('rate_close', sa.Numeric(asdecimal=False), nullable=True),
     sa.Column('currency', sa.String, nullable=False),
     sa.Column('date_opened', sa.DateTime, nullable=False, default=datetime.now),
@@ -75,7 +78,7 @@ class NewTransaction(object):
 
     @property
     def price(self):
-        return self.amount * self.rate_buy
+        return self.amount * self.rate_sale
 
     @property
     def sold(self):
@@ -87,6 +90,15 @@ class NewTransaction(object):
             self.amount,
             self.rate_buy
         )
+
+async def get_transaction_by_id(
+    conn,
+    *,
+    t_id: int,
+):
+    query = transaction.select().where(transaction.c.id == t_id)
+    result = await conn.execute(query)
+    return await result.fetchone()
 
 
 async def get_transactions(

@@ -2,6 +2,7 @@ import argparse
 import statistics
 from datetime import datetime, timedelta
 
+import click
 import pandas as pd
 
 from tables import Table
@@ -22,16 +23,21 @@ class Transaction(object):
         if self.verbose:
             print(message)
 
-    def sale(self, rate_sale, dry_run=False):
-        amount = self.amount * rate_sale
+    def sale(self, rate_buy_closing, dry_run=False):
+        if self.sold is True:
+            raise RuntimeError('You cannot sell one transaction twice')
+
+        # amount of money we get when selling a transaction
+        amount = self.amount * rate_buy_closing
         if not dry_run:
-            profit = amount - self.price  # what we gain
+            profit = amount - self.initial_price  # what we gain
             self.log(
-                'Selling {amount:.2f}({rate_buy:.2f}) at {rate_sale:.2f}; '
+                'Selling {amount:.2f} ({rate_sale:.2f}) '
+                'at {rate_buy_closing:.2f}; '
                 'total: {total:.2f}; profit: {profit:.2f}'.format(
                     amount=self.amount,
-                    rate_buy=self.rate_buy,
-                    rate_sale=rate_sale,
+                    rate_sale=self.rate_sale,
+                    rate_buy_closing=rate_buy_closing,
                     total=amount,
                     profit=profit,
                 )
@@ -40,27 +46,28 @@ class Transaction(object):
         return amount
 
     @property
-    def price(self):
-        return self.amount * self.rate_buy
+    def initial_price(self):
+        # Initial price when we are buying from bank
+        return self.amount * self.rate_sale
 
     @property
     def sold(self):
         return self._sold
 
     def __str__(self):
-        return '{}: {:.2f} at {:.2f}'.format(
+        return '{}: {:.2f} at {:.2f} = {:.2f}'.format(
             self.date.strftime(DATE_FMT),
             self.amount,
-            self.rate_buy
+            self.rate_sale,
+            self.initial_price,
         )
 
 
 class ShiftTrader(object):
-    def __init__(self, starting_amount, shift, verbose=True):
+    def __init__(self, verbose=True):
         self.transactions = []  # history of all transactions
-        self.amount = starting_amount  # operation money we use to buy currency
-        self.shift = shift  # days we wait between buying/selling
-        self._min_debt = 0
+        self.amount = 0  # track fund
+        self._min_debt = 0  # max negative delta of a fund
         self._success = []  # success periods
         self._fail = []  # fail periods
         self._strike_data = []
@@ -74,22 +81,27 @@ class ShiftTrader(object):
 
     def trade(self, daily_data):
         date = daily_data['date']
-        # our perspective
-        rate_sale = daily_data['buy']
-        rate_buy = daily_data['sale']
+        # bank's perspective
+        rate_buy = daily_data['buy']
+        rate_sale = daily_data['sale']
         is_success = False  # if today's trade is successful
         for t in self.transactions:
             if (
-                    t.date + timedelta(days=self.shift) == date and
-                    rate_sale > t.rate_buy
+                    t.date <  date and
+                    rate_buy - t.rate_sale > 0 and
+                    not t.sold
             ):
-                self.amount += t.sale(rate_sale)
+                end_amount  = t.sale(rate_buy)
+                self.amount += end_amount
+                message = '<<< {}$ for {:.2f} = {:.2f} UAH'.format(
+                    t.amount,
+                    rate_buy,
+                    end_amount,
+                )
+                click.secho(message, fg='green', bold=True)
                 is_success = True
 
-        # handle expired transactions
-        expired_sold = self.handle_expired(date, rate_sale)
-
-        if is_success or expired_sold:
+        if is_success:
             if self._flag is True:
                 self._strike += 1
             else:
@@ -107,6 +119,7 @@ class ShiftTrader(object):
                 self._success.append(self._strike)
                 self._strike_data.append(self._strike)
                 self._strike = 1
+
         # buy some amount of currency
         t = Transaction(
             rate_buy=rate_buy,
@@ -115,41 +128,31 @@ class ShiftTrader(object):
             date=date,
             verbose=self.verbose,
         )
-        debt = self.amount - t.price
-        # if debt < 0:
-        #    raise ValueError(
-        #       'Cannot buy {:.2f}$. Available: {:.2f}UAH'.format(self.daily_amount, self.amount))
+        debt = self.amount - t.initial_price
+        # Lowest amplitude
         self._min_debt = min(debt, self._min_debt)
 
-        self.amount -= t.price
+        self.amount -= t.initial_price
+        click.secho(
+            '>>> {}$ for {:.2f} = {:.2f} UAH'.format(100, rate_sale, t.initial_price),
+            fg='blue', bold=True)
         self.transactions.append(t)
         self.log('Amount in the end of the day: {:.2f}'.format(self.amount))
 
-    def handle_expired(self, date, rate_sale):
-        expired_sold = False  # any expired transaction was sold
-        for t in self.transactions:
-            if (
-                    t.date + timedelta(days=self.shift) < date and
-                    rate_sale > t.rate_buy and
-                    not t.sold
-            ):
-                self.log('Selling expired {}'.format(t))
-                self.amount += t.sale(rate_sale)
-                expired_sold = True
-        return expired_sold
-
-    def close(self, rate_sale_closing):
-        """Sell all hanging transaction for the rate specified"""
-        self.log('Closing trading for {} transactions'.format(len(self.hanging)))
+    def close(self, rate_buy_closing):
+        """Sell all hanging transaction to the bank for the rate specified"""
+        self.log(
+            'Closing trading for {} transactions'.format(len(self.hanging)))
         for t in self.hanging:
-            self.amount += t.sale(rate_sale_closing)
+            self.amount += t.sale(rate_buy_closing)
 
     @property
     def daily_amount(self):
         return 100
 
-    def get_potential(self, rate_sale):
-        return self.amount + sum([t.sale(rate_sale, dry_run=True)
+    def get_potential(self, rate_buy_today):
+        """Suppose we sell all our transactions to the bank and today's rate"""
+        return self.amount + sum([t.sale(rate_buy_today, dry_run=True)
                                   for t in self.hanging])
 
     @property
@@ -157,38 +160,27 @@ class ShiftTrader(object):
         return list(filter(lambda t: not t.sold, self.transactions))
 
 
-def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
-    """
-    :param year: year we want to launch our algorithm on
-    :param starting_amount_uah: how much we initially invest
-    :param shift: days shift to wait before selling transaction
-    :return:
-    """
+def launch_trading(*, year, verbose=True):
     currency = 'usd'
     filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
     df = pd.read_csv(filename)
     df['date'] = pd.to_datetime(df['date'], format=DATE_FMT)
     sd = datetime.strptime('01.01.{}'.format(year), DATE_FMT)
-    ed = datetime.strptime('07.01.{}'.format(year), DATE_FMT)
+    # ed = datetime.strptime('01.02.{}'.format(year), DATE_FMT)
 
     # Get end date
-    # last_date_value = df.iloc[[-1]]['date'].item()
-    # pd_date = pd.to_datetime(last_date_value)
-    # ed = pd_date.to_pydatetime()
+    last_date_value = df.iloc[[-1]]['date'].item()
+    pd_date = pd.to_datetime(last_date_value)
+    ed = pd_date.to_pydatetime()
 
     print('Trading at period: [{} - {}]'.format(sd, ed))
 
-    trader = ShiftTrader(
-        starting_amount=starting_amount_uah,
-        shift=shift,
-        verbose=verbose,
-    )
+    trader = ShiftTrader(verbose=verbose)
 
     i = 0
-
+    starting_amount_uah = 0
     s = {  # stats
         'year': year,
-        'shift': shift,
         'k1_return': None,
         'k1_return_soft': None,
         'k5_return': None,
@@ -209,12 +201,13 @@ def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
     }
 
     current_date = sd  # starting date
+    rate_buy_closing = None
     while current_date <= ed:  # until end date
-        rate_sale = df.loc[df['date'] == current_date]['sale'].item()
         rate_buy = df.loc[df['date'] == current_date]['buy'].item()
+        rate_sale = df.loc[df['date'] == current_date]['sale'].item()
         if verbose:
             print(
-                '\n==>{}: {:.2f}/{:.2f}'.format(
+                '\n==> {}: {:.2f}/{:.2f}'.format(
                     current_date.strftime(DATE_FMT),
                     rate_buy,
                     rate_sale,
@@ -223,15 +216,16 @@ def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
 
         daily_data = {
             'date': current_date,
-            'buy': rate_sale,  # we buy currency, bank sale currency
-            'sale': rate_buy,  # we sale currency, bank buy currency
+            'buy': rate_buy,  # we buy currency, bank sale currency
+            'sale': rate_sale,  # we sale currency, bank buy currency
         }
-        potential = trader.get_potential(rate_buy)
 
+        trader.trade(daily_data)
+
+        potential = trader.get_potential(rate_buy)
         if verbose:
             print('Potential = {:.2f}'.format(potential))
 
-        trader.trade(daily_data)
         days_passed = current_date - sd  # how many days passed since start
         if s['exit_period'] is None and potential > starting_amount_uah:
             s['exit_period'] = days_passed
@@ -250,11 +244,12 @@ def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
 
         i += 1
         current_date += timedelta(days=1)
+        rate_buy_closing = rate_buy
 
     s['hanging'] = len(trader.hanging)
     # close period at the last day no matter which rate
     # in order to calculate raw profit
-    trader.close(rate_buy)
+    trader.close(rate_buy_closing)
 
     # sell every purchased transaction
     s['transactions'] = 2 * len(trader.transactions)
@@ -273,10 +268,7 @@ def launch_trading(*, year, starting_amount_uah, shift, verbose=True):
 def print_stats(stats):
     starting_amount = stats['starting_amount']
     debt = stats['debt']
-    print(
-        '\n#### Report for {year} year. '
-        'Shift: {shift} ####\n'.format(**stats)
-    )
+    print('\n#### Report for {year} year ####\n'.format(year=stats['year']))
     print('Minimal investment needed: {:.2f} UAH'.format(starting_amount-debt))
 
     print('\n#### Return/exit periods ####\n')
@@ -316,15 +308,17 @@ def print_stats(stats):
         print('Cannot exit within given period\n')
 
     print('\n#### Strikes ####\n')
+    success = stats['success']
+    fail = stats['fail']
     print('Periods: {}'.format(len(stats['strikes'])))
-    print('Success: {}'.format(len(stats['success'])))
-    print('\tShortest: {}'.format(min(stats['success'])))
-    print('\tLongest: {}'.format(max(stats['success'])))
-    print('\tMean: {:.2f}'.format(statistics.mean(stats['success'])))
-    print('Fail: {}'.format(len(stats['fail'])))
-    print('\tShortest: {}'.format(min(stats['fail'])))
-    print('\tLongest: {}'.format(max(stats['fail'])))
-    print('\tMean: {:.2f}'.format(statistics.mean(stats['fail'])))
+    print('Success: {}'.format(len(success)))
+    print('\tShortest: {}'.format(min(success) if success else 0))
+    print('\tLongest: {}'.format(max(success) if success else 0))
+    print('\tMean: {:.2f}'.format(statistics.mean(success) if success else 0))
+    print('Fail: {}'.format(len(fail)))
+    print('\tShortest: {}'.format(min(fail) if fail else 0))
+    print('\tLongest: {}'.format(max(fail) if fail else 0))
+    print('\tMean: {:.2f}'.format(statistics.mean(fail) if fail else 0))
 
     print('\n#### Transactions ####\n')
     print('Total transactions: {}'.format(stats['transactions']))
@@ -335,7 +329,8 @@ def print_stats(stats):
     print('Initial invested amount: {} UAH'.format(starting_amount))
     print('Amount we have in the end: {:.2f} UAH'.format(end_amount))
     print('Raw profit: {:.2f} UAH'.format(end_amount-starting_amount))
-    print('Profit, %: {:.2f}'.format(end_amount / starting_amount * 100))
+    if starting_amount:
+        print('Profit, %: {:.2f}'.format((end_amount / starting_amount * 100)))
 
 
 def build_shift_comparison_table(year):
@@ -371,26 +366,12 @@ def build_shift_comparison_table(year):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='TradeAlgo#02v0')
+    parser = argparse.ArgumentParser(description='TradeAlgo#02v1')
     parser.add_argument(
         '--year',
         required=True,
         type=int,
         help='which year you want to analyze',
-    )
-    parser.add_argument(
-        '--shift',
-        required=False,
-        default=1,
-        type=int,
-        help='minimal delay between buying and selling',
-    )
-    parser.add_argument(
-        '--amount',
-        required=False,
-        default=10000,
-        type=int,
-        help='amount of money you want to initially invest',
     )
     args = parser.parse_args()
     return args
@@ -400,8 +381,6 @@ if __name__ == '__main__':
     args = parse_args()
     launch_trading(
         year=args.year,
-        shift=args.shift,
-        starting_amount_uah=args.amount,
     )
 
     # build_shift_comparison_table(year=args.year)

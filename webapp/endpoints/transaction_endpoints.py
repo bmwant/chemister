@@ -7,6 +7,10 @@ import dateparser
 from aiohttp import web, hdrs
 
 import settings
+from crawler.models.fund import (
+    process_buy,
+    process_sale,
+)
 from crawler.models.transaction import (
     remove_transaction,
     set_transaction_status,
@@ -29,14 +33,19 @@ async def set_transaction_bought(request):
 
     async with engine.acquire() as conn:
         # todo: get or 404
-        await set_transaction_status(
-            conn,
-            t_id=t_id,
-            status=TransactionStatus.HANGING,
-        )
+        buy_result = await process_buy(conn, t_id=t_id)
+        if buy_result is True:
+            await set_transaction_status(
+                conn,
+                t_id=t_id,
+                status=TransactionStatus.HANGING,
+            )
+            flash(request, 'Set bought for transaction [#%s]' % t_id)
+        else:
+            flash(request,
+                  'Cannot buy transaction [#%s]. Insufficiend fund' % t_id)
         # todo: add event?
 
-    flash(request, 'Set bought for transaction [#%s]' % t_id)
     return web.HTTPFound(router['index'].url_for())
 
 
@@ -52,6 +61,7 @@ async def set_transaction_sold(request):
 
     async with engine.acquire() as conn:
         # todo: get or 404
+        sale_result = await process_sale(conn, t_id=t_id)
         await set_transaction_status(
             conn,
             t_id=t_id,

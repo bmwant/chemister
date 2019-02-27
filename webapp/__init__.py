@@ -22,7 +22,6 @@ def setup_routes(app):
     app.router.add_get('/check', views.check_refresh_done)
     app.router.add_get('/settings', views.settings, name='settings')
     app.router.add_get('/statistics', views.statistics, name='statistics')
-    app.router.add_get('/rates', views.rates, name='rates')
     app.router.add_get('/admin', views.control_panel, name='admin')
     app.router.add_get('/login', views.login, name='login')
     app.router.add_post('/do_login', views.do_login)
@@ -30,6 +29,15 @@ def setup_routes(app):
 
     app.router.add_post('/config/save', endpoints.save_config)
     app.router.add_get('/config/delete/{config_id}', endpoints.delete_config)
+
+    # fund
+    app.router.add_get('/investments', views.investments, name='investments')
+    app.router.add_post(
+        '/investment/add', endpoints.add_new_investment)
+
+    # rates
+    app.router.add_get('/rates', views.rates, name='rates')
+    app.router.add_post('/rate/add', endpoints.add_new_rate)
 
     # transaction
     # todo: make post and ajax
