@@ -1,9 +1,36 @@
 import random
+import operator
 from abc import ABC, abstractmethod
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
+from tqdm import tqdm
+
+
+ENVIRONMENT = [
+    (40, 1),
+    (35, 1),
+    (42, 1),
+    (37, 1),
+    (34, 1),
+    (33, 1),
+    (39, 1),
+    (44, 1),
+    (41, 1),
+    (45, 1),
+]
+
+
+ACTIONS = (
+    (30, 0),  # buy 30L without driving
+    (20, 0),
+    (10, 0),
+    (0, 0),  # have some rest
+    (-10, 10),
+    (-20, 20),
+    (-30, 30),  # burn 30L of fuel to drive 30 km
+)
 
 
 class EnvData(object):
@@ -18,24 +45,17 @@ class BaseAgent(ABC):
         self.lip = lip  # verbose
 
     @abstractmethod
-    def take_action(self, *args, **kwargs):
+    def take_action(self, *args, **kwargs) -> int:
         pass
 
 
 class RandomActionDriver(BaseAgent):
-    def take_action(self, *, tank, money, distance, data):
-        actions = (
-            (30, 0),
-            (20, 0),
-            (10, 0),
-            (0, 0),
-            (-10, 10),
-            (-20, 20),
-            (-30, 30),
-        )
+    def take_action(self, *, tank, money, distance, data) -> int:
+
         # choose random action until it's valid
         while True:
-            d_tank, d_distance = random.choice(actions)
+            action_num = random.randrange(len(ACTIONS))
+            d_tank, d_distance = ACTIONS[action_num]
             if tank + d_tank >= 0:
                 if self.lip:
                     print('\nTime: %d' % data.step)
@@ -46,11 +66,7 @@ class RandomActionDriver(BaseAgent):
                     else:
                         print('>>> Having some rest')
 
-                return (
-                    tank + d_tank,
-                    money - data.gas_price*d_tank,
-                    distance + d_distance/data.consumption
-                )
+                return action_num
 
 
 class Car(object):
@@ -61,15 +77,35 @@ class Car(object):
         self.driver = driver
 
     def step(self, data):
-        tank, money, distance = self.driver.take_action(
+        action_num = self.driver.take_action(
             tank=self.tank,
             money=self.money,
             distance=self.distance,
             data=data,
         )
+
+        d_tank, d_distance = ACTIONS[action_num]
+        if d_tank > 0:
+            money = self.money - data.gas_price*d_tank
+        else:
+            money = self.money
+        tank = self.tank + d_tank
+        distance = self.distance + d_distance/data.consumption
+
+        data_row = (
+            data.gas_price,
+            data.consumption,
+            self.money,
+            self.tank,
+            self.distance,
+            action_num,
+        )
+
         self.tank_history.append(tank)
         self.distance_history.append(distance)
         self.fund_history.append(money)
+
+        return data_row
 
     @property
     def distance(self):
@@ -117,25 +153,13 @@ def show_history(tank, distance, money):
     plt.show()
 
 
-def main():
+def sample_play():
     """
     Simulate our trip containing just 10 steps
     """
-    environment = [
-        (40, 1),
-        (35, 1),
-        (42, 1),
-        (37, 1),
-        (34, 1),
-        (33, 1),
-        (39, 1),
-        (44, 1),
-        (41, 1),
-        (45, 1),
-    ]
     driver = RandomActionDriver(lip=True)  # driver loves to talk
     car = Car(driver=driver)
-    for i, (gas_price, consumption) in enumerate(environment):
+    for i, (gas_price, consumption) in enumerate(ENVIRONMENT):
         env_data = EnvData(
             step=i,
             gas_price=gas_price,
@@ -146,11 +170,56 @@ def main():
     print('We have driven %d km' % car.distance)
     print('We have spent %.2f$' % car.money)
     show_history(
-        tank=car.tank_history, 
+        tank=car.tank_history,
         distance=car.distance_history,
         money=car.fund_history,
     )
 
 
+def collect_data():
+    """
+    Select top 1K games to train neural network on it later.
+    """
+    TOP_GAMES = 1000
+    NUM_GAMES = 10000
+    driver = RandomActionDriver()
+    data = []
+    for n in tqdm(range(NUM_GAMES)):
+        # Reset env
+        car = Car(driver=driver)
+        game_data = []
+        for i, (gas_price, consumption) in enumerate(ENVIRONMENT):
+            env_data = EnvData(
+                step=i,
+                gas_price=gas_price,
+                consumption=consumption,
+            )
+            row = car.step(env_data)
+            game_data.append(row)
+
+        coef = car.distance /(-car.money)  # ride efficiency
+        data.append((coef, game_data))
+
+    # Choose games with best efficiency
+    top_data = sorted(data,
+                      key=operator.itemgetter(0), reverse=True)[:TOP_GAMES]
+    return top_data
+
+
+def write_data(data):
+    df_data = []
+    for coef, game_data in data:
+        for row in game_data:
+            df_data.append(row)
+
+    df = pd.DataFrame(df_data)
+
+    # print(df.head(100))
+    df.to_csv('play_data.csv', index=False, header=False)
+
+
+
 if __name__ == '__main__':
-    main()
+    # sample_play()
+    data = collect_data()
+    write_data(data)
