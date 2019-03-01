@@ -57,8 +57,8 @@ class Car(object):
     def __init__(self, driver: BaseAgent):
         self.tank_history = []
         self.distance_history = []
+        self.fund_history = []
         self.driver = driver
-        self.money = 0
 
     def step(self, data):
         tank, money, distance = self.driver.take_action(
@@ -69,7 +69,7 @@ class Car(object):
         )
         self.tank_history.append(tank)
         self.distance_history.append(distance)
-        self.money = money
+        self.fund_history.append(money)
 
     @property
     def distance(self):
@@ -79,26 +79,39 @@ class Car(object):
     def tank(self):
         return self.tank_history[-1] if self.tank_history else 0
 
+    @property
+    def money(self):
+        return self.fund_history[-1] if self.fund_history else 0
 
-def show_history(tank, distance):
+
+def show_history(tank, distance, money):
     # fig, ax = plt.subplots(figsize=(12, 8))
     t = np.arange(0, len(tank))
 
-    fig, axs = plt.subplots(2, 1)
+    fig, axs = plt.subplots(3, 1)
     fig.canvas.set_window_title('RL Driver')
-    axs[0].plot(t, tank)
-    axs[0].set_title('Tank volume')
-    axs[0].set_xlabel('step, t')
-    axs[0].set_ylabel('volume, l')
-    axs[0].xaxis.set_ticks(t)
-    axs[0].grid(True)
+    tank_axs, dist_axs, money_axs = axs
+    tank_axs.plot(t, tank)
+    tank_axs.set_title('Tank volume')
+    tank_axs.set_xlabel('step, t')
+    tank_axs.set_ylabel('volume, l')
+    tank_axs.xaxis.set_ticks(t)
+    tank_axs.grid(True)
 
-    axs[1].plot(t, distance)
-    axs[1].set_title('Distance travelled')
-    axs[1].set_xlabel('step, t')
-    axs[1].set_ylabel('distance, km')
-    axs[1].xaxis.set_ticks(t)
-    axs[1].grid(True)
+    dist_axs.plot(t, distance)
+    dist_axs.set_title('Distance travelled')
+    dist_axs.set_xlabel('step, t')
+    dist_axs.set_ylabel('distance, km')
+    dist_axs.xaxis.set_ticks(t)
+    dist_axs.grid(True)
+
+    money = list(map(lambda x: -x, money))
+    money_axs.plot(t, money)
+    money_axs.set_title('Money spent')
+    money_axs.set_xlabel('step, t')
+    money_axs.set_ylabel('money, $')
+    money_axs.xaxis.set_ticks(t)
+    money_axs.grid(True)
 
     fig.tight_layout()
     plt.show()
@@ -131,7 +144,12 @@ def main():
         car.step(env_data)
 
     print('We have driven %d km' % car.distance)
-    show_history(tank=car.tank_history, distance=car.distance_history)
+    print('We have spent %.2f$' % car.money)
+    show_history(
+        tank=car.tank_history, 
+        distance=car.distance_history,
+        money=car.fund_history,
+    )
 
 
 if __name__ == '__main__':
