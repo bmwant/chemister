@@ -35,5 +35,6 @@ statsmodels = "*"
 requests = "*"
 scikit-learn = "*"
 terminaltables = "*"
+tqdm = "*"
 
 [dev-packages]
