@@ -228,7 +228,7 @@ def collect_data():
             row = car.step(env_data)
             game_data.append(row)
 
-        coef = car.distance ** 2 / math.log(-car.money)  # ride efficiency
+        coef = car.distance / math.log(-car.money)  # ride efficiency
         data.append((coef, game_data))
 
     # Choose games with best efficiency
