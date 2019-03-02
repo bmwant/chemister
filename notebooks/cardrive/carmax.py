@@ -1,3 +1,4 @@
+import math
 import random
 import operator
 from abc import ABC, abstractmethod
@@ -47,6 +48,23 @@ class BaseAgent(ABC):
     @abstractmethod
     def take_action(self, *args, **kwargs) -> int:
         pass
+
+
+class NNBasedDriver(BaseAgent):
+    def __init__(self, model, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.model = model
+
+    def take_action(self, *, tank, money, distance, data) -> int:
+        input_data = np.array([[
+            data.gas_price,
+            data.consumption,
+            money,
+            tank,
+            distance,
+        ]])
+        prediction = self.model.predict(input_data)
+        return np.argmax(prediction)
 
 
 class RandomActionDriver(BaseAgent):
@@ -153,12 +171,11 @@ def show_history(tank, distance, money):
     plt.show()
 
 
-def sample_play():
+def play_trip(agent):
     """
     Simulate our trip containing just 10 steps
     """
-    driver = RandomActionDriver(lip=True)  # driver loves to talk
-    car = Car(driver=driver)
+    car = Car(driver=agent)
     for i, (gas_price, consumption) in enumerate(ENVIRONMENT):
         env_data = EnvData(
             step=i,
@@ -169,11 +186,25 @@ def sample_play():
 
     print('We have driven %d km' % car.distance)
     print('We have spent %.2f$' % car.money)
+    print('Efficiency %.2f' % (car.distance / math.log(-car.money)))
     show_history(
         tank=car.tank_history,
         distance=car.distance_history,
         money=car.fund_history,
     )
+
+
+def random_play():
+    driver = RandomActionDriver(lip=True)
+    play_trip(agent=driver)
+
+
+def nn_play():
+    from carmax_nn import create_model
+    model = create_model()
+    model.load('nn01model.tflearn')
+    driver = NNBasedDriver(model=model)
+    play_trip(driver)
 
 
 def collect_data():
@@ -197,7 +228,7 @@ def collect_data():
             row = car.step(env_data)
             game_data.append(row)
 
-        coef = car.distance /(-car.money)  # ride efficiency
+        coef = car.distance / math.log(-car.money)  # ride efficiency
         data.append((coef, game_data))
 
     # Choose games with best efficiency
@@ -220,6 +251,7 @@ def write_data(data):
 
 
 if __name__ == '__main__':
-    # sample_play()
-    data = collect_data()
-    write_data(data)
+    # random_play()
+    nn_play()
+    # data = collect_data()
+    # write_data(data)
