@@ -1,3 +1,5 @@
 fbprophet==0.4.post2
 scikit-learn==0.20.2
 tqdm==4.31.1
+graphviz==0.10.1
+neat-python==0.92
