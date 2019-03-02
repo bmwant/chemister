@@ -72,7 +72,7 @@ def visualize(
     # Predicted for the whole range
     plt.plot(X_test, y_pred,
              color='cyan', linewidth=2, label='Predicted values')
-    plt.plot(X_train, y_learned, color='blue', linewidth=2)
+    plt.plot(X_train, y_learned, color='blue', linewidth=2, label='Learned')
 
     plt.xlabel('Day number')
     plt.ylabel('Price')

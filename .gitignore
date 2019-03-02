@@ -102,3 +102,9 @@ venv.bak/
 node_modules/
 settings_local.py
 .DS_Store
+
+neat-checkpoint-*
+*.index
+*.meta
+*.data-*
+checkpoint
