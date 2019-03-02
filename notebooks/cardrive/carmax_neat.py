@@ -1,6 +1,3 @@
-"""
-2-input XOR example -- this is most likely the simplest possible example.
-"""
 import os
 import math
 
@@ -8,7 +5,7 @@ import neat
 import numpy as np
 
 import visualize
-from carmax import BaseAgent, play_trip
+from carmax import ACTIONS, BaseAgent, play_trip 
 
 
 # inputs = [
@@ -52,7 +49,12 @@ class NeatDriver(BaseAgent):
             distance,
         ]
         output = self.net.activate(input_data)
-        return np.argmax(output)
+        actions_order = np.argsort(output)
+        # check if action is valid
+        for i in np.flip(actions_order):
+            d_tank, d_distance = ACTIONS[i]
+            if tank + d_tank >= 0:
+                return i
 
 
 def eval_genomes(genomes, config):
@@ -90,7 +92,7 @@ def run(config_file):
     winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
 
     print('\nPlaying game with best genome:')
-    driver = NeatDriver(net=winner_net)
+    driver = NeatDriver(net=winner_net, lip=True)
     play_trip(driver, verbose=True)
 
     node_names = {-1:'A', -2: 'B', 0:'A XOR B'}

@@ -64,7 +64,11 @@ class NNBasedDriver(BaseAgent):
             distance,
         ]])
         prediction = self.model.predict(input_data)
-        return np.argmax(prediction)
+        actions_order = np.flip(np.argsort(prediction))
+        for i in actions_order:
+            d_tank, d_distance = ACTIONS[i]
+            if tank + d_tank >= 0:
+                return i
 
 
 class RandomActionDriver(BaseAgent):
@@ -75,15 +79,6 @@ class RandomActionDriver(BaseAgent):
             action_num = random.randrange(len(ACTIONS))
             d_tank, d_distance = ACTIONS[action_num]
             if tank + d_tank >= 0:
-                if self.lip:
-                    print('\nTime: %d' % data.step)
-                    if d_tank > 0:
-                        print('>>> Buying %d L of a fuel' % d_tank)
-                    elif d_distance:
-                        print('>>> Travelling %d km' % d_distance)
-                    else:
-                        print('>>> Having some rest')
-
                 return action_num
 
 
@@ -122,8 +117,22 @@ class Car(object):
         self.tank_history.append(tank)
         self.distance_history.append(distance)
         self.fund_history.append(money)
+        self.status(step=data.step, action_num=action_num)
 
         return data_row
+
+    def status(self, step, action_num):
+        if not self.driver.lip:
+            return
+        d_tank, d_distance = ACTIONS[action_num]
+        print('\nTime: %d' % step)
+        if d_tank > 0:
+            print('>>> Buying %d L of a fuel' % d_tank)
+        elif d_distance:
+            print('>>> Travelling %d km' % d_distance)
+        else:
+            print('>>> Having some rest')
+        print('$$$ %.2f' % self.money)
 
     @property
     def distance(self):
@@ -188,6 +197,7 @@ def play_trip(agent, verbose=False) -> float:
     fitness = car.distance / math.log(-car.money) if car.money else 0
 
     if verbose:
+        print('\n### Summary ###')
         print('We have driven %d km' % car.distance)
         print('We have spent %.2f$' % car.money)
         print('Efficiency %.2f' % fitness)
@@ -202,15 +212,19 @@ def play_trip(agent, verbose=False) -> float:
 
 def random_play():
     driver = RandomActionDriver(lip=True)
-    play_trip(agent=driver)
+    play_trip(agent=driver, verbose=True)
 
 
 def nn_play():
     from carmax_nn import create_model
     model = create_model()
     model.load('nn01model.tflearn')
-    driver = NNBasedDriver(model=model)
-    play_trip(driver)
+    driver = NNBasedDriver(model=model, lip=True)
+    play_trip(agent=driver, verbose=True)
+
+
+def neat_play():
+    pass
 
 
 def collect_data():
