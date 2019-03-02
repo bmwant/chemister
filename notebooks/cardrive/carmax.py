@@ -171,7 +171,7 @@ def show_history(tank, distance, money):
     plt.show()
 
 
-def play_trip(agent):
+def play_trip(agent, verbose=False) -> float:
     """
     Simulate our trip containing just 10 steps
     """
@@ -184,14 +184,20 @@ def play_trip(agent):
         )
         car.step(env_data)
 
-    print('We have driven %d km' % car.distance)
-    print('We have spent %.2f$' % car.money)
-    print('Efficiency %.2f' % (car.distance / math.log(-car.money)))
-    show_history(
-        tank=car.tank_history,
-        distance=car.distance_history,
-        money=car.fund_history,
-    )
+    # How good agent was behaving for the trip
+    fitness = car.distance / math.log(-car.money) if car.money else 0
+
+    if verbose:
+        print('We have driven %d km' % car.distance)
+        print('We have spent %.2f$' % car.money)
+        print('Efficiency %.2f' % fitness)
+        show_history(
+            tank=car.tank_history,
+            distance=car.distance_history,
+            money=car.fund_history,
+        )
+
+    return fitness
 
 
 def random_play():
