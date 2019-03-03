@@ -1,8 +1,11 @@
 import os
+import gzip
 import math
+import pickle
 
 import neat
 import numpy as np
+from neat.reporting import BaseReporter
 
 import visualize
 from carmax import ACTIONS, BaseAgent, play_trip 
@@ -33,6 +36,18 @@ from carmax import ACTIONS, BaseAgent, play_trip
 #     (0, 0, 0, 0, 0, 1, 0),
 #     (0, 0, 0, 1, 0, 0, 0),
 # ]
+
+# Run for up to N generations.
+EPOCHS = 100
+MODEL_FILENAME = 'nn01model.neat'
+
+
+class WinnerReporter(BaseReporter):
+    def found_solution(self, config, generation, best):
+        winner_net = neat.nn.FeedForwardNetwork.create(best, config)
+        print('Saving model...')
+        with gzip.open(MODEL_FILENAME, 'w', compresslevel=5) as f:
+            pickle.dump(winner_net, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 class NeatDriver(BaseAgent):
@@ -78,17 +93,13 @@ def run(config_file):
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(5))
+    p.add_reporter(WinnerReporter())
 
-    # Run for up to N generations.
-    epochs = 10
-    winner = p.run(eval_genomes, epochs)
+    winner = p.run(eval_genomes, EPOCHS)
 
     # Display the winning genome.
     print('\nBest genome:\n{!s}'.format(winner))
 
-    # Show output of the most fit genome against training data.
-    print('\nOutput:')
     winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
 
     print('\nPlaying game with best genome:')
@@ -114,8 +125,11 @@ def run(config_file):
     # visualize.plot_stats(stats, ylog=False, view=True)
     # visualize.plot_species(stats, view=True)
 
-    # p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-4')
-    # p.run(eval_genomes, 10)
+
+def load_net():
+    with gzip.open(MODEL_FILENAME) as f:
+        net = pickle.load(f)
+    return net
 
 
 if __name__ == '__main__':
