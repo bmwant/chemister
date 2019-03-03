@@ -59,7 +59,6 @@ class NeatDriver(BaseAgent):
 
 def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
-        genome.fitness = 4.0
         net = neat.nn.FeedForwardNetwork.create(genome, config)
         driver = NeatDriver(net=net)
         fitness = play_trip(agent=driver, verbose=False)
@@ -81,8 +80,9 @@ def run(config_file):
     p.add_reporter(stats)
     p.add_reporter(neat.Checkpointer(5))
 
-    # Run for up to 300 generations.
-    winner = p.run(eval_genomes, 300)
+    # Run for up to N generations.
+    epochs = 10
+    winner = p.run(eval_genomes, epochs)
 
     # Display the winning genome.
     print('\nBest genome:\n{!s}'.format(winner))
@@ -95,10 +95,24 @@ def run(config_file):
     driver = NeatDriver(net=winner_net, lip=True)
     play_trip(driver, verbose=True)
 
-    node_names = {-1:'A', -2: 'B', 0:'A XOR B'}
-    visualize.draw_net(config, winner, True, node_names=node_names)
-    visualize.plot_stats(stats, ylog=False, view=True)
-    visualize.plot_species(stats, view=True)
+    node_names = {
+        -1: 'gas price', 
+        -2: 'consumption', 
+        -3: 'money',
+        -4: 'tank',
+        -5: 'distance',
+        # actions
+        0: 'buy 30',
+        1: 'buy 20',
+        2: 'buy 10',
+        3: 'rest',
+        4: 'go 10',
+        5: 'go 20',
+        6: 'go 30',
+    }
+    visualize.draw_net(config, winner, True, node_names=node_names) 
+    # visualize.plot_stats(stats, ylog=False, view=True)
+    # visualize.plot_species(stats, view=True)
 
     # p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-4')
     # p.run(eval_genomes, 10)
