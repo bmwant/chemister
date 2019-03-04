@@ -53,3 +53,17 @@ class Transaction(object):
             self.rate_sale,
             self.initial_price,
         )
+
+
+class DailyData(object):
+    def __init__(self, day: int, rate_buy: float, rate_sale: float):
+        self.step = day
+        self.rate_buy = rate_buy
+        self.rate_sale = rate_sale
+
+    def __str__(self):
+        return '{day}: {buy:.2f}/{sale:.2f}'.format(
+            day=self.step,
+            buy=self.rate_buy,
+            sale=self.rate_sale,
+        )
