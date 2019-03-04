@@ -17,7 +17,7 @@ from notebooks.algo.agent import IDLE_ACTION_INDEX, ACTIONS
 
 def get_data():
     num_actions = len(ACTIONS)
-    df = pd.read_csv('random_trade_best_data.csv', header=None)
+    df = pd.read_csv('hindsight_trade_best_data.csv', header=None)
     X = df.loc[:,0:4].to_numpy()  # select first 5 rows
     actions = df.iloc[:,-1]  # select last row
     # convert actions to softmax format

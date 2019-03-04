@@ -9,19 +9,14 @@ import pandas as pd
 
 from notebooks.helpers import DATE_FMT
 from notebooks.algo import Transaction, DailyData
-from notebooks.algo.agent import BaseAgent, evaluate_agent, ACTIONS
+from notebooks.algo.agent import BaseTrader, evaluate_agent
+from notebooks.algo.agent import IDLE_ACTION_INDEX, ACTIONS
 
 
 MAX_WORKERS = 50  # number of threads to evaluate agents in parallel
 
 
-class RandomActionTrader(BaseAgent):
-    def __init__(self, amount, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.amount_uah = amount
-        self._starting_amount_uah = amount
-        self.amount_usd = 0
-
+class RandomActionTrader(BaseTrader):
     def take_action(self, *, amount_uah, amount_usd, daily_data) -> int:
         rate_buy = daily_data.rate_buy
         rate_sale = daily_data.rate_sale
@@ -42,65 +37,30 @@ class RandomActionTrader(BaseAgent):
         # just do nothing
         return len(ACTIONS) - 1
 
-    def trade(self, daily_data):
-        action_num = self.take_action(
-            amount_uah=self.amount_uah,
-            amount_usd=self.amount_usd,
-            daily_data=daily_data,
-        )
-        d_buy, d_sale = ACTIONS[action_num]
 
+class HindsightTrader(BaseTrader):
+    def take_action(self, *, amount_uah, amount_usd, daily_data) -> int:
         rate_buy = daily_data.rate_buy
         rate_sale = daily_data.rate_sale
 
-        # Collect train data
-        data_row = (
-            rate_buy,
-            rate_sale,
-            self.amount_uah,
-            self.amount_usd,
-            self.profit,
-            action_num,
-        )
+        if rate_sale >= 27.7:
+            return IDLE_ACTION_INDEX
 
-        if d_sale:
-            # We are selling some currency
-            price_sale = d_sale * rate_buy
-            self.amount_uah += price_sale
-            self.amount_usd -= d_sale
-            assert self.amount_usd >= 0
-            if self.verbose:
-                print(
-                    'Selling {amount_sale}$ at {rate:.2f} = {price:.2f}'.format(
-                        amount_sale=d_sale,
-                        rate=rate_buy,
-                        price=price_sale,
-                    )
-                )
+        # choose random action until it's valid
+        total_tries = len(ACTIONS) * 2
+        for _ in range(total_tries):
+            action_num = random.randrange(len(ACTIONS))
+            buy_amount, sale_amount = ACTIONS[action_num]
+            price_sale = sale_amount * rate_buy
+            price_buy = buy_amount * rate_sale
+            if (
+                sale_amount <= amount_usd and
+                price_buy <= (amount_uah + price_sale)
+            ):
+                return action_num
 
-        if d_buy:
-            # We are buying some currency
-            price_buy = d_buy * rate_sale
-            self.amount_uah -= price_buy
-            self.amount_usd += d_buy
-            assert self.amount_uah >= 0
-            if self.verbose:
-                print(
-                    'Buying {amount_buy}$ at {rate:.2f} = {price:.2f}'.format(
-                        amount_buy=d_buy,
-                        rate=rate_sale,
-                        price=price_buy,
-                    )
-                )
-
-        if not (d_buy or d_sale) and self.verbose:
-            print('Idling...')
-
-        return data_row
-
-    @property
-    def profit(self) -> float:
-        return self.amount_uah - self._starting_amount_uah
+        # just do nothing
+        return len(ACTIONS) - 1
 
 
 def main():
@@ -117,7 +77,7 @@ def main():
     # pprint(top_n)
 
     months = 12
-    epochs = 5000
+    epochs = 1000
     # We can use a with statement to ensure threads are cleaned up promptly
     params = []
     with futures.ThreadPoolExecutor(max_workers=months) as executor:
@@ -142,7 +102,7 @@ def main():
 
         results = list(executor.map(wrapper, params))
         for r in results:
-            write_threshold_results(r, -400)
+            write_threshold_results(r, -200)
 
     print('\nDone!')
 
@@ -152,7 +112,7 @@ def wrapper(p):
 
 
 def create_agent():
-    return RandomActionTrader(amount=10000, verbose=False)
+    return HindsightTrader(amount=10000, verbose=False)
 
 
 def write_threshold_results(trade_results, lower_threshold=-1000):
@@ -164,7 +124,7 @@ def write_threshold_results(trade_results, lower_threshold=-1000):
 
     if df_data:
         df = pd.DataFrame(df_data)
-        with open('random_trade_best_data.csv', 'a') as f:
+        with open('hindsight_trade_best_data.csv', 'a') as f:
             df.to_csv(f, index=False, header=False)
 
 

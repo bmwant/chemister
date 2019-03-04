@@ -119,7 +119,7 @@ def evaluate_agent(
     end_date=None,
     verbose=False,
 ) -> Tuple[float, List]:
-    year = 2018
+    year = 2016
     currency = 'usd'
     df = load_year_dataframe(year=year, currency=currency)
     df['date'] = pd.to_datetime(df['date'], format=DATE_FMT)
