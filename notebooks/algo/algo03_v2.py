@@ -15,15 +15,7 @@ from notebooks.algo.agent import BaseTrader, evaluate_agent
 from notebooks.algo.agent import IDLE_ACTION_INDEX, ACTIONS
 
 
-def get_data():
-    num_actions = len(ACTIONS)
-    df = pd.read_csv('hindsight_trade_best_data.csv', header=None)
-    X = df.loc[:,0:4].to_numpy()  # select first 5 rows
-    actions = df.iloc[:,-1]  # select last row
-    # convert actions to softmax format
-    y = np.zeros((len(actions), num_actions))
-    y[np.arange(len(actions)), actions] = 1
-    return X, y
+INITIAL_AMOUNT = 20000
 
 
 class NeatBasedTrader(BaseTrader):
@@ -31,23 +23,26 @@ class NeatBasedTrader(BaseTrader):
         super().__init__(*args, **kwargs)
         self.net = net
 
-    def take_action(self, *, amount_uah, amount_usd, daily_data) -> int:
+    def take_action(
+            self,
+            *,
+            amount_uah: float,
+            amount_usd: int,
+            daily_data: DailyData,
+    ) -> int:
         rate_buy = daily_data.rate_buy
         rate_sale = daily_data.rate_sale
 
-        input_data = np.array([[
+        input_data = [
             rate_buy,
             rate_sale,
             amount_uah,
             amount_usd,
             self.profit,
-        ]])
-        prediction = self.model.predict(input_data)
-        actions_order = np.flip(np.argsort(prediction))
-        for i in actions_order[0]:
-            # todo: do something, do not idle
-            if i == IDLE_ACTION_INDEX:
-                continue
+        ]
+        output = self.net.activate(input_data)
+        actions_order = np.flip(np.argsort(output))
+        for i in actions_order:
             d_buy, d_sale = ACTIONS[i]
             price_sale = d_sale * rate_buy
             price_buy = d_buy * rate_sale
@@ -61,7 +56,7 @@ class NeatBasedTrader(BaseTrader):
 def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
         net = neat.nn.FeedForwardNetwork.create(genome, config)
-        trader = NeatBasedTrader(net=net)
+        trader = NeatBasedTrader(amount=INITIAL_AMOUNT, net=net)
         p, _ = evaluate_agent(agent=trader, verbose=False)
         genome.fitness = p
 
@@ -76,14 +71,15 @@ def run(config_file):
     )
 
     p = neat.Population(config)
-    p.add_reporter(neat.StdOutReporter())
+    # show_species_detail=True
+    p.add_reporter(neat.StdOutReporter(True))
 
     epochs = 300
     winner = p.run(eval_genomes, epochs)
     print('\nBest genome:\n{!s}'.format(winner))
 
     winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
-    trader = NeatBasedTrader()
+    trader = NeatBasedTrader(amount=INITIAL_AMOUNT, net=winner_net)
     print('\nTrade with best genome:')
 
     p, _ = evaluate_agent(agent=trader, verbose=True)
