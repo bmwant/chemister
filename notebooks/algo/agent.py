@@ -8,6 +8,31 @@ from notebooks.helpers import DATE_FMT, load_year_dataframe
 from . import DailyData
 
 
+# product
+# from itertools import product
+# (buy amount, sale amount) pairs for currency
+ACTIONS = (
+    (100, 100),
+    (100, 50),
+    (100, 20),
+    (100, 0),
+    (50, 100),
+    (50, 50),
+    (50, 20),
+    (50, 0),
+    (20, 100),
+    (20, 50),
+    (20, 20),
+    (20, 0),
+    (0, 100),
+    (0, 50),
+    (0, 20),
+    (0, 0),  # do nothing, day without trading
+)
+
+IDLE_ACTION_INDEX = len(ACTIONS) - 1
+
+
 class BaseAgent(ABC):
     def __init__(self, verbose=False):
         self.verbose = verbose
@@ -17,9 +42,79 @@ class BaseAgent(ABC):
         pass
 
 
+class BaseTrader(BaseAgent):
+    def __init__(self, amount, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.amount_uah = amount
+        self._starting_amount_uah = amount
+        self.amount_usd = 0
+
+    def trade(self, daily_data):
+        action_num = self.take_action(
+            amount_uah=self.amount_uah,
+            amount_usd=self.amount_usd,
+            daily_data=daily_data,
+        )
+        d_buy, d_sale = ACTIONS[action_num]
+
+        rate_buy = daily_data.rate_buy
+        rate_sale = daily_data.rate_sale
+
+        # Collect train data
+        data_row = (
+            rate_buy,
+            rate_sale,
+            self.amount_uah,
+            self.amount_usd,
+            self.profit,
+            action_num,
+        )
+
+        if d_sale:
+            # We are selling some currency
+            price_sale = d_sale * rate_buy
+            self.amount_uah += price_sale
+            self.amount_usd -= d_sale
+            assert self.amount_usd >= 0
+            if self.verbose:
+                print(
+                    '>>> Selling {amount_sale}$ at {rate:.2f} '
+                    '= {price:.2f}'.format(
+                        amount_sale=d_sale,
+                        rate=rate_buy,
+                        price=price_sale,
+                    )
+                )
+
+        if d_buy:
+            # We are buying some currency
+            price_buy = d_buy * rate_sale
+            self.amount_uah -= price_buy
+            self.amount_usd += d_buy
+            assert self.amount_uah >= 0
+            if self.verbose:
+                print(
+                    '<<< Buying {amount_buy}$ at {rate:.2f} '
+                    '= {price:.2f}'.format(
+                        amount_buy=d_buy,
+                        rate=rate_sale,
+                        price=price_buy,
+                    )
+                )
+
+        if not (d_buy or d_sale) and self.verbose:
+            print('Idling...')
+
+        return data_row
+
+    @property
+    def profit(self) -> float:
+        return self.amount_uah - self._starting_amount_uah
+
+
 # todo: reuse launch_trading
 def evaluate_agent(
-    agent,
+    agent: BaseTrader,
     start_date=None,
     end_date=None,
     verbose=False,

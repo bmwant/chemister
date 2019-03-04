@@ -9,29 +9,8 @@ import pandas as pd
 
 from notebooks.helpers import DATE_FMT
 from notebooks.algo import Transaction, DailyData
-from notebooks.algo.agent import BaseAgent, evaluate_agent
+from notebooks.algo.agent import BaseAgent, evaluate_agent, ACTIONS
 
-# product
-# from itertools import product
-# (buy amount, sale amount) pairs for currency
-ACTIONS = (
-    (100, 100),
-    (100, 50),
-    (100, 20),
-    (100, 0),
-    (50, 100),
-    (50, 50),
-    (50, 20),
-    (50, 0),
-    (20, 100),
-    (20, 50),
-    (20, 20),
-    (20, 0),
-    (0, 100),
-    (0, 50),
-    (0, 20),
-    (0, 0),  # do nothing, day without trading
-)
 
 MAX_WORKERS = 50  # number of threads to evaluate agents in parallel
 
