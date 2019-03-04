@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
 from abc import ABC, abstractmethod
+from typing import Tuple, List
+from datetime import datetime, timedelta
 
 import pandas as pd
 
@@ -22,7 +23,7 @@ def evaluate_agent(
     start_date=None,
     end_date=None,
     verbose=False,
-) -> float:
+) -> Tuple[float, List]:
     year = 2018
     currency = 'usd'
     df = load_year_dataframe(year=year, currency=currency)
@@ -36,6 +37,7 @@ def evaluate_agent(
         ))
 
     step = 0
+    history = []  # history of daily data and corresponding actions
     current_date = sd  # starting date
     while current_date <= ed:  # until end date
         rate_buy = df.loc[df['date'] == current_date]['buy'].item()
@@ -48,7 +50,8 @@ def evaluate_agent(
         if verbose:
             print(daily_data)
 
-        agent.trade(daily_data=daily_data)
+        h = agent.trade(daily_data=daily_data)
+        history.append(h)
 
         if verbose:
             print('Current profit: {:.2f}\n'.format(agent.profit))
@@ -60,4 +63,4 @@ def evaluate_agent(
         print('End state: {:.2f}USD and {:.2f}UAH'.format(
             agent.amount_usd, agent.amount_uah,
         ))
-    return agent.profit
+    return agent.profit, history

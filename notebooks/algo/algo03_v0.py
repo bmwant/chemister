@@ -1,10 +1,11 @@
 import random
 import calendar
+import operator
 from concurrent import futures
-from datetime import datetime, timedelta
-from multiprocessing import Manager
+from datetime import datetime
 
 import tqdm
+import pandas as pd
 
 from notebooks.helpers import DATE_FMT
 from notebooks.algo import Transaction, DailyData
@@ -31,6 +32,8 @@ ACTIONS = (
     (0, 20),
     (0, 0),  # do nothing, day without trading
 )
+
+MAX_WORKERS = 50  # number of threads to evaluate agents in parallel
 
 
 class RandomActionTrader(BaseAgent):
@@ -71,6 +74,16 @@ class RandomActionTrader(BaseAgent):
         rate_buy = daily_data.rate_buy
         rate_sale = daily_data.rate_sale
 
+        # Collect train data
+        data_row = (
+            rate_buy,
+            rate_sale,
+            self.amount_uah,
+            self.amount_usd,
+            self.profit,
+            action_num,
+        )
+
         if d_sale:
             # We are selling some currency
             price_sale = d_sale * rate_buy
@@ -104,6 +117,8 @@ class RandomActionTrader(BaseAgent):
         if not (d_buy or d_sale) and self.verbose:
             print('Idling...')
 
+        return data_row
+
     @property
     def profit(self) -> float:
         return self.amount_uah - self._starting_amount_uah
@@ -112,7 +127,6 @@ class RandomActionTrader(BaseAgent):
 def main():
     year = 2018
     from pprint import pprint
-
 
     # epochs = 10
     # results = []
@@ -124,7 +138,7 @@ def main():
     # pprint(top_n)
 
     months = 12
-    epochs = 10
+    epochs = 5000
     # We can use a with statement to ensure threads are cleaned up promptly
     params = []
     with futures.ThreadPoolExecutor(max_workers=months) as executor:
@@ -132,7 +146,6 @@ def main():
         tasks = []
         for month in range(1, months+1):
             # Create agent for each process
-            agent = RandomActionTrader(amount=10000, verbose=False)
             start_date = datetime.strptime(
                 '01.{:02d}.{}'.format(month, year), DATE_FMT)
             end_day = calendar.monthrange(year, month)[1]
@@ -140,7 +153,7 @@ def main():
                 '{}.{:02d}.{}'.format(end_day, month, year), DATE_FMT)
 
             params.append(dict(
-                agent=agent,
+                agent_factory=create_agent,
                 start_date=start_date,
                 end_date=end_date,
                 epochs=epochs,
@@ -149,29 +162,43 @@ def main():
             # tasks.append(fut)
 
         results = list(executor.map(wrapper, params))
-        print('\nResults:\n')
-        for row in results:
-            print([round(r, 2) for r in row])
+        for r in results:
+            write_threshold_results(r, -400)
 
-    print('Done!')
+    print('\nDone!')
 
 
 def wrapper(p):
     return get_best_results_for_period(**p)
 
 
+def create_agent():
+    return RandomActionTrader(amount=10000, verbose=False)
+
+
+def write_threshold_results(trade_results, lower_threshold=-1000):
+    df_data = []
+    for profit, history in trade_results:
+        if profit > lower_threshold:
+            print('\nWriting trade actions for result: {:.2f}'.format(profit))
+            df_data.extend(history)
+
+    if df_data:
+        df = pd.DataFrame(df_data)
+        with open('random_trade_best_data.csv', 'a') as f:
+            df.to_csv(f, index=False, header=False)
+
+
 def get_best_results_for_period(
-    agent,
+    agent_factory,
     start_date,
     end_date,
     epochs=100,
     top_n=10,
     n=1,
+    max_workers=MAX_WORKERS,
 ):
-    max_workers = 40
     results = []
-
-    tasks = []
 
     progress = tqdm.tqdm(
         desc='#{:02d}'.format(n),
@@ -180,9 +207,11 @@ def get_best_results_for_period(
         leave=False,
         ascii=True,
     )
+    tasks = []
     with futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
 
         for _ in range(epochs):
+            agent = agent_factory()
             fut = executor.submit(
                 evaluate_agent,
                 agent=agent,
@@ -202,7 +231,7 @@ def get_best_results_for_period(
                 results.append(r)
 
     progress.close()
-    return sorted(results, reverse=True)[:top_n]
+    return sorted(results, key=operator.itemgetter(0), reverse=True)[:top_n]
 
 
 if __name__ == '__main__':
