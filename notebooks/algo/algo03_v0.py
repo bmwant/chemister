@@ -63,6 +63,24 @@ class HindsightTrader(BaseTrader):
         return len(ACTIONS) - 1
 
 
+class GoodInsiderTrader(BaseTrader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.transactions = []
+
+    def take_action(self, *, amount_uah, amount_usd, daily_data) -> int:
+        # do nothing if rate is too high
+        if daily_data.step < 180:
+            return 11
+        # sale
+        return 0
+
+    def trade(self, daily_data):
+        data_row = super().trade(daily_data)
+
+        return data_row
+
+
 def main():
     year = 2018
     from pprint import pprint
@@ -173,5 +191,10 @@ def get_best_results_for_period(
     return sorted(results, key=operator.itemgetter(0), reverse=True)[:top_n]
 
 
+def test():
+    agent = GoodInsiderTrader()
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    test()
