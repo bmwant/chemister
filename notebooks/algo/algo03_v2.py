@@ -27,9 +27,9 @@ def get_data():
 
 
 class NeatBasedTrader(BaseTrader):
-    def __init__(self, model, *args, **kwargs):
+    def __init__(self, net, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.model = model
+        self.net = net
 
     def take_action(self, *, amount_uah, amount_usd, daily_data) -> int:
         rate_buy = daily_data.rate_buy
@@ -57,8 +57,13 @@ class NeatBasedTrader(BaseTrader):
             ):
                 return i
 
-def eval_genomes():
-    pass
+
+def eval_genomes(genomes, config):
+    for genome_id, genome in genomes:
+        net = neat.nn.FeedForwardNetwork.create(genome, config)
+        trader = NeatBasedTrader(net=net)
+        p, _ = evaluate_agent(agent=trader, verbose=False)
+        genome.fitness = p
 
 
 def run(config_file):

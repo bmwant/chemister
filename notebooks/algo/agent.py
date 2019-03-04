@@ -34,6 +34,9 @@ IDLE_ACTION_INDEX = len(ACTIONS) - 1
 
 
 class BaseAgent(ABC):
+    """
+    Agent is responsible for taking legit action
+    """
     def __init__(self, verbose=False):
         self.verbose = verbose
 
@@ -119,7 +122,7 @@ def evaluate_agent(
     end_date=None,
     verbose=False,
 ) -> Tuple[float, List]:
-    year = 2016
+    year = 2018
     currency = 'usd'
     df = load_year_dataframe(year=year, currency=currency)
     df['date'] = pd.to_datetime(df['date'], format=DATE_FMT)
