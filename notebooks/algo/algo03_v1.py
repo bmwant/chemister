@@ -29,8 +29,8 @@ def get_data():
 def create_model():
     num_output = len(ACTIONS)
     net = tflearn.input_data(shape=[None, 5])
-    net = tflearn.fully_connected(net, 6)
-    net = tflearn.fully_connected(net, 6)
+    net = tflearn.fully_connected(net, 12)
+    net = tflearn.fully_connected(net, 12)
     net = tflearn.dropout(net, 0.5)
     net = tflearn.fully_connected(net, num_output, activation='softmax')
     net = tflearn.regression(

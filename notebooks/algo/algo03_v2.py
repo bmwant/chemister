@@ -55,7 +55,7 @@ class NeatBasedTrader(BaseTrader):
 
 def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
-        net = neat.nn.FeedForwardNetwork.create(genome, config)
+        net = neat.nn.RecurrentNetwork.create(genome, config)
         trader = NeatBasedTrader(amount=INITIAL_AMOUNT, net=net)
         p, _ = evaluate_agent(agent=trader, verbose=False)
         genome.fitness = p
@@ -73,6 +73,8 @@ def run(config_file):
     p = neat.Population(config)
     # show_species_detail=True
     p.add_reporter(neat.StdOutReporter(True))
+    p.add_reporter(neat.StatisticsReporter())
+    p.add_reporter(neat.Checkpointer(10))
 
     epochs = 300
     winner = p.run(eval_genomes, epochs)
