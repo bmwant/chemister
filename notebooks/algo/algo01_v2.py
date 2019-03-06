@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from download_rates import DATE_FMT
+from notebooks.helpers import DATE_FMT
 
 
 def main():
@@ -10,8 +10,8 @@ def main():
     currency = 'usd'
     filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
     df = pd.read_csv(filename)
-    df['date'] = pd.to_datetime(df['date'], format=DATE_FMT) 
-    sd = datetime.strptime('01.01.{}'.format(year), DATE_FMT) 
+    df['date'] = pd.to_datetime(df['date'], format=DATE_FMT)
+    sd = datetime.strptime('01.01.{}'.format(year), DATE_FMT)
     ed = datetime.strptime('31.12.{}'.format(year), DATE_FMT)
 
     shift = 5  # delay in days between buying and selling
@@ -57,7 +57,7 @@ def main():
     print('Transaction skipped: {}'.format(skipped))
     print('We have {:.2f} UAH'.format(total_uah))
     print('We have {:.2f} USD in total'.format(total_usd))
-    
+
 
 if __name__ == '__main__':
     main()

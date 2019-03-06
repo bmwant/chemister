@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from build_chart import build_chart
-from download_rates import DATE_FMT
+from notebooks.build_chart import build_chart
+from notebooks.helpers import DATE_FMT, load_year_dataframe
 
 
 def count_for_shift(df, year, shift=1):
@@ -33,9 +33,9 @@ def count_for_shift(df, year, shift=1):
             data.append([current_date, rate_buy, rate_sale])
         else:
             skipped += 1
-        i += 1 
+        i += 1
         current_date += timedelta(days=1)
-    
+
     print('Stats for shift {}'.format(shift))
     print('\tSuccess {}'.format(success))
     print('\tFail {}'.format(fail))
@@ -43,6 +43,51 @@ def count_for_shift(df, year, shift=1):
     print('\tTotal: {}'.format(i))
     print('\tTotal diff: {:.2f}'.format(total_diff))
     return data
+
+
+def count_unprofitable_days(df, year):
+    i = 0  # total iterations
+    total_diff = 0  # gross sale/buy diff
+    sd = datetime.strptime('01.01.{}'.format(year), DATE_FMT)
+    ed = datetime.strptime('31.12.{}'.format(year), DATE_FMT)
+    current_date = sd
+    data = []
+    success = 0
+    t_success = 0  # threshold success days
+    threshold = 0.25
+    fail = 0
+    min_rate = float('inf')
+    min_sale_rate = df['sale'].min()  # buy as much as possible at this ))
+    max_buy_rate = df['buy'].max()  # anyway min_rate should be lower
+    while current_date <= ed:
+        rate_buy = df.loc[df['date'] == current_date]['buy'].item()
+        rate_sale = df.loc[df['date'] == current_date]['sale'].item()
+
+        d = df.loc[
+            (df['date'] > current_date) & (df['buy'] > rate_sale)
+        ]
+        if len(d.index):
+            success += 1
+        else:
+            fail += 1
+            min_rate = min(min_rate, rate_sale)
+
+        t_d = df.loc[
+            (df['date'] > current_date) & (df['buy'] >= rate_sale + threshold)
+        ]
+        if len(t_d.index):
+            t_success += 1
+
+        i += 1
+        current_date += timedelta(days=1)
+
+    print('Profitable days in {} year'.format(year))
+    print('\tSuccess {}'.format(success))
+    print('\tSuccess with threshold of {}: {}'.format(threshold, t_success))
+    print('\tFail {}'.format(fail))
+    print('\tTotal: {}'.format(i))
+    print('\tDo not buy above {:.2f}'.format(min_rate))
+    # print('\tTotal diff: {:.2f}'.format(total_diff))
 
 
 def parse_args():
@@ -59,23 +104,25 @@ def parse_args():
 
 def main(year):
     currency = 'usd'
-    filename = 'data/uah_to_{}_{}.csv'.format(currency, year)
-    df = pd.read_csv(filename)
-    df['date'] = pd.to_datetime(df['date'], format=DATE_FMT) 
-    
+    df = load_year_dataframe(year=year, currency=currency)
+    df['date'] = pd.to_datetime(df['date'], format=DATE_FMT)
+
     # for s in range(31):
     #     shift = s + 1
     #     count_for_shift(df, year, shift)
-    
-    shifts = [8, 16, 28]
-    for shift in shifts:
-        data = count_for_shift(df, year, shift)
-        shifted_df = pd.DataFrame(
-            columns=['date', 'buy', 'sale'],
-            data=data,
-        )
-        title = 'Transactions for shift={}'.format(shift)
-        build_chart(shifted_df, currency, title, show_profit=True)
+
+    # shifts = [8, 16, 28]
+    # for shift in shifts:
+    #     data = count_for_shift(df, year, shift)
+    #     shifted_df = pd.DataFrame(
+    #         columns=['date', 'buy', 'sale'],
+    #         data=data,
+    #     )
+    #     title = 'Transactions for shift={}'.format(shift)
+    #     build_chart(shifted_df, currency, title, show_profit=True)
+
+    count_unprofitable_days(df, year=year)
+
 
 if __name__ == '__main__':
     args = parse_args()
