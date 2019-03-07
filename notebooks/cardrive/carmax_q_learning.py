@@ -45,7 +45,6 @@ class Agent(object):
         return reward, new_state
 
 
-
 class PolicyBasedDriver(BaseAgent):
     def __init__(self, policy, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,8 +57,14 @@ class PolicyBasedDriver(BaseAgent):
         return action
 
 
-def policy_play():
+def value_iteration_play():
     policy = value_iteration()
+    driver = PolicyBasedDriver(policy=policy, lip=True)
+    play_trip(agent=driver, verbose=True)
+
+
+def policy_iteration_play():
+    policy = policy_iteration()
     driver = PolicyBasedDriver(policy=policy, lip=True)
     play_trip(agent=driver, verbose=True)
 
@@ -115,6 +120,76 @@ def value_iteration():
     return policy
 
 
+def policy_iteration():
+    s_S = len(ENVIRONMENT) * 7
+    v = np.zeros(s_S)  # value function
+    p = np.zeros(s_S)  # policy
+    gamma = 0.9  # discount factor
+
+    def get_new_value_for_state(s, v, p):
+        """
+        Calculates value when following policy `p` from given state `s`
+        """
+        available_actions = Agent.get_available_actions(s)
+        p = 1 / len(available_actions)  # all actions are equally possible
+        new_v = 0
+        for a in available_actions:
+            reward, new_state = Agent.get_action_reward(a, s)
+            v_ = 0 if new_state is None else v[new_state]
+            new_v += p*(reward + gamma * v_)
+        return new_v
+
+    def get_greedy_action_for_state(s, v):
+        """
+        Returns the best action which maximizes `v` for state `s`
+        """
+        available_actions = Agent.get_available_actions(s)
+
+        p = 1 / len(available_actions)
+        outcomes = np.zeros(s_A)
+        for a in available_actions:
+            reward, new_state = Agent.get_action_reward(a, s)
+            v_ = 0 if new_state is None else v[new_state]
+            outcomes[a] = p*(reward + gamma * v_)
+            
+        return np.argmax(outcomes)
+
+    theta = 0.01
+    for i in count():
+
+        print(f'Iteration {i}...')
+        while True:
+            # policy evaluation
+            print('Policy evaluation...')
+            delta = 0
+            for s in range(s_S):
+                v_ = v[s]
+                # when following current policy p
+                v[s] = get_new_value_for_state(s, v, p)
+                delta = max(delta, np.abs(v_ - v[s]))
+
+            if delta < theta:
+                break
+
+        # policy improvement
+        print('Policy improvement...')
+        policy_stable = True
+        for s in range(s_S):
+            action = p[s]
+            p[s] = get_greedy_action_for_state(s, v)
+            if action != p[s]:
+                policy_stable = False
+
+        if policy_stable:
+            print('Found stable policy!')
+            break
+
+    print('Policy', p)
+    return p
+
+
 if __name__ == '__main__':
     # value_iteration()
-    policy_play()
+    # policy_iteration()
+    # value_iteration_play()
+    policy_iteration_play()
