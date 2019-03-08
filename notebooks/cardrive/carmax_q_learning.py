@@ -4,7 +4,7 @@ from itertools import count
 import numpy as np
 
 from notebooks.cardrive.carmax import BaseAgent, play_trip
-from notebooks.cardrive.carmax import ACTIONS, ENVIRONMENT
+from notebooks.cardrive.carmax import ACTIONS, IDLE_ACTION, ENVIRONMENT
 
 
 s_A = len(ACTIONS)  # actions space size
@@ -41,14 +41,14 @@ class Agent(object):
             return (reward, None) if d_distance else (-1, None)
 
         tank_offset = (tank + d_tank) // 10
-        new_state = (step + 1)*s_A + tank_offset 
+        new_state = (step + 1)*s_A + tank_offset
         return reward, new_state
 
 
 class PolicyBasedDriver(BaseAgent):
     def __init__(self, policy, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.policy = policy 
+        self.policy = policy
 
     def take_action(self, *, tank, money, distance, data) -> int:
         step = data.step
@@ -123,23 +123,21 @@ def value_iteration():
 def policy_iteration():
     s_S = len(ENVIRONMENT) * 7
     v = np.zeros(s_S)  # value function
-    p = np.zeros(s_S)  # policy
+    # policy, do nothing by default for all states
+    p = np.full(s_S, IDLE_ACTION)
     gamma = 0.9  # discount factor
 
     def get_new_value_for_state(s, v, p):
         """
         Calculates value when following policy `p` from given state `s`
         """
-        available_actions = Agent.get_available_actions(s)
-        p = 1 / len(available_actions)  # all actions are equally possible
-        new_v = 0
-        for a in available_actions:
-            reward, new_state = Agent.get_action_reward(a, s)
-            v_ = 0 if new_state is None else v[new_state]
-            new_v += p*(reward + gamma * v_)
-        return new_v
+        action = p[s].astype('int')  # to native python type
+        reward, new_state = Agent.get_action_reward(action, s)
+        v_ = 0 if new_state is None else v[new_state]
+        # probability equals 1
+        return reward + gamma * v_
 
-    def get_greedy_action_for_state(s, v):
+    def get_max_action_for_state(s, v):
         """
         Returns the best action which maximizes `v` for state `s`
         """
@@ -151,7 +149,7 @@ def policy_iteration():
             reward, new_state = Agent.get_action_reward(a, s)
             v_ = 0 if new_state is None else v[new_state]
             outcomes[a] = p*(reward + gamma * v_)
-            
+
         return np.argmax(outcomes)
 
     theta = 0.01
@@ -176,7 +174,7 @@ def policy_iteration():
         policy_stable = True
         for s in range(s_S):
             action = p[s]
-            p[s] = get_greedy_action_for_state(s, v)
+            p[s] = get_max_action_for_state(s, v)
             if action != p[s]:
                 policy_stable = False
 
