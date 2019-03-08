@@ -70,7 +70,6 @@ def policy_iteration_play():
 
 
 def value_iteration():
-    actions_space_size = len(ACTIONS)
     s_S = len(ENVIRONMENT) * 7  # states space size, timesteps * tank volumes
     # Initialize array V arbitrarily (0 for all s in S)
     v = np.zeros(s_S)
@@ -81,7 +80,7 @@ def value_iteration():
         Calculate values after performing all actions in a given state
         """
         available_actions = Agent.get_available_actions(s)
-        outcomes = np.zeros(s_A)
+        outcomes = np.full(s_A, -np.inf)
         p = 1 / len(available_actions)
         for a in available_actions:
             reward, new_state = Agent.get_action_reward(a, s)
@@ -100,7 +99,7 @@ def value_iteration():
             v_ = v[s]
             actions_outcomes = get_outcomes_for_state(s, v)
             v[s] = max(actions_outcomes)
-            delta = max(delta, v_ - v[s])
+            delta = max(delta, np.abs(v_ - v[s]))
 
         if delta < theta:
             print('Value function converged')
@@ -189,5 +188,5 @@ def policy_iteration():
 if __name__ == '__main__':
     # value_iteration()
     # policy_iteration()
-    # value_iteration_play()
-    policy_iteration_play()
+    value_iteration_play()
+    # policy_iteration_play()
