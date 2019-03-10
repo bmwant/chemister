@@ -1,4 +1,5 @@
 import math
+import random
 from itertools import count
 
 import numpy as np
@@ -8,6 +9,7 @@ from notebooks.cardrive.carmax import ACTIONS, IDLE_ACTION, ENVIRONMENT
 
 
 s_A = len(ACTIONS)  # actions space size
+s_S = len(ENVIRONMENT) * 7  # states space size
 
 
 class Agent(object):
@@ -65,6 +67,12 @@ def value_iteration_play():
 
 def policy_iteration_play():
     policy = policy_iteration()
+    driver = PolicyBasedDriver(policy=policy, lip=True)
+    play_trip(agent=driver, verbose=True)
+
+
+def q_learning_play():
+    policy = q_learning()
     driver = PolicyBasedDriver(policy=policy, lip=True)
     play_trip(agent=driver, verbose=True)
 
@@ -185,8 +193,91 @@ def policy_iteration():
     return p
 
 
+# todo: fix broken Q-learning
+def q_learning():
+    """
+    https://medium.freecodecamp.org/an-introduction-to-q-learning-reinforcement-learning-14ac0b4493cc
+    """
+    alpha = 0.1  # learning rate
+    gamma = 0.9  # discount factor
+    Q = np.zeros(shape=(s_S, s_A))
+
+    def maximize_Q(s):
+        """
+        Maximum expected future reward given the new state `s` and all 
+        possible actions in this state.
+        """
+        available_actions = Agent.get_available_actions(s)
+        outcomes = []
+        for a in available_actions:
+            r, s_ = Agent.get_action_reward(a, s)
+            outcomes.append(np.max(Q[s_]))
+        return np.max(outcomes)
+
+    # vars for e-greedy action selection strategy
+    min_eps = 0.01
+    eps = 1.0  # start with exploration
+    max_eps = 1.0
+    decay_rate = 0.001
+
+    # track convergence
+    theta = 0.001
+    # while Q is not converged
+    for i in count():
+        if i % 100 == 0:
+            print(f'Iteration {i}...')
+        delta = 0  # max Q update for the episode
+        s = 0  # starting state
+        while True:  # running an episode 
+            # exploration
+            actions = Agent.get_available_actions(s)
+            # random action
+            a = random.choice(actions)
+            # or exploitation
+            if np.random.random() > eps:
+                best_action = np.argmax(Q[s])
+                if best_action in actions:
+                    a = best_action
+
+            # perform action choosen, receive reward and new state
+            r, s_ = Agent.get_action_reward(a, s)
+            if s_ is None:  # while s is not terminal
+                break
+            max_q = maximize_Q(s)
+            # q_update = alpha*(r + gamma*max_q - Q[s, a])
+            # Q[s, a] += q_update
+            old_Q = Q[s, a]
+            Q[s, a] = (1-alpha)*Q[s, a] + alpha*(r + gamma*max_q)
+            q_update = Q[s, a] - old_Q
+            s = s_
+            delta = max(delta, np.abs(q_update))
+        # check Q for convergence
+        if delta < theta:
+            print(f'Q-function converged after {i} iterations')
+            break
+        # exploit more with each iteration
+        eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
+    
+    def extract_policy(Q):
+        policy = np.zeros(s_S)
+        for s in range(s_S):
+            action = np.argmax(Q[s])
+            policy[s] = action
+        return policy
+
+    p = extract_policy(Q)
+    print('Policy', p)
+    return p
+
+
+def sarsa():
+    pass
+
+
 if __name__ == '__main__':
     # value_iteration()
     # policy_iteration()
-    value_iteration_play()
+    # value_iteration_play()
     # policy_iteration_play()
+    # q_learning()
+    q_learning_play()
