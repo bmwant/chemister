@@ -25,3 +25,8 @@ def test_from_state_conversion():
     assert Agent.from_state(48) == (6, 60)
     assert Agent.from_state(61) == (8, 50)
     assert Agent.from_state(68) == (9, 50)
+
+
+def test_get_available_actions():
+    assert Agent.get_available_actions(62) == [3, 4, 5, 6]
+    assert Agent.get_available_actions(61) == [2, 3, 4, 5, 6]

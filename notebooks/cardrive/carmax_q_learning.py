@@ -42,6 +42,11 @@ class Agent(object):
         """
         Assuming actions is valid for a given state calculate a reward for it
         """
+        # sanity check
+        actions = cls.get_available_actions(state)
+        if action not in actions:
+            raise RuntimeError(f'{action} is not valid for {state}')
+
         step, tank = cls.from_state(state)
         price, consumption = ENVIRONMENT[step]
         d_tank, d_distance = ACTIONS[action]
@@ -83,6 +88,12 @@ def policy_iteration_play():
 
 def q_learning_play():
     policy = q_learning()
+    driver = PolicyBasedDriver(policy=policy, lip=True)
+    play_trip(agent=driver, verbose=True)
+
+
+def sarsa_play():
+    policy = sarsa()
     driver = PolicyBasedDriver(policy=policy, lip=True)
     play_trip(agent=driver, verbose=True)
 
@@ -283,24 +294,20 @@ def q_learning():
 def sarsa():
     alpha = 0.1
     gamma = 0.9
-    lambda_ = 0.5
+    lambda_ = 0.3
 
     Q = np.zeros(shape=(s_S, s_A))
     e = np.zeros(shape=(s_S, s_A))  # eligibility trace
 
     def extract_policy(Q):
-        p = np.zeros(s_S)
-        f = False
+        p = np.full(s_S, -1)
         for s in range(s_S):
             actions = Agent.get_available_actions(s)  # get valid actions
             # get best possible action for a given state
             for a in np.argsort(Q[s]):
                 if a in actions:
                     p[s] = a
-                    f = True
                     break
-        if f is False:
-            raise RuntimeError('Not found')
         return p
 
     def get_next_action(Q, s, eps=1.0):
@@ -308,11 +315,12 @@ def sarsa():
         if np.random.random() < eps:
             # explore
             actions = Agent.get_available_actions(s)
-            return np.random.choice(actions)
+            a = np.random.choice(actions)
+            assert a in actions
+            return a, False
         else:
             # exploit
-            return policy[s]
-
+            return int(policy[s]), True
 
     # vars for e-greedy action selection strategy
     min_eps = 0.01
@@ -326,16 +334,13 @@ def sarsa():
         s = 0
         a = IDLE_ACTION  # or get_next_action(Q, s, 0)
         while True:  # run episode
-            print('.', end='')
+            # print(f'State {s}, action: {a}')
             r, s_ = Agent.get_action_reward(a, s)
-            a_ = get_next_action(Q, s, eps=eps)
             e[s, a] += 1
             if s_ is not None:
-                try:
-                    delta = r + gamma*Q[s_, a_] - Q[s, a]
-                except Exception as e:
-                    print(e, s, a, s_, a_)
-                    import pdb; pdb.set_trace()
+                a_, pol = get_next_action(Q, s_, eps=eps)
+                delta = r + gamma*Q[s_, a_] - Q[s, a]
+                a = a_
             else:
                 delta = r - Q[s, a]
 
@@ -346,14 +351,15 @@ def sarsa():
                     e[ss, aa] = gamma * lambda_ * e[ss, aa]
 
             s = s_
-            a = a_
+
             if s is None:  # reached terminal state
                 break
         # exploit more with each iteration
         eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
 
-
-    print(Q)
+    policy = extract_policy(Q)
+    print('Policy', policy)
+    return policy
 
 
 if __name__ == '__main__':
@@ -363,4 +369,5 @@ if __name__ == '__main__':
     # policy_iteration_play()
     # q_learning()
     # q_learning_play()
-    sarsa()
+    # sarsa()
+    sarsa_play()
