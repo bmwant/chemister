@@ -54,11 +54,13 @@ class Agent(object):
         distance_travelled = d_distance  # d_distance / consumption
         # we want less money to be spent
         norm = math.log(money_spent) if money_spent > math.e else 1
-        reward = d_distance / norm
+        # reward = d_distance / norm
+        reward = d_distance if d_distance else d_tank/10
         if step + 1 == len(ENVIRONMENT):
-            return (reward, None) if d_distance else (-1, None)
+            return (reward, None) if d_distance else (-10, None)
 
         new_state = cls.to_state(step=step+1, tank=tank+d_tank)
+        # print(reward, new_state)
         return reward, new_state
 
 
@@ -99,7 +101,6 @@ def sarsa_play():
 
 
 def value_iteration():
-    s_S = len(ENVIRONMENT) * 7  # states space size, timesteps * tank volumes
     # Initialize array V arbitrarily (0 for all s in S)
     v = np.zeros(s_S)
     gamma = 0.9  # discount factor, should be close to 1 in our case
@@ -149,7 +150,6 @@ def value_iteration():
 
 
 def policy_iteration():
-    s_S = len(ENVIRONMENT) * 7
     v = np.zeros(s_S)  # value function
     # policy, do nothing by default for all states
     p = np.full(s_S, IDLE_ACTION)
@@ -172,7 +172,7 @@ def policy_iteration():
         available_actions = Agent.get_available_actions(s)
 
         p = 1 / len(available_actions)
-        outcomes = np.zeros(s_A)
+        outcomes = np.full(s_A, -np.inf)
         for a in available_actions:
             reward, new_state = Agent.get_action_reward(a, s)
             v_ = 0 if new_state is None else v[new_state]
@@ -214,11 +214,23 @@ def policy_iteration():
     return p
 
 
+def print_Q(Q):
+    from notebooks.tables import Table
+
+    data = []
+    for row in Q:
+        data.append(['{:>4.2f}'.format(r) for r in row])
+
+    t = Table(data=data)
+    t.print()
+
+
 def q_learning():
     """
     https://medium.freecodecamp.org/an-introduction-to-q-learning-reinforcement-learning-14ac0b4493cc
+    https://www.cse.unsw.edu.au/~cs9417ml/RL1/algorithms.html
     """
-    alpha = 0.1  # learning rate
+    alpha = 0.2  # learning rate
     gamma = 0.9  # discount factor
     Q = np.zeros(shape=(s_S, s_A))
 
@@ -227,6 +239,8 @@ def q_learning():
         Maximum expected future reward given the new state `s` and all
         possible actions in this state.
         """
+        if s is None:
+            return 0
         available_actions = Agent.get_available_actions(s)
         outcomes = []
         for a in available_actions:
@@ -234,11 +248,30 @@ def q_learning():
             outcomes.append(np.max(Q[s_]))
         return np.max(outcomes)
 
+    def extract_policy(Q):
+        p = np.full(s_S, -1)
+        for s in range(s_S):
+            actions = Agent.get_available_actions(s)  # get valid actions
+            # get best possible action for a given state
+            for a in np.flip(np.argsort(Q[s])):
+                if a in actions:
+                    p[s] = a
+                    break
+        return p
+
     # vars for e-greedy action selection strategy
     min_eps = 0.01
     eps = 1.0  # start with exploration
     max_eps = 1.0
-    decay_rate = 0.001
+    decay_rate = 0.01
+
+    def get_next_action(Q, s, eps=1.0):
+        actions = Agent.get_available_actions(s)
+        if np.random.random() < eps:
+            return np.random.choice(actions)
+        else:
+            policy = extract_policy(Q)
+            return policy[s]
 
     EPOCHS = 4000
     for i in range(EPOCHS):
@@ -247,38 +280,26 @@ def q_learning():
         s = 0  # starting state
         # running an episode until terminal state reached
         while s is not None:  
-            # exploration
-            actions = Agent.get_available_actions(s)
-            # random action
-            a = random.choice(actions)
-            # or exploitation
-            if np.random.random() > eps:
-                best_action = np.argmax(Q[s])
-                if best_action in actions:
-                    a = best_action
+            # exploration vs exploitation
+            a = get_next_action(Q, s, eps=eps)
 
-            # perform action choosen, receive reward and new state
+            # perform action chosen, receive reward and new state
             r, s_ = Agent.get_action_reward(a, s)
-            if s_ is None:  # while s is not terminal
-                break
-            max_q = maximize_Q(s)
-            Q[s, a] = (1-alpha)*Q[s, a] + alpha*(r + gamma*max_q)
+            max_q = maximize_Q(s_)
+            Q[s, a] = alpha*(r + gamma*max_q - Q[s, a])
+
             s = s_
         # exploit more with each iteration
         eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
-
-    def extract_policy(Q):
-        policy = np.zeros(s_S)
-        for s in range(s_S):
-            action = np.argmax(Q[s])
-            policy[s] = action
-        return policy
+        # print(eps)
 
     p = extract_policy(Q)
+    print_Q(Q)
     print('Policy', p)
     return p
 
 
+# todo: fix sarsa too
 def sarsa():
     alpha = 0.1
     gamma = 0.9
@@ -356,6 +377,6 @@ if __name__ == '__main__':
     # value_iteration_play()
     # policy_iteration_play()
     # q_learning()
-    # q_learning_play()
+    q_learning_play()
     # sarsa()
-    sarsa_play()
+    # sarsa_play()
