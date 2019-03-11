@@ -214,7 +214,6 @@ def policy_iteration():
     return p
 
 
-# todo: fix broken Q-learning
 def q_learning():
     """
     https://medium.freecodecamp.org/an-introduction-to-q-learning-reinforcement-learning-14ac0b4493cc
@@ -241,15 +240,13 @@ def q_learning():
     max_eps = 1.0
     decay_rate = 0.001
 
-    # track convergence
-    theta = 0.001
-    # while Q is not converged
-    for i in count():
+    EPOCHS = 4000
+    for i in range(EPOCHS):
         if i % 100 == 0:
             print(f'Iteration {i}...')
-        delta = 0  # max Q update for the episode
         s = 0  # starting state
-        while True:  # running an episode
+        # running an episode until terminal state reached
+        while s is not None:  
             # exploration
             actions = Agent.get_available_actions(s)
             # random action
@@ -265,17 +262,8 @@ def q_learning():
             if s_ is None:  # while s is not terminal
                 break
             max_q = maximize_Q(s)
-            # q_update = alpha*(r + gamma*max_q - Q[s, a])
-            # Q[s, a] += q_update
-            old_Q = Q[s, a]
             Q[s, a] = (1-alpha)*Q[s, a] + alpha*(r + gamma*max_q)
-            q_update = Q[s, a] - old_Q
             s = s_
-            delta = max(delta, np.abs(q_update))
-        # check Q for convergence
-        if delta < theta:
-            print(f'Q-function converged after {i} iterations')
-            break
         # exploit more with each iteration
         eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
 
