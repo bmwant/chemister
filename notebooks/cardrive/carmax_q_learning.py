@@ -4,6 +4,7 @@ from itertools import count
 from typing import Tuple
 
 import numpy as np
+from matplotlib import pyplot as plt
 
 from notebooks.cardrive.carmax import BaseAgent, play_trip
 from notebooks.cardrive.carmax import ACTIONS, IDLE_ACTION, ENVIRONMENT
@@ -55,9 +56,12 @@ class Agent(object):
         # we want less money to be spent
         norm = math.log(money_spent) if money_spent > math.e else 1
         # reward = d_distance / norm
+        # not counting money spent here
         reward = d_distance if d_distance else d_tank/10
+        # this will not converge as good as the version above
+        # reward = d_distance if d_distance else -1
         if step + 1 == len(ENVIRONMENT):
-            return (reward, None) if d_distance else (-10, None)
+            return (reward, None) if d_distance else (-1, None)
 
         new_state = cls.to_state(step=step+1, tank=tank+d_tank)
         # print(reward, new_state)
@@ -89,13 +93,13 @@ def policy_iteration_play():
 
 
 def q_learning_play():
-    policy = q_learning()
+    policy = q_learning(plot_chart=False)
     driver = PolicyBasedDriver(policy=policy, lip=True)
     play_trip(agent=driver, verbose=True)
 
 
 def sarsa_play():
-    policy = sarsa()
+    policy = sarsa(plot_chart=False)
     driver = PolicyBasedDriver(policy=policy, lip=True)
     play_trip(agent=driver, verbose=True)
 
@@ -225,7 +229,22 @@ def print_Q(Q):
     t.print()
 
 
-def q_learning():
+def build_evaluation_chart(data, period):
+    fig, ax = plt.subplots(figsize=(12, 8))
+    fig.canvas.set_window_title('Q-function evaluation')
+    datax = np.arange(0, period*len(data), period)
+    plt.plot(datax, data, 'b', label='Score')
+
+    ax.legend()
+    plt.xlabel('Iterations')
+    plt.ylabel('Fitness')
+    plt.title('Learning curve')
+    ax.grid(True)
+
+    plt.show()
+
+
+def q_learning(plot_chart=True):
     """
     https://medium.freecodecamp.org/an-introduction-to-q-learning-reinforcement-learning-14ac0b4493cc
     https://www.cse.unsw.edu.au/~cs9417ml/RL1/algorithms.html
@@ -259,11 +278,13 @@ def q_learning():
                     break
         return p
 
+    def evaluate_policy(p):
+        driver = PolicyBasedDriver(policy=p, lip=False)
+        fitness = play_trip(agent=driver, verbose=False)
+        return fitness
+
     # vars for e-greedy action selection strategy
-    min_eps = 0.01
-    eps = 1.0  # start with exploration
-    max_eps = 1.0
-    decay_rate = 0.01
+    eps = 0.4  # a bit more exploitation than exploration
 
     def get_next_action(Q, s, eps=1.0):
         actions = Agent.get_available_actions(s)
@@ -273,10 +294,17 @@ def q_learning():
             policy = extract_policy(Q)
             return policy[s]
 
-    EPOCHS = 4000
+    EPOCHS = 2000
+    period = 100  # evaluate each number of epochs
+    data = []
     for i in range(EPOCHS):
-        if i % 100 == 0:
-            print(f'Iteration {i}...')
+        if i % period == 0:
+            print(f'Evaluating policy on {i} iteration...')
+            # collect data for evaluation chart
+            p = extract_policy(Q)
+            fitness = evaluate_policy(p)
+            data.append(fitness)
+
         s = 0  # starting state
         # running an episode until terminal state reached
         while s is not None:  
@@ -289,35 +317,36 @@ def q_learning():
             Q[s, a] = alpha*(r + gamma*max_q - Q[s, a])
 
             s = s_
-        # exploit more with each iteration
-        eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
-        # print(eps)
 
     p = extract_policy(Q)
     print_Q(Q)
     print('Policy', p)
+    if plot_chart:
+        build_evaluation_chart(data, period=period)
     return p
 
 
-# todo: fix sarsa too
-def sarsa():
+def sarsa(plot_chart=True):
     alpha = 0.1
     gamma = 0.9
-    lambda_ = 0.3
 
     Q = np.zeros(shape=(s_S, s_A))
-    e = np.zeros(shape=(s_S, s_A))  # eligibility trace
 
     def extract_policy(Q):
         p = np.full(s_S, -1)
         for s in range(s_S):
             actions = Agent.get_available_actions(s)  # get valid actions
             # get best possible action for a given state
-            for a in np.argsort(Q[s]):
+            for a in np.flip(np.argsort(Q[s])):
                 if a in actions:
                     p[s] = a
                     break
         return p
+
+    def evaluate_policy(p):
+        driver = PolicyBasedDriver(policy=p, lip=False)
+        fitness = play_trip(agent=driver, verbose=False)
+        return fitness
 
     def get_next_action(Q, s, eps=1.0):
         policy = extract_policy(Q)
@@ -325,11 +354,10 @@ def sarsa():
             # explore
             actions = Agent.get_available_actions(s)
             a = np.random.choice(actions)
-            assert a in actions
-            return a, False
+            return a
         else:
             # exploit
-            return int(policy[s]), True
+            return int(policy[s])
 
     # vars for e-greedy action selection strategy
     min_eps = 0.01
@@ -337,29 +365,34 @@ def sarsa():
     max_eps = 1.0
     decay_rate = 0.001
 
-    for i in range(5000):
-        if i % 100 == 0:
-            print(f'Iteration {i}...')
+    EPOCHS = 2000
+    period = 100
+    data = []
+    for i in range(EPOCHS):
+        if i % period == 0:
+            print(f'Evaluating policy on {i} iteration...')
+            p = extract_policy(Q)
+            fitness = evaluate_policy(p)
+            data.append(fitness)
+
         s = 0
-        a = IDLE_ACTION  # or get_next_action(Q, s, 0)
-        while True:  # run episode
-            # print(f'State {s}, action: {a}')
+        # start each episode from a random action
+        a = get_next_action(Q, s, eps=eps)
+        while True:  # rollout
             r, s_ = Agent.get_action_reward(a, s)
-            e[s, a] += 1
+
             if s_ is not None:
-                a_, pol = get_next_action(Q, s_, eps=eps)
-                delta = r + gamma*Q[s_, a_] - Q[s, a]
-                a = a_
+                a_ = get_next_action(Q, s_, eps=eps)
+                q_update = alpha * (r + gamma*Q[s_, a_] - Q[s, a])
             else:
-                delta = r - Q[s, a]
+                # just a reward, no futher state is available
+                q_update = alpha * (r - Q[s, a])
+                # the is no next action
+                a_ = None
 
-            # update Q table
-            for ss in range(s_S):
-                for aa in range(s_A):
-                    Q[ss, aa] += alpha * delta * e[ss, aa]
-                    e[ss, aa] = gamma * lambda_ * e[ss, aa]
-
+            Q[s, a] += q_update 
             s = s_
+            a = a_
 
             if s is None:  # reached terminal state
                 break
@@ -367,7 +400,10 @@ def sarsa():
         eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
 
     policy = extract_policy(Q)
+    print_Q(Q)
     print('Policy', policy)
+    if plot_chart:
+        build_evaluation_chart(data, period=period)
     return policy
 
 
@@ -377,6 +413,6 @@ if __name__ == '__main__':
     # value_iteration_play()
     # policy_iteration_play()
     # q_learning()
-    q_learning_play()
+    # q_learning_play()
     # sarsa()
-    # sarsa_play()
+    sarsa_play()
