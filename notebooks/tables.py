@@ -19,4 +19,7 @@ class Table(object):
         if self.porcelain:
             tbl = PorcelainTable(data)
 
+        if self.header is None:
+            tbl.inner_heading_row_border = False
+
         click.echo(tbl.table)
