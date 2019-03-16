@@ -26,6 +26,18 @@ class Environment(object):
 
         self._df.sort_values(by=['date'], inplace=True)
         self._df.reset_index(drop=True, inplace=True)
+        print('Simplify and run just for 1 month')
+        self._df = self._df.head(31)
+
+    def load_demo(self):
+        data = [
+            (27.9, 28.3),
+            (28.4, 28.65),
+            (28.1, 28.3),
+            (28.5, 28.7),
+        ]
+        self._df = pd.DataFrame(data, columns=['buy', 'sale'])
+
 
     def get_observation(self, step=None):
         step = step or self.step
@@ -45,6 +57,7 @@ def check():
     e = Environment()
     e.load(year=2017)
     print(e.get_observation())
+    print(e.size)
 
 
 if __name__ == '__main__':

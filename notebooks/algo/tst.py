@@ -1,3 +1,4 @@
+import sys
 import time
 import random
 from concurrent import futures
@@ -8,7 +9,16 @@ import tqdm
 PROCESSES = 4
 THREADS = 3
 
+
 def main():
+    I = 20
+    for i in range(I):
+
+        sys.stdout.write(f'\r{i}/{I}...')
+        sys.stdout.flush()
+        time.sleep(1)
+    return 
+
     with futures.ProcessPoolExecutor(max_workers=PROCESSES) as executor:
         fut_to_num = {}
         for i in range(PROCESSES):

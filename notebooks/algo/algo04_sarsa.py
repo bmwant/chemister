@@ -1,9 +1,11 @@
 import os
 import time
+import pickle
 import concurrent.futures
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
 
+import tqdm
 import numpy as np
 
 from notebooks.algo.agent import PolicyBasedTrader
@@ -36,22 +38,6 @@ def get_next_action(agent, Q, state, eps=1.0) -> int:
         return int(policy[state])
 
 
-def maximize_q(agent, Q, state):
-    """
-    One step lookahead for the best action which maximizes Q in a new state.
-    """
-    if state is None:
-        return 0
-
-    # valid actions in a given state
-    actions = agent.get_available_actions(state)
-    outcomes = []
-    for a in actions:
-        r, s_ = agent.take_action(a, state, dry_run=True)
-        outcomes.append(np.max(Q[s_]))
-    return np.max(outcomes)
-
-
 def evaluate_q(env, Q):
     agent = PolicyBasedTrader(policy=None, env=env)
     policy = extract_policy(agent, Q)
@@ -64,16 +50,38 @@ def evaluate_q(env, Q):
     return agent.profit
 
 
+DUMP_FILENAME = 'sarsa_q.model'
+
+
+class SarsaModel(object):
+    def __init__(self, Q, eps):
+        self.Q = Q
+        self.eps = eps
+
+    def save(self):
+        print('\nSaving model to a file {}'.format(DUMP_FILENAME))
+        with open(DUMP_FILENAME, 'wb') as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load():
+        if os.path.exists(DUMP_FILENAME):
+            print('Loading model from {}'.format(DUMP_FILENAME))
+            with open(DUMP_FILENAME, 'rb') as f:
+                return pickle.load(f)
+
+
 def evaluate_agent():
     env = Environment()
     env.load(2018)
     agent = PolicyBasedTrader(policy=None, env=env)
-    model = load_model()
+    model = SarsaModel.load()
     if model is None:
         raise RuntimeError('Train agent first, no model to load')
 
-    policy = extract_policy(agent, model)
+    policy = extract_policy(agent, model.Q)
 
+    print('Evaluate SARSA model on env with size: {}'.format(env.size))
     for step in range(env.size):
         state = agent.to_state(step, agent.amount_usd)
         action = policy[state]
@@ -88,85 +96,91 @@ def evaluate_agent():
     return agent.profit
 
 
-DUMP_FILENAME = 'q_learning.model'
-
-
-def save_model(Q):
-    print('\nSaving model to a file {}'.format(DUMP_FILENAME))
-    with open(DUMP_FILENAME, 'wb') as f:
-        np.save(f, Q)
-
-
-def load_model():
-    if os.path.exists(DUMP_FILENAME):
-        print('Loading model from {}'.format(DUMP_FILENAME))
-        with open(DUMP_FILENAME, 'rb') as f:
-            return np.load(f)
-
-
-def q_learning(plot_chart=False):
+def sarsa(plot_chart=False):
     env = Environment()
+    # load smaller environment for just one month
     env.load(2018)
     agent = PolicyBasedTrader(policy=None, env=env)
     s_S = agent.states_space_size
     s_A = agent.actions_space_size
     print(f'States space size is {s_S}')
     print(f'Actions space size is {s_A}')
+    print(f'Steps in environment is {env.size}')
 
     alpha = 0.2  # learning rate
     gamma = 0.9  # discount factor
-    eps = 0.4  # exploration factor
-    model = load_model()
-    Q = model if model is not None else np.zeros(shape=(s_S, s_A))
+    # load model from a file if saved previously
+    model = SarsaModel.load()
+    Q = model.Q if model is not None else np.zeros(shape=(s_S, s_A))
+    if model is not None:
+        print(f'Resuming with eps={model.eps}')
+
+    min_eps = 0.01
+    # eps = 0.1  # start with exploration 
+    eps = model.eps if model is not None else 0.1
+    max_eps = 1.0
+    decay_rate = 0.01
 
     EPOCHS = 1000
     period = 5
     data = []
 
+    print(f'Running {EPOCHS} epochs\n')
     lock = Lock()
 
     def run_iterations(worker_num=0):
-        print(f'#{worker_num}: Running {EPOCHS} iterations in worker')
+        # print(f'#{worker_num}: Running {EPOCHS} iterations in worker')
+        nonlocal eps
+        progress = tqdm.tqdm(
+            desc='#{:02d}'.format(worker_num),
+            position=worker_num,
+            total=EPOCHS,
+            leave=False,
+        )
         for i in range(EPOCHS):
             Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy 
             if i % period == 0:
-                print(f'#{worker_num}: Evaluating agent on {i} iteration...')
+                # print(f'#{worker_num}: Evaluating agent on {i} iteration...')
                 fitness = evaluate_q(env, Q_copy)
-                print(f'#{worker_num}: Current fitness: {fitness:.2f}')
                 data.append(fitness)
 
             # reset env for each epoch
             agent = PolicyBasedTrader(policy=None, env=env)
             s = 0  # starting state
-            print(f'#{worker_num}: Rollout for epoch {i}')
+            a = get_next_action(agent, Q_copy, s, eps=eps)
+            # print(f'#{worker_num}: Rollout for epoch {i}')
             while s is not None:  # rollout
-                # do not allow other threads to update Q within a single step
-                with lock:  
-                    a = get_next_action(agent, Q, s, eps) 
+                r, s_ = agent.take_action(a, s)
+                with lock:
+                    if s_ is not None:
+                        a_ = get_next_action(agent, Q, s_, eps=eps)
+                        q_update = alpha * (r + gamma*Q[s_, a_] - Q[s, a])
+                    else:
+                        q_update = alpha * (r - Q[s, a])
+                        a_ = None
 
-                    r, s_ = agent.take_action(a, s)
-                    # maximize Q for the next state
-                    max_q = maximize_q(agent, Q, s_)  
+                    Q[s, a] += q_update
 
-                    Q[s, a] = alpha*(r + gamma*max_q - Q[s, a])
-                
                 s = s_
+                a = a_
+            eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
+            progress.update()
+        progress.close()
+        return worker_num
 
     workers = 8
     with ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {
-            executor.submit(run_iterations, i): i
+        futures = [
+            executor.submit(run_iterations, i)
             for i in range(workers)
-        }
-        for future in concurrent.futures.as_completed(futures):
-            worker_num = futures[future]
-            try:
-                r = future.result()
-                print(f'#{worker_num}: Finished!')
-            except Exception as e:
-                print(f'#{worker_num}: Failed with {e}')
+        ]
+        result = concurrent.futures.wait(futures)
+        assert len(result.done) == workers
 
-    save_model(Q)
+    # Save latest data
+    model = SarsaModel(Q=Q, eps=eps)
+    model.save()
+    print('\nDone!')
     policy = extract_policy(agent, Q)
     if plot_chart:
         build_evaluation_chart(data, period=period)
@@ -175,5 +189,5 @@ def q_learning(plot_chart=False):
 
 
 if __name__ == '__main__':
-    q_learning(plot_chart=True)
+    sarsa(plot_chart=True)
     evaluate_agent()
