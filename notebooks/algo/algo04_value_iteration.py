@@ -23,14 +23,18 @@ def extract_policy(agent, v):
 
 def get_outcomes_for_state(agent, state, v, gamma=1.0):
     actions = agent.get_available_actions(state)
+    # print(f'Available actions in state {state} is {actions}')
     # to be able perform np.argmax over it properly
     outcomes = np.full(agent.actions_space_size, -np.inf)
-    p = 1 / len(actions)  # all actions are equally available
     for a in actions:
+        p = 1  # probability of moving to the state `s_`
+        # when being in state `state` and taking action `a`
         r, s_ = agent.take_action(a, state, dry_run=True)
+        # `r` reward for taking action `a` in the state `state`
         v_ = v[s_] if s_ is not None else 0
         outcomes[a] = p*(r + gamma*v_)
 
+    # print(f'Outcomes are {outcomes}')
     return outcomes
 
 
@@ -66,9 +70,9 @@ def value_iteration(plot_chart=False):
     print(f'Actions space size is {s_A}')
 
     v = np.zeros(s_S)
-    gamma = 0.99  # discount factor
+    gamma = 0.9  # discount factor
 
-    EPOCHS = 10
+    EPOCHS = 500
     period = 5
     data = []
 
@@ -80,18 +84,25 @@ def value_iteration(plot_chart=False):
         sys.stdout.write(f'\rIteration {i}/{EPOCHS}...')
         sys.stdout.flush()
         for s in range(s_S):
+            # print('='*30)
             v_ = v[s]
             actions_outcomes = get_outcomes_for_state(agent, s, v, gamma=gamma)
             v[s] = max(actions_outcomes)
+            # print(f's={s}; v[s]={v[s]}\n')
             delta = max(delta, np.abs(v_ - v[s]))
 
+        # print(delta)
         if delta < theta:
             print('Value function converged')
             break
+
+    print('='*80)
+    print('Value function')
+    print(v)
     def run_iterations(worker_num=0):
         print(f'#{worker_num}: Running {EPOCHS} iterations in worker')
         for i in range(EPOCHS):
-            Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy 
+            Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy
             if i % period == 0:
                 print(f'#{worker_num}: Evaluating agent on {i} iteration...')
                 fitness = evaluate_q(env, Q_copy)
@@ -104,19 +115,22 @@ def value_iteration(plot_chart=False):
             print(f'#{worker_num}: Rollout for epoch {i}')
             while s is not None:  # rollout
                 # do not allow other threads to update Q within a single step
-                with lock:  
-                    a = get_next_action(agent, Q, s, eps) 
+                with lock:
+                    a = get_next_action(agent, Q, s, eps)
 
                     r, s_ = agent.take_action(a, s)
                     # maximize Q for the next state
-                    max_q = maximize_q(agent, Q, s_)  
+                    max_q = maximize_q(agent, Q, s_)
 
                     Q[s, a] = alpha*(r + gamma*max_q - Q[s, a])
-                
+
                 s = s_
 
+    print('='*80)
     print('Extracting deterministic policy, pi')
     policy = extract_policy(agent, v)
+
+    print('='*80)
     print('Evaluating extracted policy')
     evaluate_policy(policy)
     return policy
