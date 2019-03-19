@@ -40,14 +40,14 @@ ACTIONS_F = (
     (0, 0),  # do nothing, day without trading
 )
 ACTIONS = (
-    (100, 100),
+    # (100, 100),
     (100, 0),
     (0, 100),
     (0, 0),
 )
 
 IDLE_ACTION_INDEX = len(ACTIONS) - 1
-MAX_AMOUNT = 200  # max amount of currency we are allowed to buy
+MAX_AMOUNT = 1000  # max amount of currency we are allowed to buy
 wallet_step = 100
 wallet_range = np.arange(0, MAX_AMOUNT+1, wallet_step)  # including upper bound
 s_W = wallet_range.size  # space size for wallet discrete size
@@ -180,7 +180,7 @@ class PolicyBasedTrader(BaseTrader):
         sale_uah = d_sale*rate_buy  # we will get this much uah
         buy_uah = d_buy*rate_sale  # we will pay this much uah
         uah_diff = sale_uah - buy_uah
-        new_amount = self.amount_usd + usd_diff  # currency amount
+        new_amount = amount + usd_diff  # currency amount
         if self.verbose:
             print(f'Taking action #{action}: ({d_buy}, {d_sale})')
         if not dry_run:
@@ -197,7 +197,7 @@ class PolicyBasedTrader(BaseTrader):
             # reward = self.profit
             new_state = None
         else:
-            new_state = self.to_state(step+1, new_amount) 
+            new_state = self.to_state(step+1, new_amount)
 
         reward = uah_diff  # raw operation profit in uah
         if self.verbose:

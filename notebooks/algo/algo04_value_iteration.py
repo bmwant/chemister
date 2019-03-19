@@ -3,11 +3,12 @@ import sys
 import time
 import concurrent.futures
 from threading import Lock
+from itertools import count
 from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-from notebooks.algo.agent import PolicyBasedTrader
+from notebooks.algo.agent import PolicyBasedTrader, s_W
 from notebooks.algo.environment import Environment
 from notebooks.cardrive.visualize import build_evaluation_chart
 
@@ -26,6 +27,7 @@ def get_outcomes_for_state(agent, state, v, gamma=1.0):
     # print(f'Available actions in state {state} is {actions}')
     # to be able perform np.argmax over it properly
     outcomes = np.full(agent.actions_space_size, -np.inf)
+    da = {}
     for a in actions:
         p = 1  # probability of moving to the state `s_`
         # when being in state `state` and taking action `a`
@@ -33,20 +35,23 @@ def get_outcomes_for_state(agent, state, v, gamma=1.0):
         # `r` reward for taking action `a` in the state `state`
         v_ = v[s_] if s_ is not None else 0
         outcomes[a] = p*(r + gamma*v_)
+        da[a] = f'R: {r} -> s\':{s_}'
 
-    # print(f'Outcomes are {outcomes}')
+    # print(f'State: {state}', da)
+    # print(f'Setting v[{state}]={max(outcomes)}')
     return outcomes
 
 
 def evaluate_policy(policy):
     env = Environment()
-    # env.load(2018)
-    env.load_demo()
+    env.load(2018)
+    # env.load_demo()
     agent = PolicyBasedTrader(policy=None, env=env, verbose=True)
 
     print(policy)
     for step in range(env.size):
         state = agent.to_state(step, agent.amount_usd)
+        # print('State=', state)
         action = policy[state]
         agent.take_action(action, state)
 
@@ -59,20 +64,38 @@ def evaluate_policy(policy):
     return agent.profit
 
 
+def print_value_function(v):
+    print('='*80)
+    print('Value function')
+
+    for row in range(len(v)):
+        print('{:.2f}\t'.format(v[row]), end=' ')
+        if (row+1) % s_W == 0:
+            print()
+
+
+"""
+1) inf as values -
+2) -10000 as values -
+3) remove (100, 100) action -
+4) setting gamma to 1 +
+5) setting gamma to 0.999 +-
+"""
 def value_iteration(plot_chart=False):
     env = Environment()
-    # env.load(2018)
-    env.load_demo()
+    env.load(2018)
+    # env.load_demo()
     agent = PolicyBasedTrader(policy=None, env=env)
     s_S = agent.states_space_size
     s_A = agent.actions_space_size
     print(f'States space size is {s_S}')
     print(f'Actions space size is {s_A}')
 
-    v = np.zeros(s_S)
-    gamma = 0.9  # discount factor
+    v = np.full(s_S, 0)
+    # gamma = 0.9  # discount factor
+    gamma = 1  # count raw undiscounted profit
 
-    EPOCHS = 500
+    EPOCHS = 1000
     period = 5
     data = []
 
@@ -80,6 +103,7 @@ def value_iteration(plot_chart=False):
 
     theta = 0.05  # convergence check
     for i in range(EPOCHS):
+    # for i in count():
         delta = 0
         sys.stdout.write(f'\rIteration {i}/{EPOCHS}...')
         sys.stdout.flush()
@@ -88,17 +112,15 @@ def value_iteration(plot_chart=False):
             v_ = v[s]
             actions_outcomes = get_outcomes_for_state(agent, s, v, gamma=gamma)
             v[s] = max(actions_outcomes)
+            # print('Max on actions is {:.2f}'.format(max(actions_outcomes)))
             # print(f's={s}; v[s]={v[s]}\n')
             delta = max(delta, np.abs(v_ - v[s]))
 
-        # print(delta)
         if delta < theta:
-            print('Value function converged')
+            print('\nValue function converged')
             break
 
-    print('='*80)
-    print('Value function')
-    print(v)
+    print_value_function(v)
     def run_iterations(worker_num=0):
         print(f'#{worker_num}: Running {EPOCHS} iterations in worker')
         for i in range(EPOCHS):

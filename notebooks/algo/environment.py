@@ -1,6 +1,6 @@
 import pandas as pd
 
-from notebooks.helpers import load_year_dataframe, DATE_FMT 
+from notebooks.helpers import load_year_dataframe, DATE_FMT
 
 
 class EnvData(object):
@@ -26,15 +26,16 @@ class Environment(object):
 
         self._df.sort_values(by=['date'], inplace=True)
         self._df.reset_index(drop=True, inplace=True)
-        print('Simplify and run just for 1 month')
-        self._df = self._df.head(31)
+        days = 31
+        print(f'Simplify and run just for {days} days')
+        self._df = self._df.head(days)
 
     def load_demo(self):
         data = [
-            (27.9, 28.3),
-            (28.4, 28.65),
-            (28.1, 28.3),
-            (28.5, 28.7),
+            (27.9, 28.3),  # buy
+            (28.1, 28.3),  # buy
+            (28.4, 28.65), # sale
+            (28.5, 28.7),  # sale
         ]
         self._df = pd.DataFrame(data, columns=['buy', 'sale'])
 
