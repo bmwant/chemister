@@ -32,8 +32,8 @@ class Environment(object):
     def load_demo(self):
         data = [
             (27.9, 28.3),
-            (28.4, 28.65),
             (28.1, 28.3),
+            (28.4, 28.65),
             (28.5, 28.7),
         ]
         self._df = pd.DataFrame(data, columns=['buy', 'sale'])

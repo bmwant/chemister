@@ -39,7 +39,7 @@ def get_new_value_for_state(agent, s, v, p, gamma=1.0):
     return r + gamma * v_
 
 
-def evaluate_policy(policy):
+def evaluate_policy(policy, verbose=False):
     env = Environment()
     # env.load(2018)
     env.load_demo()
@@ -48,7 +48,9 @@ def evaluate_policy(policy):
     for step in range(env.size):
         state = agent.to_state(step, agent.amount_usd)
         action = policy[state]
-        agent.take_action(action, state)
+        r, s_ = agent.take_action(action, state)
+        if verbose:
+            print(f'Transition {state}->{s_}')
 
     print('End amount UAH: {:.2f}'.format(agent.amount_uah))
     print('End amount USD: {:.2f}'.format(agent.amount_usd))
@@ -117,9 +119,19 @@ def policy_iteration():
 
     print('='*80)
     print('Evaluating extracted policy')
+    
+    print('Policy', p) 
     evaluate_policy(p)
     return p
 
 
+def test():
+    policy = np.array([
+        1, 3, 3, 3, 1, 3, 3, 3, 2, 3, 2, 3
+    ]) 
+    evaluate_policy(policy, verbose=True)
+
+
 if __name__ == '__main__':
-    policy_iteration()
+    # policy_iteration()
+    test()
