@@ -4,6 +4,8 @@ import timeit
 
 import numpy as np
 
+from humanfriendly import format_timespan
+
 from notebooks.algo.agent import PolicyBasedTrader, s_W
 from notebooks.algo.environment import Environment
 from notebooks.cardrive.visualize import build_evaluation_chart
@@ -95,10 +97,14 @@ def value_iteration():
     data = []
 
     theta = 0.05  # convergence check
-
+    
+    t1 = timeit.default_timer()
     for i in range(EPOCHS):
         delta = 0
-        sys.stdout.write(f'\rRunning epoch {i}/{EPOCHS}...')
+        t2 = timeit.default_timer()
+        dtime = format_timespan(t2 - t1)
+        sys.stdout.write(
+            f'\rRunning epoch {i}/{EPOCHS}... {dtime} passed')
         sys.stdout.flush()
         for s in range(s_S):
             v_ = v[s]
