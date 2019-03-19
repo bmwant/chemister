@@ -1,10 +1,6 @@
 import os
 import sys
-import time
-import concurrent.futures
-from threading import Lock
-from itertools import count
-from concurrent.futures import ThreadPoolExecutor
+import timeit
 
 import numpy as np
 
@@ -81,7 +77,7 @@ def print_value_function(v):
 4) setting gamma to 1 +
 5) setting gamma to 0.999 +-
 """
-def value_iteration(plot_chart=False):
+def value_iteration():
     env = Environment()
     env.load(2018)
     # env.load_demo()
@@ -92,71 +88,52 @@ def value_iteration(plot_chart=False):
     print(f'Actions space size is {s_A}')
 
     v = np.full(s_S, 0)
-    # gamma = 0.9  # discount factor
     gamma = 1  # count raw undiscounted profit
 
     EPOCHS = 1000
     period = 5
     data = []
 
-    lock = Lock()
-
     theta = 0.05  # convergence check
+
     for i in range(EPOCHS):
-    # for i in count():
         delta = 0
-        sys.stdout.write(f'\rIteration {i}/{EPOCHS}...')
+        sys.stdout.write(f'\rRunning epoch {i}/{EPOCHS}...')
         sys.stdout.flush()
         for s in range(s_S):
-            # print('='*30)
             v_ = v[s]
-            actions_outcomes = get_outcomes_for_state(agent, s, v, gamma=gamma)
+            actions_outcomes = get_outcomes_for_state(
+                agent, s, v, gamma=gamma)
             v[s] = max(actions_outcomes)
-            # print('Max on actions is {:.2f}'.format(max(actions_outcomes)))
-            # print(f's={s}; v[s]={v[s]}\n')
             delta = max(delta, np.abs(v_ - v[s]))
 
         if delta < theta:
-            print('\nValue function converged')
+            print(f'\nValue function converged on {i} iteration')
             break
 
     print_value_function(v)
-    def run_iterations(worker_num=0):
-        print(f'#{worker_num}: Running {EPOCHS} iterations in worker')
-        for i in range(EPOCHS):
-            Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy
-            if i % period == 0:
-                print(f'#{worker_num}: Evaluating agent on {i} iteration...')
-                fitness = evaluate_q(env, Q_copy)
-                print(f'#{worker_num}: Current fitness: {fitness:.2f}')
-                data.append(fitness)
-
-            # reset env for each epoch
-            agent = PolicyBasedTrader(policy=None, env=env)
-            s = 0  # starting state
-            print(f'#{worker_num}: Rollout for epoch {i}')
-            while s is not None:  # rollout
-                # do not allow other threads to update Q within a single step
-                with lock:
-                    a = get_next_action(agent, Q, s, eps)
-
-                    r, s_ = agent.take_action(a, s)
-                    # maximize Q for the next state
-                    max_q = maximize_q(agent, Q, s_)
-
-                    Q[s, a] = alpha*(r + gamma*max_q - Q[s, a])
-
-                s = s_
 
     print('='*80)
     print('Extracting deterministic policy, pi')
     policy = extract_policy(agent, v)
-
-    print('='*80)
-    print('Evaluating extracted policy')
-    evaluate_policy(policy)
+    print(policy)
     return policy
 
 
+def main():
+    """
+    31 days - 0.21 minutes, single thread, profit - 290
+    62 days - 0.45 minutes
+    365 days -
+    """
+    t1 = timeit.default_timer()
+    policy = value_iteration()
+    t2 = timeit.default_timer()
+    print('\nValue iteration finished in {:.2f} minutes'.format((t2-t1) / 60.))
+    print('='*80)
+    print('Evaluating extracted policy')
+    evaluate_policy(policy)
+
+
 if __name__ == '__main__':
-    value_iteration(plot_chart=True)
+    main()

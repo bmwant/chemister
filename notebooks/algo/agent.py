@@ -39,11 +39,45 @@ ACTIONS_F = (
     (0, 10),
     (0, 0),  # do nothing, day without trading
 )
-ACTIONS = (
+ACTIONS_S = (
     # (100, 100),
     (100, 0),
     (0, 100),
     (0, 0),
+)
+
+ACTIONS = (
+     (0, 100),
+     (0, 200),
+     (0, 300),
+     (0, 400),
+     (0, 500),
+     (100, 0),
+     (100, 200),
+     (100, 300),
+     (100, 400),
+     (100, 500),
+     (200, 0),
+     (200, 100),
+     (200, 300),
+     (200, 400),
+     (200, 500),
+     (300, 0),
+     (300, 100),
+     (300, 200),
+     (300, 400),
+     (300, 500),
+     (400, 0),
+     (400, 100),
+     (400, 200),
+     (400, 300),
+     (400, 500),
+     (500, 0),
+     (500, 100),
+     (500, 200),
+     (500, 300),
+     (500, 400),
+     (0, 0),
 )
 
 IDLE_ACTION_INDEX = len(ACTIONS) - 1
@@ -52,6 +86,7 @@ wallet_step = 100
 wallet_range = np.arange(0, MAX_AMOUNT+1, wallet_step)  # including upper bound
 s_W = wallet_range.size  # space size for wallet discrete size
 
+print('s_A', len(ACTIONS))
 print('s_W', s_W)
 
 class BaseAgent(ABC):
