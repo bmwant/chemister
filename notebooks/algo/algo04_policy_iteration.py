@@ -1,13 +1,16 @@
 import os
 import sys
 import time
+import timeit
 import concurrent.futures
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
+from humanfriendly import format_timespan
 
 from notebooks.algo.agent import PolicyBasedTrader, IDLE_ACTION_INDEX
+from notebooks.algo.agent import s_W
 from notebooks.algo.environment import Environment
 from notebooks.cardrive.visualize import build_evaluation_chart
 
@@ -39,10 +42,20 @@ def get_new_value_for_state(agent, s, v, p, gamma=1.0):
     return r + gamma * v_
 
 
+def print_value_function(v):
+    print('='*80)
+    print('Value function')
+
+    for row in range(len(v)):
+        print('{:.2f}\t'.format(v[row]), end=' ')
+        if (row+1) % s_W == 0:
+            print()
+
+
 def evaluate_policy(policy, verbose=False):
     env = Environment()
-    # env.load(2018)
-    env.load_demo()
+    env.load(2018)
+    # env.load_demo()
     agent = PolicyBasedTrader(policy=None, env=env, verbose=True)
 
     for step in range(env.size):
@@ -63,8 +76,8 @@ def evaluate_policy(policy, verbose=False):
 
 def policy_iteration():
     env = Environment()
-    # env.load(2018)
-    env.load_demo()
+    env.load(2018)
+    # env.load_demo()
     agent = PolicyBasedTrader(policy=None, env=env)
     s_S = agent.states_space_size
     s_A = agent.actions_space_size
@@ -72,9 +85,8 @@ def policy_iteration():
     print(f'Actions space size is {s_A}')
 
     v = np.zeros(s_S)  # value function
-    v = np.full(s_S, 0)  # value function
     p = np.full(s_S, IDLE_ACTION_INDEX)  # initial policy should be valid
-    gamma = 0.9  # discount factor
+    gamma = 1  # discount factor
 
     EPOCHS = 500
     period = 5
@@ -106,23 +118,23 @@ def policy_iteration():
                 policy_stable = False
 
         if policy_stable:
-            print(f'Found stable policy on iteration {i}!')
+            print(f'\nFound stable policy on iteration {i}!')
             break
 
-    print('='*80)
-    print('Value function')
-    print(v)
+    print_value_function(v)
 
-    print('='*80)
-    print('Policy')
-    print(p)
+    return p
 
+
+def main():
+    t1 = timeit.default_timer()
+    policy = policy_iteration()
+    t2 = timeit.default_timer()
+    dt = format_timespan(t2-t1)
+    print('\nPolicy iteration finished in {}'.format(dt))
     print('='*80)
     print('Evaluating extracted policy')
-    
-    print('Policy', p) 
-    evaluate_policy(p)
-    return p
+    evaluate_policy(policy)
 
 
 def test():
@@ -133,5 +145,5 @@ def test():
 
 
 if __name__ == '__main__':
-    # policy_iteration()
-    test()
+    main()
+    # test()

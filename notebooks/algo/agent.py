@@ -86,6 +86,7 @@ wallet_step = 10
 wallet_range = np.arange(0, MAX_AMOUNT+1, wallet_step)  # including upper bound
 s_W = wallet_range.size  # space size for wallet discrete size
 
+print('Actions', ACTIONS)
 print('s_A (number of actions)', len(ACTIONS))
 print('s_W (wallet slots)', s_W)
 
