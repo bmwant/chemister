@@ -30,7 +30,6 @@ def get_max_action_for_state(agent, s, v, gamma=1.0):
     return np.argmax(outcomes)
 
 
-
 def get_new_value_for_state(agent, s, v, p, gamma=1.0):
     """
     Get reward when following current policy `p` and being in the state `s` for
@@ -74,6 +73,22 @@ def evaluate_policy(policy, verbose=False):
     return agent.profit
 
 
+MODEL_FILENAME = 'policy_iteration04.model'
+
+
+def save_model(v):
+    # print('\nSaving model to a file {}'.format(MODEL_FILENAME))
+    with open(MODEL_FILENAME, 'wb') as f:
+        np.save(f, v)
+
+
+def load_model():
+    if os.path.exists(MODEL_FILENAME):
+        print('\nLoading model from {}'.format(MODEL_FILENAME))
+        with open(MODEL_FILENAME, 'rb') as f:
+            return np.load(f)
+
+
 def policy_iteration():
     env = Environment()
     env.load(2018)
@@ -81,22 +96,26 @@ def policy_iteration():
     agent = PolicyBasedTrader(policy=None, env=env)
     s_S = agent.states_space_size
     s_A = agent.actions_space_size
-    print(f'States space size is {s_S}')
-    print(f'Actions space size is {s_A}')
 
-    v = np.zeros(s_S)  # value function
+    v = load_model()
+    v = v if v is not None else np.zeros(s_S)  # value function
     p = np.full(s_S, IDLE_ACTION_INDEX)  # initial policy should be valid
     gamma = 1  # discount factor
 
-    EPOCHS = 500
+    EPOCHS = 1000
     period = 5
     data = []
 
-    lock = Lock()
+    print(f'States space size is {s_S}')
+    print(f'Actions space size is {s_A}')
+    print(f'Max epochs to run {EPOCHS}')
 
     theta = 0.05  # convergence check
+    t1 = timeit.default_timer()
     for i in range(EPOCHS):
-        sys.stdout.write(f'\rIteration {i}/{EPOCHS}...')
+        t2 = timeit.default_timer()
+        dt = format_timespan(t2-t1)
+        sys.stdout.write(f'\rIteration {i}/{EPOCHS}... {dt} passed')
         sys.stdout.flush()
         while True:  # policy evaluation
             delta = 0
@@ -117,8 +136,14 @@ def policy_iteration():
             if action != p[s]:
                 policy_stable = False
 
+        if i % period == 0:
+            save_model(v)
+
         if policy_stable:
             print(f'\nFound stable policy on iteration {i}!')
+            print(
+                '\nSaving resulting model to a file {}'.format(MODEL_FILENAME))
+            save_model(v)
             break
 
     print_value_function(v)

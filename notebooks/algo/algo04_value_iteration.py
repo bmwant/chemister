@@ -1,9 +1,12 @@
 import os
 import sys
+import time
 import timeit
+import concurrent.futures
+from threading import Lock
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
-
 from humanfriendly import format_timespan
 
 from notebooks.algo.agent import PolicyBasedTrader, s_W
@@ -25,7 +28,6 @@ def get_outcomes_for_state(agent, state, v, gamma=1.0):
     # print(f'Available actions in state {state} is {actions}')
     # to be able perform np.argmax over it properly
     outcomes = np.full(agent.actions_space_size, -np.inf)
-    da = {}
     for a in actions:
         p = 1  # probability of moving to the state `s_`
         # when being in state `state` and taking action `a`
@@ -33,10 +35,8 @@ def get_outcomes_for_state(agent, state, v, gamma=1.0):
         # `r` reward for taking action `a` in the state `state`
         v_ = v[s_] if s_ is not None else 0
         outcomes[a] = p*(r + gamma*v_)
-        da[a] = f'R: {r} -> s\':{s_}'
 
-    # print(f'State: {state}', da)
-    # print(f'Setting v[{state}]={max(outcomes)}')
+    # print(f'Outcomes are {outcomes}')
     return outcomes
 
 
@@ -46,10 +46,8 @@ def evaluate_policy(policy):
     # env.load_demo()
     agent = PolicyBasedTrader(policy=None, env=env, verbose=True)
 
-    print(policy)
     for step in range(env.size):
         state = agent.to_state(step, agent.amount_usd)
-        # print('State=', state)
         action = policy[state]
         agent.take_action(action, state)
 
@@ -72,39 +70,49 @@ def print_value_function(v):
             print()
 
 
-"""
-1) inf as values -
-2) -10000 as values -
-3) remove (100, 100) action -
-4) setting gamma to 1 +
-5) setting gamma to 0.999 +-
-"""
-def value_iteration():
+MODEL_FILENAME = 'value_iteration04.model'
+
+
+def save_model(v):
+    # print('\nSaving model to a file {}'.format(MODEL_FILENAME))
+    with open(MODEL_FILENAME, 'wb') as f:
+        np.save(f, v)
+
+
+def load_model():
+    if os.path.exists(MODEL_FILENAME):
+        print('\nLoading model from {}'.format(MODEL_FILENAME))
+        with open(MODEL_FILENAME, 'rb') as f:
+            return np.load(f)
+
+
+def value_iteration(plot_chart=False):
     env = Environment()
     env.load(2018)
     # env.load_demo()
     agent = PolicyBasedTrader(policy=None, env=env)
     s_S = agent.states_space_size
     s_A = agent.actions_space_size
-    print(f'States space size is {s_S}')
-    print(f'Actions space size is {s_A}')
 
-    v = np.full(s_S, 0)
-    gamma = 1  # count raw undiscounted profit
+    v = load_model()
+    v = v if v is not None else np.zeros(s_S)
+    gamma = 1  # undiscounted return for the whole episode
 
     EPOCHS = 1000
     period = 5
     data = []
 
+    print(f'States space size is {s_S}')
+    print(f'Actions space size is {s_A}')
+    print(f'Max epochs to run {EPOCHS}')
+
     theta = 0.05  # convergence check
-    
     t1 = timeit.default_timer()
     for i in range(EPOCHS):
         delta = 0
         t2 = timeit.default_timer()
-        dtime = format_timespan(t2 - t1)
-        sys.stdout.write(
-            f'\rRunning epoch {i}/{EPOCHS}... {dtime} passed')
+        dt = format_timespan(t2-t1)
+        sys.stdout.write(f'\rIteration {i}/{EPOCHS}... {dt} passed')
         sys.stdout.flush()
         for s in range(s_S):
             v_ = v[s]
@@ -113,8 +121,14 @@ def value_iteration():
             v[s] = max(actions_outcomes)
             delta = max(delta, np.abs(v_ - v[s]))
 
+        if i % period == 0:
+            save_model(v)
+
         if delta < theta:
-            print(f'\nValue function converged on {i} iteration')
+            print(f'\nValue function converged in {i} iterations')
+            print(
+                '\nSaving resulting model to a file {}'.format(MODEL_FILENAME))
+            save_model(v)
             break
 
     print_value_function(v)
@@ -123,19 +137,16 @@ def value_iteration():
     print('Extracting deterministic policy, pi')
     policy = extract_policy(agent, v)
     print(policy)
+
     return policy
 
 
 def main():
-    """
-    31 days - 0.21 minutes, single thread, profit - 290
-    62 days - 0.45 minutes
-    365 days -
-    """
     t1 = timeit.default_timer()
     policy = value_iteration()
     t2 = timeit.default_timer()
-    print('\nValue iteration finished in {:.2f} minutes'.format((t2-t1) / 60.))
+    dt = format_timespan(t2-t1)
+    print('\nValue iteration finished in {}'.format(dt))
     print('='*80)
     print('Evaluating extracted policy')
     evaluate_policy(policy)
