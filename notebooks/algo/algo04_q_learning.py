@@ -114,12 +114,12 @@ def q_learning(plot_chart=False):
     print(f'Actions space size is {s_A}')
 
     alpha = 0.2  # learning rate
-    gamma = 0.9  # discount factor
-    eps = 0.4  # exploration factor
+    gamma = 1  # discount factor
+    eps = 0.8  # exploration factor, higher - more exploration
     model = load_model()
     Q = model if model is not None else np.zeros(shape=(s_S, s_A))
 
-    EPOCHS = 1000
+    EPOCHS = 500
     period = 5
     data = []
 
@@ -128,7 +128,7 @@ def q_learning(plot_chart=False):
     def run_iterations(worker_num=0):
         print(f'#{worker_num}: Running {EPOCHS} iterations in worker')
         for i in range(EPOCHS):
-            Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy 
+            Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy
             if i % period == 0:
                 print(f'#{worker_num}: Evaluating agent on {i} iteration...')
                 fitness = evaluate_q(env, Q_copy)
@@ -141,15 +141,15 @@ def q_learning(plot_chart=False):
             print(f'#{worker_num}: Rollout for epoch {i}')
             while s is not None:  # rollout
                 # do not allow other threads to update Q within a single step
-                with lock:  
-                    a = get_next_action(agent, Q, s, eps) 
+                with lock:
+                    a = get_next_action(agent, Q, s, eps)
 
                     r, s_ = agent.take_action(a, s)
                     # maximize Q for the next state
-                    max_q = maximize_q(agent, Q, s_)  
+                    max_q = maximize_q(agent, Q, s_)
 
                     Q[s, a] = alpha*(r + gamma*max_q - Q[s, a])
-                
+
                 s = s_
 
     workers = 8

@@ -1,12 +1,15 @@
 import os
 import time
 import pickle
+import threading
 import concurrent.futures
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
 
 import tqdm
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import animation
 
 from notebooks.algo.agent import PolicyBasedTrader
 from notebooks.algo.environment import Environment
@@ -107,8 +110,8 @@ def sarsa(plot_chart=False):
     print(f'Actions space size is {s_A}')
     print(f'Steps in environment is {env.size}')
 
-    alpha = 0.2  # learning rate
-    gamma = 0.9  # discount factor
+    alpha = 0.3  # learning rate
+    gamma = 1  # discount factor
     # load model from a file if saved previously
     model = SarsaModel.load()
     Q = model.Q if model is not None else np.zeros(shape=(s_S, s_A))
@@ -116,12 +119,12 @@ def sarsa(plot_chart=False):
         print(f'Resuming with eps={model.eps}')
 
     min_eps = 0.01
-    # eps = 0.1  # start with exploration 
+    # eps = 0.1  # start with exploration
     eps = model.eps if model is not None else 0.1
     max_eps = 1.0
     decay_rate = 0.01
 
-    EPOCHS = 1000
+    EPOCHS = 30
     period = 5
     data = []
 
@@ -138,7 +141,7 @@ def sarsa(plot_chart=False):
             leave=False,
         )
         for i in range(EPOCHS):
-            Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy 
+            Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy
             if i % period == 0:
                 # print(f'#{worker_num}: Evaluating agent on {i} iteration...')
                 fitness = evaluate_q(env, Q_copy)
@@ -168,13 +171,31 @@ def sarsa(plot_chart=False):
         progress.close()
         return worker_num
 
+    fig, ax = plt.subplots(figsize=(6, 4))
+    fig.canvas.set_window_title('Agent evaluation')
+
+    def build_live_chart(i):
+        local_data = data[::]
+        datax = np.arange(0, period*len(local_data), period)
+
+        plt.xlabel('Iterations')
+        plt.ylabel('Fitness')
+        plt.title('Learning curve')
+        ax.clear()
+        ax.plot(datax, local_data, 'b', label='Score')
+        ax.legend()
+        ax.grid(True)
+
     workers = 8
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = [
             executor.submit(run_iterations, i)
             for i in range(workers)
         ]
+        ani = animation.FuncAnimation(fig, build_live_chart, interval=500)
+        plt.show()
         result = concurrent.futures.wait(futures)
+        plt.close()
         assert len(result.done) == workers
 
     # Save latest data
@@ -189,5 +210,5 @@ def sarsa(plot_chart=False):
 
 
 if __name__ == '__main__':
-    sarsa(plot_chart=True)
+    sarsa(plot_chart=False)
     evaluate_agent()
