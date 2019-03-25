@@ -1,14 +1,17 @@
 import os
+import time
 import pickle
 import argparse
 import threading
+import concurrent.futures
+from threading import Lock
+from concurrent.futures import ThreadPoolExecutor
 
-import click
+import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import animation
 
-from notebooks.helpers import hldit
 from notebooks.algo.agent import PolicyBasedTrader
 from notebooks.algo.environment import Environment
 from notebooks.cardrive.visualize import build_evaluation_chart
@@ -97,7 +100,6 @@ def evaluate_agent():
     return agent.profit
 
 
-@hldit
 def sarsa(play=False, plot_chart=False):
     env = Environment()
     # load smaller environment for just one month
@@ -118,25 +120,64 @@ def sarsa(play=False, plot_chart=False):
         print(f'Resuming with eps={model.eps}')
 
     min_eps = 0.01
-    eps = 0.1  # start with exploration
+    # eps = 0.1  # start with exploration
     eps = model.eps if model is not None else 0.1
     max_eps = 1.0
-    decay_rate = 0.05
-    best_fitness = -np.inf
+    decay_rate = 0.01
 
-    EPOCHS = 2000
+    EPOCHS = 100
     period = 5
     data = []
+
+    print(f'Running {EPOCHS} epochs\n')
+    lock = Lock()
+
+    def run_iterations(worker_num=0):
+        # print(f'#{worker_num}: Running {EPOCHS} iterations in worker')
+        nonlocal eps
+        progress = tqdm.tqdm(
+            desc='#{:02d}'.format(worker_num),
+            position=worker_num,
+            total=EPOCHS,
+            leave=False,
+        )
+        for i in range(EPOCHS):
+            Q_copy = Q.copy()  # do not lock, just evaluate on a recent copy
+            if i % period == 0:
+                # print(f'#{worker_num}: Evaluating agent on {i} iteration...')
+                fitness = evaluate_q(env, Q_copy)
+                data.append(fitness)
+
+            # reset env for each epoch
+            agent = PolicyBasedTrader(policy=None, env=env)
+            s = 0  # starting state
+            a = get_next_action(agent, Q_copy, s, eps=eps)
+            # print(f'#{worker_num}: Rollout for epoch {i}')
+            while s is not None:  # rollout
+                r, s_ = agent.take_action(a, s)
+                with lock:
+                    if s_ is not None:
+                        a_ = get_next_action(agent, Q, s_, eps=eps)
+                        q_update = alpha * (r + gamma*Q[s_, a_] - Q[s, a])
+                    else:
+                        q_update = alpha * (r - Q[s, a])
+                        a_ = None
+
+                    Q[s, a] += q_update
+
+                s = s_
+                a = a_
+            eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
+            progress.update()
+        progress.close()
+        return worker_num
 
     fig, ax = plt.subplots(figsize=(6, 4))
     fig.canvas.set_window_title('Agent evaluation')
 
     def build_live_chart(i):
-        window = 20  # show N last values
-        local_data = data[-window:]
-        sv = (len(data) - window)*period if len(data) - window > 0 else 0
-        ev = len(data)*period
-        datax = np.arange(sv, ev, period)
+        local_data = data[::]
+        datax = np.arange(0, period*len(local_data), period)
 
         plt.xlabel('Iterations')
         plt.ylabel('Fitness')
@@ -146,52 +187,23 @@ def sarsa(play=False, plot_chart=False):
         ax.legend()
         ax.grid(True)
 
-    def run_iterations():
-        nonlocal eps, best_fitness
-        print(f'Running {EPOCHS} epochs\n')
-        for i in range(EPOCHS):
-            if i % period == 0:
-                print(f'Evaluating agent on {i} iteration...')
-                fitness = evaluate_q(env, Q)
-                if fitness > 0:
-                    click.secho(f'We have positive fitness {fitness:.2f}',
-                                fg='red')
-                if fitness > best_fitness:
-                    best_fitness = fitness
-                data.append(fitness)
-
-            # reset env for each epoch
-            agent = PolicyBasedTrader(policy=None, env=env)
-            s = 0  # starting state
-            a = get_next_action(agent, Q, s, eps=eps)
-            print(f'Rollout for epoch {i}')
-            while s is not None:  # rollout
-                r, s_ = agent.take_action(a, s)
-                if s_ is not None:
-                    a_ = get_next_action(agent, Q, s_, eps=eps)
-                    q_update = alpha * (r + gamma*Q[s_, a_] - Q[s, a])
-                else:
-                    q_update = alpha * (r - Q[s, a])
-                    a_ = None
-
-                Q[s, a] += q_update
-
-                s = s_
-                a = a_
-            eps = min_eps + (max_eps - min_eps)*np.exp(-decay_rate*i)
-
-    ani = animation.FuncAnimation(fig, build_live_chart, interval=500)
-    t = threading.Thread(target=run_iterations)
-    t.start()
-    plt.show()
-    t.join()
+    workers = 1
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = [
+            executor.submit(run_iterations, i)
+            for i in range(workers)
+        ]
+        ani = animation.FuncAnimation(fig, build_live_chart, interval=500)
+        plt.show()
+        result = concurrent.futures.wait(futures)
+        plt.close()
+        assert len(result.done) == workers
 
     # Save latest data
     if not play:
         model = SarsaModel(Q=Q, eps=eps)
         model.save()
     print('\nDone!')
-    click.secho(f'Best fitness {best_fitness:.2f}', fg='green')
     policy = extract_policy(agent, Q)
 
     if plot_chart:
@@ -208,18 +220,13 @@ def parse_args():
         default=False,
         help='use saved model just to evaluate an agent',
     )
-    parser.add_argument(
-        '--chart',
-        action='store_true',
-        default=True,
-        help='build full evaluation chart in the end',
-    )
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    sarsa(play=args.play, plot_chart=args.chart)
+    print(args.play)
+    sarsa(plot_chart=False)
     evaluate_agent()
 
 

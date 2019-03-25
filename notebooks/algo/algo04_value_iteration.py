@@ -98,7 +98,7 @@ def value_iteration(plot_chart=False):
     v = v if v is not None else np.zeros(s_S)
     gamma = 1  # undiscounted return for the whole episode
 
-    EPOCHS = 1000
+    EPOCHS = 20
     period = 5
     data = []
 

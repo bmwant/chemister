@@ -26,9 +26,9 @@ class Environment(object):
 
         self._df.sort_values(by=['date'], inplace=True)
         self._df.reset_index(drop=True, inplace=True)
-        # days = 31
-        # print(f'Simplify and run just for {days} days')
-        # self._df = self._df.head(days)
+        days = 31
+        print(f'Simplify and run just for {days} days')
+        self._df = self._df.head(days)
 
     def load_demo(self):
         data = [
