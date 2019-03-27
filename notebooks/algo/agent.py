@@ -50,17 +50,33 @@ ACTIONS = (
     (0, 10),
     (0, 20),
     (0, 50),
-    (0, 80),
     (0, 100),
     (0, 200),
-    (0, 500),
     (10, 0),
+    (10, 20),
+    (10, 50),
+    (10, 100),
+    (10, 200),
     (20, 0),
+    (20, 10),
+    (20, 50),
+    (20, 100),
+    (20, 200),
     (50, 0),
-    (80, 0),
+    (50, 10),
+    (50, 20),
+    (50, 100),
+    (50, 200),
     (100, 0),
+    (100, 10),
+    (100, 20),
+    (100, 50),
+    (100, 200),
     (200, 0),
-    (500, 0),
+    (200, 10),
+    (200, 20),
+    (200, 50),
+    (200, 100),
     (0, 0),
 )
 
@@ -70,9 +86,10 @@ wallet_step = 10
 wallet_range = np.arange(0, MAX_AMOUNT+1, wallet_step)  # including upper bound
 s_W = wallet_range.size  # space size for wallet discrete size
 
-print('Actions', ACTIONS)
-print('s_A (number of actions)', len(ACTIONS))
+# print('Actions', ACTIONS)
+# print('s_A (number of actions)', len(ACTIONS))
 print('s_W (wallet slots)', s_W)
+
 
 class BaseAgent(ABC):
     """

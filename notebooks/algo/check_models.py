@@ -3,11 +3,13 @@ from collections import Counter
 
 import numpy as np
 
+from notebooks.helpers import hldit
 from notebooks.algo.agent import ACTIONS
 from notebooks.algo.environment import Environment
 from notebooks.algo.agent import PolicyBasedTrader, s_W
 
 MODEL_FILENAME = 'policy_iteration04.model'
+POLICY_FILENAME = 'policy_dump.model'
 
 
 def save_model(v):
@@ -38,6 +40,7 @@ def get_max_action_for_state(agent, s, v, gamma=1.0):
     return np.argmax(outcomes)
 
 
+@hldit
 def extract_policy(agent, v):
     print('Extracting policy...')
     s_S = agent.states_space_size
@@ -56,20 +59,29 @@ def main():
     env = Environment()
     env.load(2018)
     # env.load_demo()
-    # agent = PolicyBasedTrader(policy=None, env=env, verbose=False)
+    agent = PolicyBasedTrader(policy=None, env=env, verbose=False)
+    print(f'Total states: {agent.states_space_size}')
     # policy = extract_policy(agent, v)
-    # print('Count actions')
+    with open(POLICY_FILENAME, 'rb') as f:
+        policy = np.load(f)
 
-    actions_performed = {30: 16221, 4: 4698, 5: 4165, 25: 3937, 0: 3134, 2: 783, 15: 759, 3: 758, 1: 747, 10: 713, 20: 678, 9: 47, 26: 35, 14: 35, 27: 26, 19: 25, 8: 23, 21: 21, 13: 16, 7: 13, 16: 10, 22: 8, 28: 8, 12: 4, 17: 1}
+    print('Count actions')
+    c = Counter()
+    agent = PolicyBasedTrader(policy=None, env=env, verbose=True)
+
+    min_amount_uah = 0
+    for step in range(env.size):
+        state = agent.to_state(step, agent.amount_usd)
+        action = policy[state]
+        c[action] += 1
+        agent.take_action(action, state)
+        min_amount_uah = min(agent.amount_uah, min_amount_uah)
+
     for i, action in enumerate(ACTIONS):
-        print(action, '->', actions_performed.get(i))
+        print(action, '->', c.get(i))
 
-
-    # for step in range(env.size):
-    #     state = agent.to_state(step, agent.amount_usd)
-    #     action = policy[state]
-    #     agent.take_action(action, state)
-
+    print('min amount uah', min_amount_uah)
+    print(c)
     # print('End amount UAH: {:.2f}'.format(agent.amount_uah))
     # print('End amount USD: {:.2f}'.format(agent.amount_usd))
     # print('Profit in UAH: {:.2f}'.format(agent.profit))

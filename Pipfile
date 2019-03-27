@@ -39,5 +39,6 @@ tqdm = "*"
 neat-python = "==0.92"
 graphviz = "==0.10.1"
 humanfriendly = "*"
+tf-agents = "*"
 
 [dev-packages]
