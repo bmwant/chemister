@@ -26,7 +26,7 @@ from notebooks.helpers import load_year_dataframe, DATE_FMT
 
 
 tf.compat.v1.enable_v2_behavior()
-VERBOSE = True
+VERBOSE = False
 MAX_AMOUNT = 1000
 # WRONG_ACTION_REWARD = -MAX_AMOUNT*50 
 WRONG_ACTION_REWARD = -100
@@ -90,14 +90,14 @@ class TradeEnvironment(py_environment.PyEnvironment):
         step = self._step_num
         amount = self._amount
         amount_left = MAX_AMOUNT - amount
-        try:
+        if step < self.env_size:
             row = self._df.iloc[[step]]
-        except Exception as e:
-            import pdb; pdb.set_trace()
-            print('here')
-        buy = row['buy'].item()
-        sale = row['sale'].item()
-        min_buy_week = 0
+            buy = row['buy'].item()
+            sale = row['sale'].item()
+        else:
+            # handle termination states
+            buy = 0
+            sale = 0
         not_nan = lambda x: x if x is not np.nan else 0
         min_buy_week = not_nan(self._df.iloc[step-7:step]['buy'].min())
         min_buy_prev = not_nan(self._df.iloc[:step]['buy'].min())
