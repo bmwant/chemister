@@ -1,4 +1,5 @@
 import abc
+import argparse
 
 import tensorflow as tf
 import numpy as np
@@ -16,16 +17,28 @@ from tf_agents.environments import (
     utils,
 )
 from tf_agents.environments import time_step as ts
-from tf_agents.policies import random_tf_policy
+from tf_agents.policies import (
+    random_tf_policy,
+    greedy_policy,
+    epsilon_greedy_policy,
+    tf_py_policy,
+)
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils import common
 from tf_agents.specs import array_spec
 
+from notebooks.algo.tf_policy import (
+    DummyTradePolicy, 
+    FilteredQPolicy,
+    FilteredRandomPyPolicy,
+    FilteredRandomTFPolicy,
+)
 from notebooks.algo.agent import PolicyBasedTrader as Agent
 from notebooks.helpers import load_year_dataframe, DATE_FMT
 
 
 tf.compat.v1.enable_v2_behavior()
+FLAGS = None
 VERBOSE = False
 MAX_AMOUNT = 1000
 # WRONG_ACTION_REWARD = -MAX_AMOUNT*50 
@@ -45,7 +58,7 @@ class TradeEnvironment(py_environment.PyEnvironment):
         # self._action_spec = array_spec.ArraySpec.from_array(
         #     actions, name='action')
         self._observation_spec = array_spec.BoundedArraySpec(
-            shape=(16,), dtype=np.float32,
+            shape=(17,), dtype=np.float32,
             # minimum=[0, 0, 0],
             # maximum=[100, 100, MAX_AMOUNT],
             name='observation',
@@ -129,6 +142,7 @@ class TradeEnvironment(py_environment.PyEnvironment):
                 sale, 
                 amount,
                 amount_left,
+                step,
             ],
             dtype=np.float32,
         )
@@ -165,21 +179,27 @@ class TradeEnvironment(py_environment.PyEnvironment):
         if 0 <= new_amount <= MAX_AMOUNT:
             amount = new_amount
         else:
+            raise RuntimeError(
+                'Wrong action is produced by policy: {}, {}: a{}, s{}'.format(
+                    action, action_value, amount, step))
             reward = WRONG_ACTION_REWARD
 
         if VERBOSE:
             print(
-                '#{step} ({amount}): {buy}/{sale}; {action}; {reward}'.format(
+                '#{step} ({amount}->{new_amount}): '
+                '{buy}/{sale}; {action}; {reward}'.format(
                     step=step,
-                    amount=amount,
+                    amount=self._amount,
+                    new_amount=amount,
                     buy=buy,
                     sale=sale,
                     action=action_value,
                     reward=reward,
             ))
 
-        observation = self._get_observation(step)
+        # Update amount after action taken and return the observation
         self._amount = amount
+        observation = self._get_observation(step)
 
         if self._episode_ended:
             return ts.termination(
@@ -218,14 +238,30 @@ def collect_step(environment, policy):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--log_dir',
+        type=str,
+        default='/tmp/tensorflow/logs/tfenv',
+        help='summaries log directory',
+    )
+    FLAGS, unparsed = parser.parse_known_args()
+    if tf.gfile.Exists(FLAGS.log_dir):
+        tf.gfile.DeleteRecursively(FLAGS.log_dir)
+    tf.gfile.MakeDirs(FLAGS.log_dir)
+    train()
+
+
+def train():
+    global VERBOSE
     environment = TradeEnvironment()
     # utils.validate_py_environment(environment, episodes=5)
     # Environments
     train_env = tf_py_environment.TFPyEnvironment(environment)
     eval_env = tf_py_environment.TFPyEnvironment(environment)
 
-    num_iterations = 50000
-    fc_layer_params = (300, )
+    num_iterations = 50
+    fc_layer_params = (512, )  # ~ (17 + 1001) / 2
 
     initial_collect_steps = 2000
     collect_steps_per_iteration = 1
@@ -255,13 +291,41 @@ def main():
         td_errors_loss_fn=dqn_agent.element_wise_squared_loss,
         train_step_counter=train_step_counter,
     )
-    tf_agent.initialize()
-    
-    # change to any sane policy
-    random_policy = random_tf_policy.RandomTFPolicy(
+
+    q_policy = FilteredQPolicy(
+        tf_agent._time_step_spec, 
+        tf_agent._action_spec, 
+        q_network=tf_agent._q_network,
+    )
+
+    # Valid policy to pre-fill replay buffer
+    dummy_policy = DummyTradePolicy(
         train_env.time_step_spec(),
         train_env.action_spec(),
     )
+
+    # Main agent's policy; greedy one
+    policy = greedy_policy.GreedyPolicy(q_policy)
+    filtered_random_py_policy = FilteredRandomPyPolicy(
+        time_step_spec=policy.time_step_spec, 
+        action_spec=policy.action_spec,
+    )
+    filtered_random_tf_policy = tf_py_policy.TFPyPolicy(
+        filtered_random_py_policy)
+    collect_policy = epsilon_greedy_policy.EpsilonGreedyPolicy(
+        q_policy, epsilon=tf_agent._epsilon_greedy)
+    # Patch random policy for epsilon greedy collect policy
+
+    filtered_random_tf_policy = FilteredRandomTFPolicy(
+        time_step_spec=policy.time_step_spec,
+        action_spec=policy.action_spec,
+    )
+    collect_policy._random_policy = filtered_random_tf_policy
+    
+    tf_agent._policy = policy
+    tf_agent._collect_policy = collect_policy
+    tf_agent.initialize()
+    
     replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
         data_spec=tf_agent.collect_data_spec,
         batch_size=train_env.batch_size,
@@ -270,7 +334,7 @@ def main():
     print(
         'Pre-filling replay buffer in {} steps'.format(initial_collect_steps))
     for _ in range(initial_collect_steps):
-        traj = collect_step(train_env, random_policy)
+        traj = collect_step(train_env, dummy_policy)
         replay_buffer.add_batch(traj)
 
     dataset = replay_buffer.as_dataset(
@@ -289,7 +353,7 @@ def main():
     returns = [avg_return]
     
     print('Starting iterations...')
-    for _ in range(num_iterations):
+    for i in range(num_iterations):
 
         # fill replay buffer
         for _ in range(collect_steps_per_iteration):
@@ -314,12 +378,16 @@ def main():
     print('Finished {} iterations!'.format(num_iterations))
 
     print('Playing with resulting policy')
-    global VERBOSE
     VERBOSE = True
     r = compute_avg_return(eval_env, tf_agent.policy, 1)
     print('Result: {}'.format(r))
     steps = range(0, num_iterations+1, eval_interval)
 
+    # merged = tf.summary.merge_all()
+    # writer = tf.summary.FileWriter(FLAGS.log_dir)
+    # 
+    # writer.close()
+    print('Check out chart for learning')
     plt.plot(steps, returns)
     plt.ylabel('Average Return')
     plt.xlabel('Step')
@@ -328,4 +396,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    train()
+    # main()
