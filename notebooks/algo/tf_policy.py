@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import tensorflow.contrib.eager as tfe
 import tensorflow_probability as tfp
 from tensorflow.python.framework import ops
 from tf_agents.policies import policy_step
