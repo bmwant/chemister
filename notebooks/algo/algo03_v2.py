@@ -1,4 +1,5 @@
 import os
+import argparse
 import calendar
 import operator
 from concurrent import futures
@@ -15,7 +16,7 @@ from notebooks.algo.agent import BaseTrader, evaluate_agent
 from notebooks.algo.agent import IDLE_ACTION_INDEX, ACTIONS
 
 
-INITIAL_AMOUNT = 20000
+INITIAL_AMOUNT = 30000
 
 
 class NeatBasedTrader(BaseTrader):
@@ -55,13 +56,13 @@ class NeatBasedTrader(BaseTrader):
 
 def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
-        net = neat.nn.RecurrentNetwork.create(genome, config)
+        net = neat.nn.FeedForwardNetwork.create(genome, config)
         trader = NeatBasedTrader(amount=INITIAL_AMOUNT, net=net)
         p, _ = evaluate_agent(agent=trader, verbose=False)
         genome.fitness = p
 
 
-def run(config_file):
+def run(config_file, epochs):
     config = neat.Config(
         neat.DefaultGenome,
         neat.DefaultReproduction,
@@ -76,7 +77,6 @@ def run(config_file):
     p.add_reporter(neat.StatisticsReporter())
     p.add_reporter(neat.Checkpointer(10))
 
-    epochs = 300
     winner = p.run(eval_genomes, epochs)
     print('\nBest genome:\n{!s}'.format(winner))
 
@@ -88,7 +88,36 @@ def run(config_file):
     print('\nProfit: {:.2f}'.format(p))
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Genetic algorithm for trader',
+    )
+    parser.add_argument(
+        '--config',
+        required=True,
+        help='file with NEAT configuration',
+    )
+    parser.add_argument(
+        '--epochs',
+        type=int,
+        required=False,
+        default=300,
+        help='number of epochs you want to run',
+    )
+    args = parser.parse_args()
+    return args
+
+
+def main():
+    args = parse_args()
+    current_dir = os.path.dirname(__file__)
+    config_path = os.path.join(current_dir, args.config)
+    if not os.path.exists(config_path):
+        raise ValueError(
+            'Incorrect path provided for config file. '
+            'Should be relative to current directory')
+    run(config_path, epochs=args.epochs)
+
+
 if __name__ == '__main__':
-    local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, 'neat-config')
-    run(config_path)
+    main()

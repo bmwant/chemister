@@ -226,7 +226,10 @@ def nn_play():
 
 
 def neat_play():
-    pass
+    from carmax_neat import NeatDriver, load_net
+    net = load_net()
+    driver = NeatDriver(net=net, lip=True)
+    play_trip(agent=driver, verbose=True)
 
 
 def collect_data():
@@ -271,9 +274,9 @@ def write_data(data):
     df.to_csv('play_data.csv', index=False, header=False)
 
 
-
 if __name__ == '__main__':
     # random_play()
-    nn_play()
+    # nn_play()
+    neat_play()
     # data = collect_data()
     # write_data(data)

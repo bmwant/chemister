@@ -1,16 +1,14 @@
 [NEAT]
-fitness_criterion      = max
-fitness_threshold      = 0
-# two above are ignored
-no_fitness_termination = True
-pop_size               = 150
-reset_on_extinction    = False
+fitness_criterion     = max
+fitness_threshold     = 100
+pop_size              = 150
+reset_on_extinction   = False
 
 [DefaultGenome]
 # node activation options
-activation_default      = sigmoid
-activation_mutate_rate  = 0.0
-activation_options      = sigmoid
+activation_default      = random
+activation_mutate_rate  = 0.2
+activation_options      = sigmoid relu tanh gauss
 
 # node aggregation options
 aggregation_default     = sum
@@ -36,25 +34,25 @@ conn_delete_prob        = 0.5
 
 # connection enable options
 enabled_default         = True
-enabled_mutate_rate     = 0.01
+enabled_mutate_rate     = 0.02
 
 feed_forward            = True
-initial_connection      = full
+initial_connection      = partial_direct 0.6
 
 # node add/remove rates
 node_add_prob           = 0.2
 node_delete_prob        = 0.2
 
 # network parameters
-num_hidden              = 0
+num_hidden              = 1
 num_inputs              = 5
-num_outputs             = 7
+num_outputs             = 16
 
 # node response options
 response_init_mean      = 1.0
 response_init_stdev     = 0.0
-response_max_value      = 30.0
-response_min_value      = -30.0
+response_max_value      = 50.0
+response_min_value      = -50.0
 response_mutate_power   = 0.0
 response_mutate_rate    = 0.0
 response_replace_rate   = 0.0
@@ -62,8 +60,8 @@ response_replace_rate   = 0.0
 # connection weight options
 weight_init_mean        = 0.0
 weight_init_stdev       = 1.0
-weight_max_value        = 30
-weight_min_value        = -30
+weight_max_value        = 40
+weight_min_value        = -40
 weight_mutate_power     = 0.5
 weight_mutate_rate      = 0.8
 weight_replace_rate     = 0.1

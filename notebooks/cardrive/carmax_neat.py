@@ -1,8 +1,11 @@
 import os
+import gzip
 import math
+import pickle
 
 import neat
 import numpy as np
+from neat.reporting import BaseReporter
 
 import visualize
 from carmax import ACTIONS, BaseAgent, play_trip 
@@ -34,6 +37,18 @@ from carmax import ACTIONS, BaseAgent, play_trip
 #     (0, 0, 0, 1, 0, 0, 0),
 # ]
 
+# Run for up to N generations.
+EPOCHS = 100
+MODEL_FILENAME = 'nn01model.neat'
+
+
+class WinnerReporter(BaseReporter):
+    def found_solution(self, config, generation, best):
+        winner_net = neat.nn.FeedForwardNetwork.create(best, config)
+        print('Saving model...')
+        with gzip.open(MODEL_FILENAME, 'w', compresslevel=5) as f:
+            pickle.dump(winner_net, f, protocol=pickle.HIGHEST_PROTOCOL)
+
 
 class NeatDriver(BaseAgent):
     def __init__(self, net, *args, **kwargs):
@@ -59,7 +74,6 @@ class NeatDriver(BaseAgent):
 
 def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
-        genome.fitness = 4.0
         net = neat.nn.FeedForwardNetwork.create(genome, config)
         driver = NeatDriver(net=net)
         fitness = play_trip(agent=driver, verbose=False)
@@ -79,29 +93,43 @@ def run(config_file):
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(5))
+    p.add_reporter(WinnerReporter())
 
-    # Run for up to 300 generations.
-    winner = p.run(eval_genomes, 300)
+    winner = p.run(eval_genomes, EPOCHS)
 
     # Display the winning genome.
     print('\nBest genome:\n{!s}'.format(winner))
 
-    # Show output of the most fit genome against training data.
-    print('\nOutput:')
     winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
 
     print('\nPlaying game with best genome:')
     driver = NeatDriver(net=winner_net, lip=True)
     play_trip(driver, verbose=True)
 
-    node_names = {-1:'A', -2: 'B', 0:'A XOR B'}
-    visualize.draw_net(config, winner, True, node_names=node_names)
-    visualize.plot_stats(stats, ylog=False, view=True)
-    visualize.plot_species(stats, view=True)
+    node_names = {
+        -1: 'gas price', 
+        -2: 'consumption', 
+        -3: 'money',
+        -4: 'tank',
+        -5: 'distance',
+        # actions
+        0: 'buy 30',
+        1: 'buy 20',
+        2: 'buy 10',
+        3: 'rest',
+        4: 'go 10',
+        5: 'go 20',
+        6: 'go 30',
+    }
+    visualize.draw_net(config, winner, True, node_names=node_names) 
+    # visualize.plot_stats(stats, ylog=False, view=True)
+    # visualize.plot_species(stats, view=True)
 
-    # p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-4')
-    # p.run(eval_genomes, 10)
+
+def load_net():
+    with gzip.open(MODEL_FILENAME) as f:
+        net = pickle.load(f)
+    return net
 
 
 if __name__ == '__main__':
