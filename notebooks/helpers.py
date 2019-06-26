@@ -1,5 +1,10 @@
+import timeit
+from functools import wraps
+
+import click
 import pandas as pd
 import numpy as np
+from humanfriendly import format_timespan
 
 import settings
 
@@ -26,3 +31,19 @@ def load_year_dataframe(year: int=2018, currency: str='usd'):
     filepath = settings.PROJECT_ROOT / 'notebooks/data' / filename
     df = pd.read_csv(filepath)
     return df
+
+
+def hldit(func):
+    """
+    How Long Doest It Take
+    """
+    @wraps(func)
+    def inner(*args, **kwargs):
+        t1 = timeit.default_timer()
+        result = func(*args, **kwargs)
+        t2 = timeit.default_timer()
+        dt = format_timespan(t2-t1)
+        click.secho(f'\n{func.__name__} finished in {dt}', fg='cyan')
+        return result
+
+    return inner

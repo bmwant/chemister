@@ -33,6 +33,8 @@ ACTIONS = (
     (-30, 30),  # burn 30L of fuel to drive 30 km
 )
 
+IDLE_ACTION = 3  # index of doing nothing
+
 
 class EnvData(object):
     def __init__(self, step: int, gas_price: float, consumption: float):

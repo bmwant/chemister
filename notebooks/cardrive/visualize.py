@@ -202,3 +202,18 @@ def draw_net(
     dot.render(filename, view=view)
 
     return dot
+
+
+def build_evaluation_chart(data, period):
+    fig, ax = plt.subplots(figsize=(12, 8))
+    fig.canvas.set_window_title('Agent evaluation')
+    datax = np.arange(0, period*len(data), period)
+    plt.plot(datax, data, 'b', label='Score')
+
+    ax.legend()
+    plt.xlabel('Iterations')
+    plt.ylabel('Fitness')
+    plt.title('Learning curve')
+    ax.grid(True)
+
+    plt.show()
